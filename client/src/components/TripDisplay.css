@@ -1,0 +1,95 @@
+.trip-display {
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.trip-summary,
+.transportation,
+.accommodations,
+.attractions,
+.food-recommendations,
+.travel-tips {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.trip-summary h2,
+.transportation h2,
+.accommodations h2,
+.attractions h2,
+.food-recommendations h2,
+.travel-tips h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.summary-content h3 {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.summary-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.summary-description {
+  color: #666;
+  line-height: 1.6;
+}
+
+.transport-item,
+.accommodation-item,
+.attraction-item,
+.food-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.transport-image,
+.accommodation-image,
+.attraction-image,
+.food-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.booking-link {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.booking-link:hover {
+  background-color: #0056b3;
+}
+
+.travel-tips-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.travel-tips-list li {
+  margin-bottom: 5px;
+  color: #555;
+}

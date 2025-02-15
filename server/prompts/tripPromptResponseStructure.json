@@ -1,0 +1,61 @@
+{
+  "trip_summary": {
+    "from": "",
+    "to": "",
+    "best_travel_options": [],
+    "estimated_budget_range": "",
+    "summary_description": "",
+    "image_url": ""
+  },
+  "transportation": [
+    {
+      "method": "",
+      "duration": "",
+      "cost_range": "",
+      "booking_link": "",
+      "image_url": ""
+    },
+    {
+      "method": "",
+      "duration": "",
+      "cost_range": "",
+      "booking_link": "",
+      "image_url": ""
+    }
+  ],
+  "accommodations": [
+    {
+      "category": "",
+      "name": "",
+      "price_per_night": "",
+      "booking_link": "",
+      "image_url": ""
+    },
+    {
+      "category": "",
+      "name": "",
+      "price_per_night": "",
+      "booking_link": "",
+      "image_url": ""
+    }
+  ],
+  "attractions": [
+    {
+      "name": "",
+      "description": "",
+      "best_time_to_visit": "",
+      "entry_fee": "",
+      "location": "",
+      "image_url": ""
+    }
+  ],
+  "food_recommendations": [
+    {
+      "dish": "",
+      "description": "",
+      "best_place_to_try": "",
+      "image_url": ""
+    }
+  ],
+  "travel_tips": []
+}
