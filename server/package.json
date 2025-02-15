@@ -15,7 +15,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "openai": "^4.85.1",
-    "google-generative-ai": "^0.2.1"
+    "@google/generative-ai": "^0.2.1"
   },
   "type": "module"
 }
