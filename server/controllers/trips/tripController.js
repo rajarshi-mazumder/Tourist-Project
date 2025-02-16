@@ -4,9 +4,12 @@ import path from "path";
 import aiController from "../../aicontrollers/aiController.js";
 import parseJsonFromGemini from "../../aicontrollers/geminiController.js";
 
+
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
+
+import { getTransportOptions } from "../transportation/transportationOptionsController.js";
 
 const tripController = {
   generateTrip: async (req, res) => {
@@ -19,19 +22,21 @@ const tripController = {
           .json({ message: "From city, to city, and days are required" });
       }
 
+
       const task = "trips";
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
       const tripPlannerPromptPath = path.resolve(
         __dirname,
-        "../../prompts/TripPlannerPrompt"
+        "../../prompts/TripPlannerPrompt.txt"
       );
       const tripPlannerPrompt = fs.readFileSync(tripPlannerPromptPath, "utf-8");
 
       const prompt = tripPlannerPrompt
         .replace(/{from_city}/g, from_city)
         .replace(/{to_city}/g, to_city)
-        .replace(/{{days}}/g, days);
+        .replace(/{{days}}/g, days)
+
 
       let responseText;
       try {
@@ -42,7 +47,7 @@ const tripController = {
           .status(500)
           .json({ message: "Failed to generate trip", error: error.message });
       }
-
+      
       let tripDetails;
       try {
         let content;

@@ -1,7 +1,7 @@
 {
   "trip_summary": {
-    "from": "",
-    "to": "",
+    "from": "{from_city}",
+    "to": "{to_city}",
     "best_travel_options": [],
     "estimated_budget_range": "",
     "summary_description": "",
@@ -10,6 +10,8 @@
   "transportation": [
     {
       "method": "",
+      "from": "",
+      "to": "",
       "duration": "",
       "cost_range": "",
       "booking_link": "",
@@ -17,6 +19,8 @@
     },
     {
       "method": "",
+      "from": "",
+      "to": "",
       "duration": "",
       "cost_range": "",
       "booking_link": "",
@@ -24,13 +28,6 @@
     }
   ],
   "accommodations": [
-    {
-      "category": "",
-      "name": "",
-      "price_per_night": "",
-      "booking_link": "",
-      "image_url": ""
-    },
     {
       "category": "",
       "name": "",
