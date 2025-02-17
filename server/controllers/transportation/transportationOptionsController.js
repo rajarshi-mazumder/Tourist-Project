@@ -1,5 +1,5 @@
-import 'dotenv/config';
-import axios from "axios";
+require('dotenv').config();
+const axios = require("axios");
 
 // 🛫 **Fetch Flight Options (Skyscanner API)**
 async function getFlightOptions(from, to) {
@@ -26,7 +26,7 @@ async function getTrainOptions(from, to) {
   try {
     const response = await axios.get(
       // `https://maps.googleapis.com/maps/api/directions/json`,
-      `https://maps.googleapis.com/maps/api/directions/json?destination=${to}&origin=${from}&mode=transit&departure_time=now&key=${process.env.GOOGLE_MAPS_API_KEY}`,
+      `https://maps.googleapis.com/maps/api/directions/json?destination=${to}&origin=${from}&mode=transit&transit_mode=train&departure_time=now&key=${process.env.GOOGLE_MAPS_API_KEY}`,
     );
     const legs=response.data.routes[0].legs;
     console.log(legs)
@@ -111,4 +111,4 @@ async function getTransportOptions(from, to) {
   return [ ...trains];
 }
 
-export { getTransportOptions };
+module.exports = { getTransportOptions };

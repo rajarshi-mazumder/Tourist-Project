@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
 
 function parseJsonFromGemini(jsonStr) {
   try {
@@ -34,4 +34,4 @@ function parseJsonFromGemini(jsonStr) {
     return null;
   }
 }
-export default parseJsonFromGemini;
+module.exports = parseJsonFromGemini;
