@@ -5,26 +5,10 @@
   padding: 20px;
 }
 
-/* --- TRIP SUMMARY --- */
+/* Trip Summary */
 .trip-summary {
   text-align: center;
   margin-bottom: 20px;
-}
-
-.trip-summary h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.summary-content {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.summary-description {
-  font-size: 16px;
-  color: #555;
 }
 
 .summary-image {
@@ -34,56 +18,85 @@
   margin: 10px 0;
 }
 
-/* --- TRANSPORTATION SECTION --- */
+/* Transportation */
 .transportation h2 {
   font-size: 22px;
   margin-bottom: 10px;
 }
 
-.transport-options {
+.route-container {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  justify-content: center;
   background: #f0f8ff;
   padding: 10px;
   border-radius: 8px;
-  justify-content: center;
+  margin-bottom: 15px;
 }
 
-.transport-item {
-  background: #e6f0ff;
-  padding: 8px 12px;
-  border-radius: 5px;
-  font-weight: bold;
-  color: #007bff;
-  white-space: nowrap;
-}
-
-.transport-arrow {
-  font-size: 18px;
-  color: #666;
+.transport-segment {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 0 5px;
+  background: #e6f0ff;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  min-width: 200px;
 }
 
-/* --- ICONS --- */
-.desktop-arrow {
+.transport-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.transport-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.transport-method {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.transport-info,
+.transport-route,
+.transport-duration,
+.transport-cost {
+  font-size: 14px;
+  color: #333;
+}
+
+.booking-link {
+  color: #fff;
+  background: #007bff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 5px;
   display: inline-block;
+}
+
+.booking-link:hover {
+  background: #0056b3;
+}
+
+/* Arrows */
+.desktop-arrow {
+  font-size: 18px;
+  color: #666;
+  margin: 0 8px;
 }
 
 .mobile-arrow {
   display: none;
 }
 
-/* --- RESPONSIVE DESIGN --- */
+/* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
-  .transport-options {
+  .route-container {
     flex-direction: column;
-    align-items: center;
   }
 
   .desktop-arrow {
@@ -93,49 +106,4 @@
   .mobile-arrow {
     display: inline-block;
   }
-}
-
-/* --- ACCOMMODATIONS, ATTRACTIONS, FOOD, TRAVEL TIPS --- */
-.accommodations,
-.attractions,
-.food-recommendations,
-.travel-tips {
-  margin-top: 20px;
-}
-
-.accommodation-item,
-.attraction-item,
-.food-item {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.accommodation-item img,
-.attraction-item img,
-.food-item img {
-  width: 100%;
-  max-width: 300px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-.booking-link {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 6px 10px;
-  background: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-}
-
-.booking-link:hover {
-  background: #0056b3;
-}
-
-.travel-tips-list {
-  list-style-type: disc;
-  padding-left: 20px;
 }
