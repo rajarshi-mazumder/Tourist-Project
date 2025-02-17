@@ -1,4 +1,5 @@
 import React from "react";
+import { FaArrowRight, FaArrowDown } from "react-icons/fa";
 import "./TripDisplay.css";
 
 function TripDisplay({ tripData }) {
@@ -34,7 +35,7 @@ function TripDisplay({ tripData }) {
             </p>
             <p>
               <strong>Best Travel Options:</strong>{" "}
-              {trip_summary.best_travel_options}
+              {trip_summary.best_travel_options.join(", ")}
             </p>
             <p>
               <strong>Estimated Budget:</strong>{" "}
@@ -47,19 +48,29 @@ function TripDisplay({ tripData }) {
       <section className="transportation">
         <h2>Transportation</h2>
         {transportation &&
-          transportation.map((transportOptions, index) => (
+          transportation.map((route, index) => (
             <div key={index} className="transport-options">
-              {transportOptions.map((transport, transportIndex) => (
-                <span key={transportIndex} className="transport-item">
-                  {transportIndex > 0 && " → "}
-                  {transport.method} ({transport.duration},{" "}
-                  {transport.cost_range})
-                </span>
+              {route.map((segment, segmentIndex) => (
+                <React.Fragment key={segmentIndex}>
+                  {/* Transport Item */}
+                  <span className="transport-item">
+                    {segment.method} ({segment.duration}, {segment.cost_range})
+                  </span>
+
+                  {/* Show Arrow only if there's another segment after this */}
+                  {segmentIndex < route.length - 1 && (
+                    <span className="transport-arrow">
+                      <FaArrowRight className="desktop-arrow" />
+                      <FaArrowDown className="mobile-arrow" />
+                    </span>
+                  )}
+                </React.Fragment>
               ))}
             </div>
           ))}
       </section>
 
+      {/* Accommodations Section */}
       <section className="accommodations">
         <h2>Accommodations</h2>
         {accommodations &&
@@ -88,6 +99,7 @@ function TripDisplay({ tripData }) {
           ))}
       </section>
 
+      {/* Attractions Section */}
       <section className="attractions">
         <h2>Attractions</h2>
         {attractions &&
@@ -103,13 +115,11 @@ function TripDisplay({ tripData }) {
               <p>
                 <strong>Entry Fee:</strong> {attraction.entry_fee}
               </p>
-              <p>
-                <strong>Opening Hours:</strong> {attraction.opening_hours}
-              </p>
             </div>
           ))}
       </section>
 
+      {/* Food Recommendations */}
       <section className="food-recommendations">
         <h2>Food Recommendations</h2>
         {food_recommendations &&
@@ -130,6 +140,7 @@ function TripDisplay({ tripData }) {
           ))}
       </section>
 
+      {/* Travel Tips */}
       <section className="travel-tips">
         <h2>Travel Tips</h2>
         {travel_tips && (
