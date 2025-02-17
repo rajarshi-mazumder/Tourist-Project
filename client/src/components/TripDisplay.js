@@ -47,30 +47,15 @@ function TripDisplay({ tripData }) {
       <section className="transportation">
         <h2>Transportation</h2>
         {transportation &&
-          transportation.map((transport, index) => (
-            <div key={index} className="transport-item">
-              <h3>{transport.method}</h3>
-              <img
-                src={transport.image_url}
-                alt={transport.method}
-                className="transport-image"
-              />
-              <p>
-                <strong>Duration:</strong> {transport.duration}
-              </p>
-              <p>
-                <strong>Cost:</strong> {transport.cost_range}
-              </p>
-              {transport.booking_link && (
-                <a
-                  href={transport.booking_link}
-                  className="booking-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Book Now
-                </a>
-              )}
+          transportation.map((transportOptions, index) => (
+            <div key={index} className="transport-options">
+              {transportOptions.map((transport, transportIndex) => (
+                <span key={transportIndex} className="transport-item">
+                  {transportIndex > 0 && " → "}
+                  {transport.method} ({transport.duration},{" "}
+                  {transport.cost_range})
+                </span>
+              ))}
             </div>
           ))}
       </section>
@@ -81,7 +66,7 @@ function TripDisplay({ tripData }) {
           accommodations.map((accommodation, index) => (
             <div key={index} className="accommodation-item">
               <h3>
-                {accommodation.name} ({accommodation.category})
+                {accommodation.name} ({accommodation.type})
               </h3>
               <img
                 src={accommodation.image_url}
@@ -89,8 +74,7 @@ function TripDisplay({ tripData }) {
                 className="accommodation-image"
               />
               <p>
-                <strong>Price per night:</strong>{" "}
-                {accommodation.price_per_night}
+                <strong>Price Range:</strong> {accommodation.price_range}
               </p>
               <a
                 href={accommodation.booking_link}
@@ -117,14 +101,10 @@ function TripDisplay({ tripData }) {
               />
               <p>{attraction.description}</p>
               <p>
-                <strong>Best time to visit:</strong>{" "}
-                {attraction.best_time_to_visit}
-              </p>
-              <p>
                 <strong>Entry Fee:</strong> {attraction.entry_fee}
               </p>
               <p>
-                <strong>Location:</strong> {attraction.location}
+                <strong>Opening Hours:</strong> {attraction.opening_hours}
               </p>
             </div>
           ))}
@@ -135,15 +115,16 @@ function TripDisplay({ tripData }) {
         {food_recommendations &&
           food_recommendations.map((food, index) => (
             <div key={index} className="food-item">
-              <h3>{food.dish}</h3>
+              <h3>{food.name}</h3>
               <img
                 src={food.image_url}
-                alt={food.dish}
+                alt={food.name}
                 className="food-image"
               />
               <p>{food.description}</p>
               <p>
-                <strong>Best place to try:</strong> {food.best_place_to_try}
+                <strong>Restaurant Recommendation:</strong>{" "}
+                {food.restaurant_recommendation}
               </p>
             </div>
           ))}

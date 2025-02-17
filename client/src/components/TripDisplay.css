@@ -60,6 +60,17 @@
   background-color: #fafafa;
 }
 
+.transport-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
 .transport-image,
 .accommodation-image,
 .attraction-image,

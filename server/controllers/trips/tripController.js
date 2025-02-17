@@ -4,12 +4,16 @@ import path from "path";
 import aiController from "../../aicontrollers/aiController.js";
 import parseJsonFromGemini from "../../aicontrollers/geminiController.js";
 
-
 import { createRequire } from "module";
+import {
+  getTrainOptions,
+  getFerryOptions,
+  getFlightOptions,
+  getBusOptions,
+  getSubwayOptions,
+} from "../transportation/transportationOptionsController.js";
 const require = createRequire(import.meta.url);
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
-
-import { getTransportOptions } from "../transportation/transportationOptionsController.js";
 
 const tripController = {
   generateTrip: async (req, res) => {
@@ -21,7 +25,6 @@ const tripController = {
           .status(400)
           .json({ message: "From city, to city, and days are required" });
       }
-
 
       const task = "trips";
       const __filename = fileURLToPath(import.meta.url);
@@ -35,8 +38,7 @@ const tripController = {
       const prompt = tripPlannerPrompt
         .replace(/{from_city}/g, from_city)
         .replace(/{to_city}/g, to_city)
-        .replace(/{{days}}/g, days)
-
+        .replace(/{{days}}/g, days);
 
       let responseText;
       try {
@@ -47,7 +49,7 @@ const tripController = {
           .status(500)
           .json({ message: "Failed to generate trip", error: error.message });
       }
-      
+
       let tripDetails;
       try {
         let content;
@@ -57,6 +59,8 @@ const tripController = {
             parsedResponse,
             tripPromptResponseStructure
           );
+          const updatedTrip = fetchAndUpdateTransportData(structuredResponse);
+
           return res.json(structuredResponse);
         } catch (e) {
           console.error("Error extracting content from AI response:", e);
@@ -113,4 +117,40 @@ function structureResponse(parsedResponse, expectedStructure) {
   }
 
   return structuredResponse;
+}
+
+async function fetchAndUpdateTransportData(tripResponse) {
+  for (let i = 0; i < tripResponse.transportation.length; i++) {
+    const routeSegments = tripResponse.transportation[i];
+
+    for (let j = 0; j < routeSegments.length; j++) {
+      const segment = routeSegments[j];
+      let transportData = [];
+
+      switch (segment.method) {
+        case "Train":
+          transportData = await getTrainOptions(segment.from, segment.to);
+          break;
+        case "Flight":
+          transportData = await getFlightOptions(segment.from, segment.to);
+          break;
+        case "Bus":
+          transportData = await getBusOptions(segment.from, segment.to);
+          break;
+        case "Ferry":
+          transportData = await getFerryOptions(segment.from, segment.to);
+          break;
+        case "Subway":
+          transportData = await getSubwayOptions(segment.from, segment.to);
+          break;
+        default:
+          console.warn(`Unknown transport method: ${segment.method}`);
+      }
+
+      tripResponse.transportation[i][j] =
+        transportData.length > 0 ? transportData[0] : segment;
+    }
+  }
+
+  return tripResponse;
 }
