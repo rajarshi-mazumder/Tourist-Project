@@ -24,10 +24,6 @@ async function chat(req, res) {
 }
 
 // Add location formatting utility function
-function formatLocation(location) {
-  return `Latitude: ${location.latitude}, Longitude: ${location.longitude}`;
-}
 
 module.exports = { chat };
 
-module.exports = { chat };

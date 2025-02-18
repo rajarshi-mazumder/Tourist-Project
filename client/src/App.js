@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-
+import TripForm from "./components/TripForm";
+import TripDisplay from "./components/TripDisplay";
 function App() {
+  const [tripData, setTripData] = useState(null);
+
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            setLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
+            const { latitude, longitude } = position.coords;
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+              setError('Invalid location data received from browser.');
+            } else {
+              setLocation({
+                latitude: latitude,
+                longitude: longitude,
+              });
+            }
           },
           (err) => {
             setError(err.message);
@@ -30,13 +39,13 @@ function App() {
   const handleSend = () => {
     // Send location and message to server
     if (location) {
-      fetch('/chat', {
+      fetch('http://localhost/chat/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: 'Your message here', // Replace with actual message input
+          message: message, // Use message from input
           location: location,
         }),
       })
@@ -51,12 +60,20 @@ function App() {
   return (
     <div className="App">
       <h1>Tourist App</h1>
+      <TripForm setTripData={setTripData} />
+      <TripDisplay tripData={tripData} />
       {error && <p>{error}</p>}
       {location && (
         <p>
           Latitude: {location.latitude}, Longitude: {location.longitude}
         </p>
       )}
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Enter your message"
+      />
       <button onClick={handleSend}>Send</button>
     </div>
   );
