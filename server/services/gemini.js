@@ -21,7 +21,7 @@ async function getGeminiFlashResponse(prompt, location) {
     // 1. Get Nearby Places using Google Maps Places API
     console.log("Trying to find restaurants");
     console.log(location);
-    const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=5000&type=restaurant&key=${googleMapsApiKey}`; // Adjust radius as needed
+    const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=1000&type=restaurant&key=${googleMapsApiKey}`; // Adjust radius as needed
     console.log(placesUrl);
     const placesResponse = await axios.get(placesUrl);
 
@@ -57,8 +57,11 @@ async function getGeminiFlashResponse(prompt, location) {
       geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
       geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
       geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
-      if (place.opening_hours)
-        geminiPrompt += `  Open Now: ${place.opening_hours.open_now || "N/A"}\n`;
+      if (place.opening_hours) {
+        geminiPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+      } else {
+        geminiPrompt += `  Open Now: N/A\n`;
+      }
       if (place.photos && place.photos.length > 0) {
         const photoReference = place.photos[0].photo_reference;
         const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
