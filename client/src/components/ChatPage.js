@@ -76,10 +76,48 @@ function ChatPage() {
         placeholder="Enter your message"
       />
       <button onClick={handleSend}>Send</button>
-      {response &&
-        response.split('\n').map((line, index) => (
-          <p key={index}>{line}</p>
-        ))}
+      {response && (
+        <div>
+          {response.restaurants && (
+            <div>
+              <h3>Restaurants:</h3>
+              {response.restaurants.map((restaurant, index) => (
+                <div key={index}>
+                  <p>Name: {restaurant.name}</p>
+                  <p>Address: {restaurant.address}</p>
+                  <p>Distance: {restaurant.distance}</p>
+                  <p>Walking Time: {restaurant.walking_time}</p>
+                  <p>Rating: {restaurant.rating}</p>
+                  <p>Website: {restaurant.website}</p>
+                  <p>Phone Number: {restaurant.phone_number}</p>
+                  <p>Open Now: {restaurant.open_now}</p>
+                  <p>Description: {restaurant.description}</p>
+                  {restaurant.photos && restaurant.photos.map((photo, index) => (
+                    <img key={index} src={photo} alt="Restaurant" />
+                  ))}
+                  {restaurant.reviews && (
+                    <div>
+                      <h4>Reviews:</h4>
+                      {restaurant.reviews.map((review, index) => (
+                        <div key={index}>
+                          <p>Author: {review.author_name}</p>
+                          <p>Text: {review.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {response.gemini_recommendation && (
+            <div>
+              <h3>Gemini Recommendation:</h3>
+              <p>{response.gemini_recommendation}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
