@@ -3,6 +3,20 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const axios = require('axios'); // For making API requests
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY; // Your Google Maps API Key
 
+async function getDistanceAndWalkingTime(origin, destination) {
+  const distanceMatrixUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=walking&key=${googleMapsApiKey}`;
+  const distanceMatrixResponse = await axios.get(distanceMatrixUrl);
+  const data = distanceMatrixResponse.data;
+
+  if (data.rows[0].elements[0].status === "OK") {
+    const distance = data.rows[0].elements[0].distance.text;
+    const duration = data.rows[0].elements[0].duration.text;
+    return { distance, duration };
+  } else {
+    return { distance: "N/A", duration: "N/A" };
+  }
+}
+
 async function getGeminiFlashResponse(prompt, location) {
     // 1. Get Nearby Places using Google Maps Places API
     console.log("Trying to find restaurants");
@@ -10,7 +24,7 @@ async function getGeminiFlashResponse(prompt, location) {
     const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=5000&type=restaurant&key=${googleMapsApiKey}`; // Adjust radius as needed
     console.log(placesUrl);
     const placesResponse = await axios.get(placesUrl);
-    
+
     const places = placesResponse.data.results;
 
     if (!places || places.length === 0) {
@@ -31,12 +45,20 @@ async function getGeminiFlashResponse(prompt, location) {
     let geminiPrompt = `${prompt}\n\nFind options for food near me:\n`;
 
     for (const place of detailedPlaces) {
-        geminiPrompt += `- **${place.name}**\n`;
-        geminiPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
-        geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
-        geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
-        geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
-        if(place.opening_hours) geminiPrompt += `  Open Now: ${place.opening_hours.open_now || "N/A"}\n`;
+      const { distance, duration } = await getDistanceAndWalkingTime(
+        location,
+        place.formatted_address
+      );
+
+      geminiPrompt += `- **${place.name}**\n`;
+      geminiPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
+      geminiPrompt += `  Distance: ${distance}\n`;
+      geminiPrompt += `  Walking Time: ${duration}\n`;
+      geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
+      geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
+      geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+      if (place.opening_hours)
+        geminiPrompt += `  Open Now: ${place.opening_hours.open_now || "N/A"}\n`;
       if (place.photos && place.photos.length > 0) {
         const photoReference = place.photos[0].photo_reference;
         const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
@@ -49,7 +71,7 @@ async function getGeminiFlashResponse(prompt, location) {
           geminiPrompt += `    - "${review.text}" by ${review.author_name}\n`;
         }
       }
-        geminiPrompt += `\n`;
+      geminiPrompt += `\n`;
     }
 
     // 4. Call Gemini
