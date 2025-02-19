@@ -74,6 +74,9 @@ async function getGeminiFlashResponse(prompt, location) {
       geminiPrompt += `\n`;
     }
 
+    console.log("This is the prompt for gemini: ", geminiPrompt);
+    console.log("------------------------------------------------------");
+
     // 4. Call Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-001" }); // Or a more suitable model if available
     const result = await model.generateContent(geminiPrompt);

@@ -76,7 +76,10 @@ function ChatPage() {
         placeholder="Enter your message"
       />
       <button onClick={handleSend}>Send</button>
-      {response && <p>Response: {response}</p>}
+      {response &&
+        response.split('\n').map((line, index) => (
+          <p key={index}>{line}</p>
+        ))}
     </div>
   );
 }
