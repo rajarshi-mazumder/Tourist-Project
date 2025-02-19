@@ -15,7 +15,7 @@ async function chat(req, res) {
     const formattedLocation = location ? formatLocation(location) : ''; // Format location data
 
 
-    const response = await getGeminiFlashResponse(`${prompt} My location is: ${formattedLocation}`);
+    const response = await getGeminiFlashResponse(prompt, formattedLocation);
     res.json({ response });
   } catch (error) {
     console.error(error);

@@ -1,6 +1,6 @@
 // server/utils/location.js
 function formatLocation(location) {
-  return `Latitude: ${location.latitude}, Longitude: ${location.longitude}`;
+  return `${location.latitude},${location.longitude}`;
 }
 
 module.exports = { formatLocation };
