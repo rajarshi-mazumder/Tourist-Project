@@ -20,7 +20,7 @@
         "duration": "1h 30m",
         "cost_range": "$150 - $300",
         "booking_link": "https://www.jal.co.jp",
-        "icon_url": "https://example.com/japan-airlines-logo.png",
+        "icon_url": null,
         "image_url": "https://example.com/flight.jpg"
       }
     ],
@@ -57,7 +57,7 @@
           "facilities": ["Elevator", "Restrooms", "Coin Lockers"]
         },
         "booking_link": "https://www.tokyometro.jp",
-        "icon_url": "https://example.com/tokyo-metro-logo.png",
+        "icon_url": null,
         "image_url": "https://example.com/ginza-line.jpg"
       }
     ]

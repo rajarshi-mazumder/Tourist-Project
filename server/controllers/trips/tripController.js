@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import aiController from "../../aicontrollers/aiController.js";
 import parseJsonFromGemini from "../../aicontrollers/geminiController.js";
+import { getHotels } from "../hotel/hotelDataController.js";
 
 import { createRequire } from "module";
 import {
@@ -19,7 +20,12 @@ const tripController = {
   generateTrip: async (req, res) => {
     try {
       const { from_city, to_city, days } = req.body;
-      console.log(`BODYY ${JSON.stringify(req.body)} ${from_city} ${to_city}`);
+      const latitude = 35.6895; // Hardcoded latitude for Tokyo
+      const longitude = 139.6917; // Hardcoded longitude for Tokyo
+      const hotels = await getHotels(latitude, longitude);
+
+      console.log(`HOTELLS ${JSON.stringify(hotels)} `);
+      return;
       if (!from_city || !to_city || !days) {
         return res
           .status(400)
@@ -59,7 +65,6 @@ const tripController = {
             parsedResponse,
             tripPromptResponseStructure
           );
-          const updatedTrip = fetchAndUpdateTransportData(structuredResponse);
 
           return res.json(structuredResponse);
         } catch (e) {

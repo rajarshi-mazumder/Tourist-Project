@@ -84,6 +84,7 @@ For **each transportation type**, include the following details:
 
 ---
 
+
 ### ✅ **JSON Response Format**
 ```json
 {

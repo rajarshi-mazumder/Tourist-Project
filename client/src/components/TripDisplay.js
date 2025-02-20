@@ -82,7 +82,7 @@ function TripDisplay({ tripData }) {
                     <span className="transport-cost">
                       <strong>Cost:</strong> {segment.cost_range}
                     </span>
-                    {segment.booking_link && (
+                    {segment.booking_link && segment.method !== "train" && (
                       <a
                         href={segment.booking_link}
                         target="_blank"
