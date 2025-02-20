@@ -47,7 +47,34 @@ async function buildGeminiPrompt(prompt, location, detailedPlaces) {
     geminiPrompt += `  Please provide a description of this place, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
   }
 
-  geminiPrompt += `\n\nBased on the above restaurants, which one do you recommend and why? Please provide a detailed explanation of your reasoning.`;
+  for (const place of detailedPlaces) {
+    geminiPrompt += `\n\nDescribe the following restaurant in detail, including the type of food, ambiance, atmosphere, and anything else relevant:\n`;
+    geminiPrompt += `- **${place.name}**\n`;
+    geminiPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
+    geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
+    geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
+    geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+    if (place.opening_hours) {
+      geminiPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+    } else {
+      geminiPrompt += `  Open Now: N/A\n`;
+    }
+    if (place.photos && place.photos.length > 0) {
+      const photoReference = place.photos[0].photo_reference;
+      const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
+      geminiPrompt += `  Image: ${photoUrl}\n`;
+    }
+
+    if (place.reviews && place.reviews.length > 0) {
+      geminiPrompt += `  Reviews:\n`;
+      for (const review of place.reviews) {
+        geminiPrompt += `    - "${review.text}" by ${review.author_name}\n`;
+      }
+    }
+  }
+  geminiPrompt += `\n\nRank the above restaurants from best to worst based on your assessment, providing a detailed explanation for your ranking.  Which restaurant is your top recommendation and why?`;
+  console.log('Gemini Prompt:', geminiPrompt);
+  console.log('-------------------');
   return geminiPrompt;
 }
 
@@ -61,8 +88,7 @@ async function chat(req, res) {
     }
 
     const formattedLocation = location ? formatLocation(location) : '';
-
-    // 1. Get Nearby Places using Google Maps Places API
+    console.log(`Maps API key: ${googleMapsApiKey}`);
     const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&type=restaurant&key=${googleMapsApiKey}`;
     const placesResponse = await axios.get(placesUrl);
     const places = placesResponse.data.results;
@@ -119,7 +145,7 @@ async function chat(req, res) {
       restaurants: restaurants,
       gemini_recommendation: recommendation
     };
-    res.json({ response: geminiResponse });
+    res.json(jsonResponse);
 
   } catch (error) {
     console.error(error);

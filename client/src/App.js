@@ -11,7 +11,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <h1>Tourist App</h1>
+        <h1></h1>
         <Routes>
           <Route path="/" element={<><TripForm setTripData={setTripData} /><TripDisplay tripData={tripData} /></>} />
           <Route path="/chat" element={<ChatPage />} />
