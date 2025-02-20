@@ -1,0 +1,96 @@
+{
+    "type": "object",
+    "properties": {
+        "restaurants": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "number"
+                    },
+                    "website": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "openNow": {
+                        "type": "boolean"
+                    },
+                    "photos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "reviews": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "author_name": {
+                                    "type": "string"
+                                },
+                                "text": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "author_name",
+                                "text"
+                            ]
+                        }
+                    },
+                    "distance": {
+                        "type": "string"
+                    },
+                    "walkingTime": {
+                        "type": "string"
+                    },
+                    "ranking": {
+                        "type": "object",
+                        "properties": {
+                            "rank": {
+                                "type": "integer"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "rank",
+                            "reason"
+                        ]
+                    }
+                },
+                "required": [
+                    "name",
+                    "address",
+                    "description",
+                    "rating",
+                    "website",
+                    "phone",
+                    "openNow",
+                    "photos",
+                    "reviews",
+                    "distance",
+                    "walkingTime",
+                    "ranking"
+                ]
+            }
+        }
+    },
+    "required": [
+        "restaurants"
+    ]
+}

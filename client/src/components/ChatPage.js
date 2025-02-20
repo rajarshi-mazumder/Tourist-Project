@@ -51,6 +51,7 @@ function ChatPage() {
       })
       .then(response => response.json())
       .then(data => {
+        console.log("Response fro api")
         console.log(data);
         setResponse(data.response); // Assuming the response has a 'response' field
       })
