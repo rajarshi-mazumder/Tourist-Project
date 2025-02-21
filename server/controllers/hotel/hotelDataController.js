@@ -7,58 +7,37 @@ import path from "path";
 
 async function getHotels(cityName) {
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const placeDataPath = path.resolve(
-      __dirname,
-      "../../prompts/JapanPlaceDataCodes.json"
-    );
-    console.log(`HOTELLS ${placeDataPath} `);
-
-    const placeData = JSON.parse(fs.readFileSync(placeDataPath, "utf-8"));
-
-    let largeClassCode, middleClassCode, smallClassCode, detailClassCode;
-    let found = false;
-
-    const largeClass = placeData.areaClasses.largeClasses[0].largeClass;
-
-    for (const middleClassWrapper of largeClass[1].middleClasses) {
-      const middleClass = middleClassWrapper.middleClass[0];
-      for (const smallClassWrapper of middleClassWrapper.middleClass[1]
-        .smallClasses) {
-        const smallClass = smallClassWrapper.smallClass[0];
-        if (smallClass.smallClassName === cityName) {
-          largeClassCode = largeClass[0].largeClassCode;
-          middleClassCode = middleClass[0].middleClassCode;
-          smallClassCode = smallClass.smallClassCode;
-
-          // Iterate through detail classes to find a valid detailClassCode
-          for (const detailClassWrapper of smallClass.detailClasses) {
-            const detailClass = detailClassWrapper.detailClass;
-            detailClassCode = detailClass.detailClassCode;
-            found = true;
-            break; // Use the first valid detailClassCode found
-          }
-
-          if (found) break;
-        }
-      }
-      if (found) break;
-    }
-
-    const baseUrl = `https://app.rakuten.co.jp/services/api/Travel/SimpleHotelSearch/20170426?format=json&largeClassCode=${largeClassCode}&middleClassCode=${middleClassCode}&smallClassCode=${smallClassCode}&detailClassCode=${detailClassCode}&applicationId=${applicationId}`;
-
+ 
+    const baseUrl = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?applicationId=${applicationId}&format=json&keyword=${cityName}`;
     console.log(`API URL: ${baseUrl}`);
+
     const hotelResponse = await axios.get(baseUrl);
-    console.log(`API Response: ${JSON.stringify(hotelResponse.data)}`);
-    return hotelResponse.data;
+    const hotels = hotelResponse.data?.hotels?.map(hotel => {
+      const hotelInfo = hotel.hotel[0].hotelBasicInfo;
+      return {
+        hotelName: hotelInfo.hotelName,
+        hotelInformationUrl: hotelInfo.hotelInformationUrl,
+        hotelImageUrl: hotelInfo.hotelImageUrl,
+        hotelThumbnailUrl: hotelInfo.hotelThumbnailUrl,
+        address1: hotelInfo.address1,
+        address2: hotelInfo.address2,
+        telephoneNo: hotelInfo.telephoneNo,
+        access: hotelInfo.access,
+        hotelMinCharge: hotelInfo.hotelMinCharge,
+        reviewCount: hotelInfo.reviewCount,
+        reviewAverage: hotelInfo.reviewAverage,
+      };
+    }) || [];
+
+
+    return hotels ;
+
   } catch (error) {
     console.error("🚨 Error fetching hotels:", error.message);
-    if (error.response) {
-      console.error("🔍 API Error Details:", error.response.data);
-    }
     throw error;
   }
 }
+
+
 
 export { getHotels };

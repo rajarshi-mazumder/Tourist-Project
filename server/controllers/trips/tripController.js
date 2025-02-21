@@ -22,10 +22,10 @@ const tripController = {
       const { from_city, to_city, days } = req.body;
       const latitude = 35.6895; // Hardcoded latitude for Tokyo
       const longitude = 139.6917; // Hardcoded longitude for Tokyo
-      const hotels = await getHotels(latitude, longitude);
+      const hotels = await getHotels(to_city);
 
-      console.log(`HOTELLS ${JSON.stringify(hotels)} `);
-      return;
+  
+ 
       if (!from_city || !to_city || !days) {
         return res
           .status(400)
@@ -40,7 +40,7 @@ const tripController = {
         "../../prompts/TripPlannerPrompt.txt"
       );
       const tripPlannerPrompt = fs.readFileSync(tripPlannerPromptPath, "utf-8");
-
+ 
       const prompt = tripPlannerPrompt
         .replace(/{from_city}/g, from_city)
         .replace(/{to_city}/g, to_city)
@@ -61,11 +61,13 @@ const tripController = {
         let content;
         try {
           let parsedResponse = parseJsonFromGemini(responseText);
-          const structuredResponse = structureResponse(
+          let structuredResponse = structureResponse(
             parsedResponse,
             tripPromptResponseStructure
           );
-
+          structuredResponse.accommodations = hotels;
+          
+          console.log("Structured Response:", JSON.stringify(structuredResponse, null, 2));
           return res.json(structuredResponse);
         } catch (e) {
           console.error("Error extracting content from AI response:", e);
