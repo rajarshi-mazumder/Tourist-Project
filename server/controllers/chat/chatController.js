@@ -18,10 +18,13 @@ async function getDistanceAndWalkingTime(origin, destination) {
 }
 
 async function buildLlmPrompt(prompt, location, detailedPlaces) {
-let llmPrompt = `${prompt}\n\nI'm trying to find food options around me, and these are the options I have, as below. I want you to provide a brief description (10-15 words) and a ranking (1-5, with 1 being the best) for each place based on type of food, ambiance, atmosphere, reviews, accessibility based on distance and time of day, and anything else relevant. Return the results in the following format:\n\n`;
+let llmPrompt = `${prompt}\n\nI'm trying to find food options around me, and these are the options I have, as below. 
+I want you to provide a brief description (10-15 words) and a ranking (with 1 being the best) 
+for each place based on type of food, ambiance, atmosphere, reviews, accessibility based on distance and time of day, 
+and anything else relevant. Do not skip any of the places, I want each of them in the rankings\n\n`;
 
   for (const place of detailedPlaces) {
-    llmPrompt += `- **${place.name}**\n`;
+    llmPrompt += `- **${place.name} (ID: ${place.id})**\n`;
     llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
     llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
     llmPrompt += `  Website: ${place.website || "N/A"}\n`;
@@ -73,10 +76,13 @@ async function chat(req, res) {
 
     // 2. Enrich Place Details
     const detailedPlaces = [];
-    for (const place of places) {
+    for (let i = 0; i < places.length; i++) {
+      const place = places[i];
       const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review&key=${googleMapsApiKey}`;
       const detailsResponse = await axios.get(detailsUrl);
-      detailedPlaces.push(detailsResponse.data.result);
+      const detailedPlace = detailsResponse.data.result;
+      detailedPlace.id = i + 1; // Assign a unique ID
+      detailedPlaces.push(detailedPlace);
     }
 
     // 3. Build OpenAI Prompt
@@ -89,24 +95,9 @@ async function chat(req, res) {
       return res.status(500).json({ error: "OpenAI returned an empty response" });
     }
     console.log('OpenAI Response:', openaiResponse);
-    const responses = openaiResponse.split('\n');
-    const updatedPlaces = detailedPlaces.map((place, index) => {
-      const response = responses[index];
-      if (response) {
-        const [description, ranking] = response.split(', Ranking - ');
-        return {
-          ...place,
-          description: description ? description.replace(`${place.name}: Description - `, '').trim() : null,
-          ranking: ranking ? parseInt(ranking.trim()) : null,
-        };
-      }
-      return place;
-    });
 
-    res.json({
-      count: places.length,
-      places: updatedPlaces,
-    });
+
+    res.send(openaiResponse);
 }
 
 module.exports = { chat };

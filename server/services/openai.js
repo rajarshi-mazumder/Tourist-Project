@@ -8,6 +8,7 @@ const { z } = require('zod');
 
 const RestaurantSchema = z.object({
   name: z.string(),
+  id: z.string().optional(),
   // address: z.string(),
   // distance: z.string().optional(),
   // walkingTime: z.string().optional(),
