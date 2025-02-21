@@ -1,4 +1,4 @@
-const { getGeminiFlashResponse } = require('../../services/gemini');
+const { getOpenAIChatResponse } = require('../../services/openai');
 const { formatLocation } = require('../../utils/location');
 const axios = require('axios');
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -17,65 +17,65 @@ async function getDistanceAndWalkingTime(origin, destination) {
   }
 }
 
-async function buildGeminiPrompt(prompt, location, detailedPlaces) {
-  let geminiPrompt = `${prompt}\n\nFind options for food near me:\n`;
+async function buildOpenAIprompt(prompt, location, detailedPlaces) {
+let openAIprompt = `${prompt}\n\nFind me restaurant options for food near my current location, and describe each in detail, including cuisine type, price range, and ambiance, and format the response as a JSON:\n`;
 
   for (const place of detailedPlaces) {
-    geminiPrompt += `- **${place.name}**\n`;
-    geminiPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
-    geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
-    geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
-    geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+    openAIprompt += `- **${place.name}**\n`;
+    openAIprompt += `  Address: ${place.formatted_address || "N/A"}\n`;
+    openAIprompt += `  Rating: ${place.rating || "N/A"}\n`;
+    openAIprompt += `  Website: ${place.website || "N/A"}\n`;
+    openAIprompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
     if (place.opening_hours) {
-      geminiPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+      openAIprompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
     } else {
-      geminiPrompt += `  Open Now: N/A\n`;
+      openAIprompt += `  Open Now: N/A\n`;
     }
     if (place.photos && place.photos.length > 0) {
       const photoReference = place.photos[0].photo_reference;
       const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
-      geminiPrompt += `  Image: ${photoUrl}\n`;
+      openAIprompt += `  Image: ${photoUrl}\n`;
     }
 
     if (place.reviews && place.reviews.length > 0) {
-      geminiPrompt += `  Reviews:\n`;
+      openAIprompt += `  Reviews:\n`;
       for (const review of place.reviews) {
-        geminiPrompt += `    - "${review.text}" by ${review.author_name}\n`;
+        openAIprompt += `    - "${review.text}" by ${review.author_name}\n`;
       }
     }
-    geminiPrompt += `\n`;
-    geminiPrompt += `  Please provide a description of this place, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
+    openAIprompt += `\n`;
+    openAIprompt += `  Please provide a description of this place, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
   }
 
   for (const place of detailedPlaces) {
-    geminiPrompt += `\n\nDescribe the following restaurant in detail, including the type of food, ambiance, atmosphere, and anything else relevant:\n`;
-    geminiPrompt += `- **${place.name}**\n`;
-    geminiPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
-    geminiPrompt += `  Rating: ${place.rating || "N/A"}\n`;
-    geminiPrompt += `  Website: ${place.website || "N/A"}\n`;
-    geminiPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+    openAIprompt += `\n\nDescribe the following restaurant in detail, including the type of food, ambiance, atmosphere, and anything else relevant:\n`;
+    openAIprompt += `- **${place.name}**\n`;
+    openAIprompt += `  Address: ${place.formatted_address || "N/A"}\n`;
+    openAIprompt += `  Rating: ${place.rating || "N/A"}\n`;
+    openAIprompt += `  Website: ${place.website || "N/A"}\n`;
+    openAIprompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
     if (place.opening_hours) {
-      geminiPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+      openAIprompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
     } else {
-      geminiPrompt += `  Open Now: N/A\n`;
+      openAIprompt += `  Open Now: N/A\n`;
     }
     if (place.photos && place.photos.length > 0) {
       const photoReference = place.photos[0].photo_reference;
       const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
-      geminiPrompt += `  Image: ${photoUrl}\n`;
+      openAIprompt += `  Image: ${photoUrl}\n`;
     }
 
     if (place.reviews && place.reviews.length > 0) {
-      geminiPrompt += `  Reviews:\n`;
+      openAIprompt += `  Reviews:\n`;
       for (const review of place.reviews) {
-        geminiPrompt += `    - "${review.text}" by ${review.author_name}\n`;
+        openAIprompt += `    - "${review.text}" by ${review.author_name}\n`;
       }
     }
   }
-  geminiPrompt += `\n\nReturn your response in the following JSON-like format:\n{\n  "restaurants": [\n    {\n      "name": "Restaurant Name",\n      "address": "Address",\n      "description": "Description",\n      "rating": 4.5,\n      "website": "Website URL",\n      "phone": "Phone Number",\n      "openNow": true,\n      "photos": ["Photo URL 1", "Photo URL 2"],\n      "reviews": [{"author_name": "Author Name", "text": "Review Text"}],\n      "distance": "1.2 km",\n      "walkingTime": "15 mins",\n      "ranking": {"rank": 1, "reason": "Reason for ranking"}\n    },\n    // ... more restaurants\n  ]\n}\n`;
+  openAIprompt += `\n\nReturn your response in the following JSON-like format:\n{\n  "restaurants": [\n    {\n      "name": "Restaurant Name",\n      "address": "Address",\n      "description": "Description",\n      "rating": 4.5,\n      "website": "Website URL",\n      "phone": "Phone Number",\n      "openNow": true,\n      "photos": ["Photo URL 1", "Photo URL 2"],\n      "reviews": [{"author_name": "Author Name", "text": "Review Text"}],\n      "distance": "1.2 km",\n      "walkingTime": "15 mins",\n      "ranking": {"rank": 1, "reason": "Reason for ranking"}\n    },\n    // ... more restaurants\n  ]\n}\n`;
   // console.log('Gemini Prompt:', geminiPrompt);
   // console.log('-------------------');
-  return geminiPrompt;
+  return openAIprompt;
 }
 
 async function chat(req, res) {
@@ -107,27 +107,28 @@ async function chat(req, res) {
       detailedPlaces.push(detailsResponse.data.result);
     }
 
-    // 3. Build Gemini Prompt
-    const geminiPrompt = await buildGeminiPrompt(prompt, formattedLocation, detailedPlaces);
+    // 3. Build OpenAI Prompt
+    const openAIprompt = await buildOpenAIprompt(prompt, formattedLocation, detailedPlaces);
 
-    // 4. Call Gemini
-    const geminiResponse = await getGeminiFlashResponse(geminiPrompt);
-    if (!geminiResponse || geminiResponse.trim() === "") {
-      console.error("Gemini returned an empty response:", geminiResponse);
-      return res.status(500).json({ error: "Gemini returned an empty response" });
-    }
-    // console.log("Gemini Response:", geminiResponse);
-    let cleanedResponse = geminiResponse;
-    if (cleanedResponse.startsWith("```json")) {
-      cleanedResponse = cleanedResponse
-        .replace(/^```json\s*/, "") // Remove starting ```json and any whitespace
-        .replace(/\s*```$/, "");     // Remove ending ``` and any whitespace
+    // 4. Call OpenAI
+    const openaiResponse = await getOpenAIChatResponse(openAIprompt);
+    if (!openaiResponse || openaiResponse.trim() === "") {
+      console.error("OpenAI returned an empty response:", openaiResponse);
+      return res.status(500).json({ error: "OpenAI returned an empty response" });
     }
 
-    console.log("Cleaned Gemini Response:", cleanedResponse);
-
- 
+    let cleanedResponse = openaiResponse;
+    
+    console.log("Cleaned OpenAI Response:", cleanedResponse);
+    
     res.json(cleanedResponse);
+    // try {
+    //   const responseJson = JSON.parse(cleanedResponse);
+    //   res.json(responseJson);
+    // } catch (error) {
+    //   console.error("Failed to parse OpenAI response as JSON:", error);
+    //   res.status(500).json({ error: "Failed to parse OpenAI response as JSON", rawResponse: cleanedResponse });
+    // }
 
   
 }
