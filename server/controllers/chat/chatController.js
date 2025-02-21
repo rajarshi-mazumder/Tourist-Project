@@ -18,69 +18,13 @@ async function getDistanceAndWalkingTime(origin, destination) {
 }
 
 async function buildLlmPrompt(prompt, location, detailedPlaces) {
-let llmPrompt = `${prompt}\n\n I'm trying to find food options around me, and these are the options I have, as below.
-I want you to rank these places based on  type of food, ambiance, atmosphere, reviews, 
-accesibility based on distance, time of day, etc, and and anything else relevant.
-For every place, give a brief description based on above parameters.
-Finally, rank the recommendations based on whcih one you recommend most based on above factors, and explain why.
-:\n`;
+let llmPrompt = `${prompt}\n\nI'm trying to find food options around me, and these are the options I have, as below. I want you to provide a brief description (10-15 words) and a ranking (1-5, with 1 being the best) for each place based on type of food, ambiance, atmosphere, reviews, accessibility based on distance and time of day, and anything else relevant. Return the results in the following format:\n\n`;
 
   for (const place of detailedPlaces) {
-    llmPrompt += `- **${place.name}**\n`;
-    llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
-    llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
-    llmPrompt += `  Website: ${place.website || "N/A"}\n`;
-    llmPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
-    if (place.opening_hours) {
-      llmPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
-    } else {
-      llmPrompt += `  Open Now: N/A\n`;
-    }
-    if (place.photos && place.photos.length > 0) {
-      const photoReference = place.photos[0].photo_reference;
-      const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
-      llmPrompt += `  Image: ${photoUrl}\n`;
-    }
-
-    if (place.reviews && place.reviews.length > 0) {
-      llmPrompt += `  Reviews:\n`;
-      for (const review of place.reviews) {
-        llmPrompt += `    - "${review.text}" by ${review.author_name}\n`;
-      }
-    }
-    llmPrompt += `\n`;
-    llmPrompt += `  Please provide a small description of this place in  10-15 words, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
+    llmPrompt += `${place.name}: Description - , Ranking - \n`;
   }
 
-  for (const place of detailedPlaces) {
-    llmPrompt += `\n\nDescribe the following restaurant in detail, including the type of food, ambiance, atmosphere, and anything else relevant:\n`;
-    llmPrompt += `- **${place.name}**\n`;
-    llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
-    llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
-    llmPrompt += `  Website: ${place.website || "N/A"}\n`;
-    llmPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
-    if (place.opening_hours) {
-      llmPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
-    } else {
-      llmPrompt += `  Open Now: N/A\n`;
-    }
-    if (place.photos && place.photos.length > 0) {
-      const photoReference = place.photos[0].photo_reference;
-      const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
-      llmPrompt += `  Image: ${photoUrl}\n`;
-    }
-
-    if (place.reviews && place.reviews.length > 0) {
-      llmPrompt += `  Reviews:\n`;
-      for (const review of place.reviews) {
-        llmPrompt += `    - "${review.text}" by ${review.author_name}\n`;
-      }
-    }
-  }
-  
-  // llmPrompt += `\n\nReturn your response in the following JSON-like format:\n{\n  "restaurants": [\n    {\n      "name": "Restaurant Name",\n      "address": "Address",\n      "description": "Description",\n      "rating": 4.5,\n      "website": "Website URL",\n      "phone": "Phone Number",\n      "openNow": true,\n      "photos": ["Photo URL 1", "Photo URL 2"],\n      "reviews": [{"author_name": "Author Name", "text": "Review Text"}],\n      "distance": "1.2 km",\n      "walkingTime": "15 mins",\n      "ranking": {"rank": 1, "reason": "Reason for ranking"}\n    },\n    // ... more restaurants\n  ]\n}\n`;
   console.log('OpenAI Prompt:', llmPrompt);
-  // console.log('-------------------');
   return llmPrompt;
 }
 
@@ -122,21 +66,22 @@ async function chat(req, res) {
       console.error("OpenAI returned an empty response:", openaiResponse);
       return res.status(500).json({ error: "OpenAI returned an empty response" });
     }
+    console.log('OpenAI Response:', openaiResponse);
+    const responses = openaiResponse.split('\n');
+    const updatedPlaces = detailedPlaces.map((place, index) => {
+      const response = responses[index];
+      if (response) {
+        const [description, ranking] = response.split(', Ranking - ');
+        return {
+          ...place,
+          description: description ? description.replace(`${place.name}: Description - `, '').trim() : null,
+          ranking: ranking ? parseInt(ranking.trim()) : null,
+        };
+      }
+      return place;
+    });
 
-    let cleanedResponse = openaiResponse;
-    
-    console.log("Cleaned OpenAI Response:", cleanedResponse);
-    
-    // res.json(cleanedResponse);
-    try {
-      const responseJson = JSON.parse(cleanedResponse);
-      res.json(responseJson);
-    } catch (error) {
-      console.error("Failed to parse OpenAI response as JSON:", error);
-      res.status(500).json({ error: "Failed to parse OpenAI response as JSON", rawResponse: cleanedResponse });
-    }
-
-  
+    res.json(updatedPlaces);
 }
 
 module.exports = { chat };

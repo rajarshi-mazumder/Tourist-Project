@@ -42,8 +42,6 @@ async function getOpenAIChatResponse(prompt) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-2024-08-06",
       messages: [{ role: "user", content: prompt }],
-      response_format: zodResponseFormat(IndexItemSchema, "items"),
-
     });
      // Log the token usage details
      console.log("Token usage:", completion.usage);
