@@ -6,7 +6,7 @@ const parseJsonFromGemini = require("../../aicontrollers/geminiController.js");
 
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
 
-const { getTransportOptions } = require("../transportation/transportationOptionsController.js");
+const { getHotels } = require("../hotel/hotelDataController.js");
 
 const tripController = {
   generateTrip: async (req, res) => {

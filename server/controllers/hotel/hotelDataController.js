@@ -1,9 +1,9 @@
-import axios from "axios";
-import { fileURLToPath } from "url";
+const axios = require("axios");
+const { fileURLToPath } = require("url");
 const applicationId = "1022755600173894292"; // From Rakuten API
 
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
 
 async function getHotels(cityName) {
   try {
@@ -40,4 +40,4 @@ async function getHotels(cityName) {
 
 
 
-export { getHotels };
+module.exports = { getHotels };
