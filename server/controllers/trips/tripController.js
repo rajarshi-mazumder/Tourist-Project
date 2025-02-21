@@ -6,13 +6,6 @@ import parseJsonFromGemini from "../../aicontrollers/geminiController.js";
 import { getHotels } from "../hotel/hotelDataController.js";
 
 import { createRequire } from "module";
-import {
-  getTrainOptions,
-  getFerryOptions,
-  getFlightOptions,
-  getBusOptions,
-  getSubwayOptions,
-} from "../transportation/transportationOptionsController.js";
 const require = createRequire(import.meta.url);
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
 
@@ -126,38 +119,4 @@ function structureResponse(parsedResponse, expectedStructure) {
   return structuredResponse;
 }
 
-async function fetchAndUpdateTransportData(tripResponse) {
-  for (let i = 0; i < tripResponse.transportation.length; i++) {
-    const routeSegments = tripResponse.transportation[i];
 
-    for (let j = 0; j < routeSegments.length; j++) {
-      const segment = routeSegments[j];
-      let transportData = [];
-
-      switch (segment.method) {
-        case "Train":
-          transportData = await getTrainOptions(segment.from, segment.to);
-          break;
-        case "Flight":
-          transportData = await getFlightOptions(segment.from, segment.to);
-          break;
-        case "Bus":
-          transportData = await getBusOptions(segment.from, segment.to);
-          break;
-        case "Ferry":
-          transportData = await getFerryOptions(segment.from, segment.to);
-          break;
-        case "Subway":
-          transportData = await getSubwayOptions(segment.from, segment.to);
-          break;
-        default:
-          console.warn(`Unknown transport method: ${segment.method}`);
-      }
-
-      tripResponse.transportation[i][j] =
-        transportData.length > 0 ? transportData[0] : segment;
-    }
-  }
-
-  return tripResponse;
-}

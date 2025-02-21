@@ -1,5 +1,8 @@
 import React from "react";
 import "./TripDisplay.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function TripDisplay({ tripData }) {
   if (!tripData) {
@@ -14,6 +17,39 @@ function TripDisplay({ tripData }) {
     food_recommendations,
     travel_tips,
   } = tripData;
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <div className="trip-display">
@@ -108,73 +144,71 @@ function TripDisplay({ tripData }) {
       {/* Accommodations */}
       <section className="accommodations">
         <h2>Accommodations</h2>
-        {accommodations.length > 0 ? (
-          accommodations.map((accommodation, index) => (
-            <div key={index} className="accommodation-item">
-              <h3>
-                {accommodation.name} ({accommodation.type})
-              </h3>
-              <img
-                src={accommodation.image_url}
-                alt={accommodation.name}
-                className="accommodation-image"
-              />
-              <p>
-                <strong>Price Range:</strong> {accommodation.price_range}
-              </p>
-              <a
-                href={accommodation.booking_link}
-                className="booking-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Book Now
-              </a>
-            </div>
-          ))
-        ) : (
-          <p>No accommodations available.</p>
-        )}
+        <Slider {...settings}>
+          {accommodations &&
+            accommodations.map((accommodation, index) => (
+              <div key={index} className="accommodation-item">
+                <h3>{accommodation.hotelName}</h3>
+                <img
+                  src={accommodation.hotelImageUrl}
+                  alt={accommodation.hotelName}
+                  className="accommodation-image"
+                />
+                <p>
+                  <strong>Price:</strong> {accommodation.hotelMinCharge}
+                </p>
+                <p>
+                  <strong>Rating:</strong> {accommodation.reviewAverage}
+                </p>
+                <a
+                  href={accommodation.hotelInformationUrl}
+                  className="booking-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Book Now
+                </a>
+              </div>
+            ))}
+        </Slider>
       </section>
 
       {/* Attractions */}
       <section className="attractions">
         <h2>Attractions</h2>
-        {attractions.length > 0 ? (
-          attractions.map((attraction, index) => (
-            <div key={index} className="attraction-item">
-              <h3>{attraction.name}</h3>
-              <img
-                src={attraction.image_url}
-                alt={attraction.name}
-                className="attraction-image"
-              />
-              <p>{attraction.description}</p>
-            </div>
-          ))
-        ) : (
-          <p>No attractions available.</p>
-        )}
+        <Slider {...settings}>
+          {attractions &&
+            attractions.map((attraction, index) => (
+              <div key={index} className="attraction-item">
+                <h3>{attraction.name}</h3>
+                <img
+                  src={attraction.representative_image_url}
+                  alt={attraction.name}
+                  className="attraction-image"
+                />
+                <p>{attraction.description}</p>
+              </div>
+            ))}
+        </Slider>
       </section>
 
       {/* Food Recommendations */}
       <section className="food-recommendations">
         <h2>Food Recommendations</h2>
-        {food_recommendations.length > 0 ? (
-          food_recommendations.map((food, index) => (
-            <div key={index} className="food-item">
-              <h3>{food.name}</h3>
-              <img
-                src={food.image_url}
-                alt={food.name}
-                className="food-image"
-              />
-              <p>{food.description}</p>
-            </div>
-          ))
-        ) : (
-          <p>No food recommendations available.</p>
-        )}
+        <Slider {...settings}>
+          {food_recommendations &&
+            food_recommendations.map((food, index) => (
+              <div key={index} className="food-item">
+                <h3>{food.dish_name}</h3>
+                <img
+                  src={food.image_url}
+                  alt={food.dish_name}
+                  className="food-image"
+                />
+                <p>{food.description}</p>
+              </div>
+            ))}
+        </Slider>
       </section>
 
       {/* Travel Tips */}
