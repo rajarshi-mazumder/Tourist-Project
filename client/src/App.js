@@ -1,17 +1,24 @@
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './App.css';
+import './global.css';
 import TripForm from "./components/TripForm";
 import TripDisplay from "./components/TripDisplay";
-import { useState } from "react";
+import ChatPage from "./components/ChatPage";
 
 function App() {
   const [tripData, setTripData] = useState(null);
 
   return (
-    <div className="App">
-      <TripForm setTripData={setTripData} />
-      <TripDisplay tripData={tripData} />
-    </div>
+    <Router>
+      <div className="App">
+        <h1></h1>
+        <Routes>
+          <Route path="/" element={<><TripForm setTripData={setTripData} /><TripDisplay tripData={tripData} /></>} />
+          <Route path="/chat" element={<ChatPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

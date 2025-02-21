@@ -1,13 +1,12 @@
-import { fileURLToPath } from "url";
-import fs from "fs";
-import path from "path";
-import aiController from "../../aicontrollers/aiController.js";
-import parseJsonFromGemini from "../../aicontrollers/geminiController.js";
-import { getHotels } from "../hotel/hotelDataController.js";
+const { fileURLToPath } = require("url");
+const fs = require("fs");
+const path = require("path");
+const aiController = require("../../aicontrollers/aiController.js");
+const parseJsonFromGemini = require("../../aicontrollers/geminiController.js");
 
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
+
+const { getTransportOptions } = require("../transportation/transportationOptionsController.js");
 
 const tripController = {
   generateTrip: async (req, res) => {
@@ -26,14 +25,11 @@ const tripController = {
       }
 
       const task = "trips";
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
       const tripPlannerPromptPath = path.resolve(
         __dirname,
         "../../prompts/TripPlannerPrompt.txt"
       );
       const tripPlannerPrompt = fs.readFileSync(tripPlannerPromptPath, "utf-8");
- 
       const prompt = tripPlannerPrompt
         .replace(/{from_city}/g, from_city)
         .replace(/{to_city}/g, to_city)
@@ -84,7 +80,7 @@ const tripController = {
   },
 };
 
-export default tripController;
+module.exports = tripController;
 
 function structureResponse(parsedResponse, expectedStructure) {
   const structuredResponse = { ...expectedStructure };
@@ -118,5 +114,3 @@ function structureResponse(parsedResponse, expectedStructure) {
 
   return structuredResponse;
 }
-
-

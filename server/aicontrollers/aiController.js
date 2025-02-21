@@ -1,6 +1,6 @@
-import aiModels from "../aiModels.js";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
+const aiModels = require("../aiModels.js");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const OpenAI = require("openai");
 
 const aiController = {
   generateAIResponse: async (prompt, task) => {
@@ -42,4 +42,4 @@ const aiController = {
   },
 };
 
-export default aiController;
+module.exports = aiController;

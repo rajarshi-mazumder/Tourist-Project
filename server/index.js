@@ -1,10 +1,12 @@
-import "dotenv/config";
-import express from "express";
-import cors from "cors";
-import tripRoutes from "./routes/tripRoutes.js";
+
+const express = require('express');
+const cors = require('cors');
+const tripRoutes = require('./routes/tripRoutes.js')
+const chatRoutes = require('./routes/chatRoutes.js');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
+require('dotenv').config();
 
 // Middleware
 app.use(
@@ -17,6 +19,7 @@ app.use(
 
 // Routes
 app.use("/trip", tripRoutes);
+app.use("/chat", chatRoutes);
 
 // Start server
 app.listen(port, () => {

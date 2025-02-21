@@ -4,4 +4,4 @@ const aiModels = {
   chatbot: "gpt-4-turbo",
 };
 
-export default aiModels;
+module.exports = aiModels;
