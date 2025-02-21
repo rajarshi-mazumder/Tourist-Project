@@ -45,6 +45,8 @@ async function getOpenAIChatResponse(prompt) {
       response_format: zodResponseFormat(IndexItemSchema, "items"),
 
     });
+     // Log the token usage details
+     console.log("Token usage:", completion.usage);
     return completion.choices[0].message.content;
   } catch (error) {
     console.error("Error calling OpenAI:", error);
