@@ -21,7 +21,29 @@ async function buildLlmPrompt(prompt, location, detailedPlaces) {
 let llmPrompt = `${prompt}\n\nI'm trying to find food options around me, and these are the options I have, as below. I want you to provide a brief description (10-15 words) and a ranking (1-5, with 1 being the best) for each place based on type of food, ambiance, atmosphere, reviews, accessibility based on distance and time of day, and anything else relevant. Return the results in the following format:\n\n`;
 
   for (const place of detailedPlaces) {
-    llmPrompt += `${place.name}: Description - , Ranking - \n`;
+    llmPrompt += `- **${place.name}**\n`;
+    llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
+    llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
+    llmPrompt += `  Website: ${place.website || "N/A"}\n`;
+    llmPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+    if (place.opening_hours) {
+      llmPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+    } else {
+      llmPrompt += `  Open Now: N/A\n`;
+    }
+    if (place.photos && place.photos.length > 0) {
+      const photoReference = place.photos[0].photo_reference;
+      const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
+      llmPrompt += `  Image: ${photoUrl}\n`;
+    }
+
+    if (place.reviews && place.reviews.length > 0) {
+      llmPrompt += `  Reviews:\n`;
+      for (const review of place.reviews) {
+        llmPrompt += `    - "${review.text}" by ${review.author_name}\n`;
+      }
+    }
+    llmPrompt += `  Description and Ranking: Description - , Ranking - \n`;
   }
 
   console.log('OpenAI Prompt:', llmPrompt);
@@ -81,7 +103,10 @@ async function chat(req, res) {
       return place;
     });
 
-    res.json(updatedPlaces);
+    res.json({
+      count: places.length,
+      places: updatedPlaces,
+    });
 }
 
 module.exports = { chat };
