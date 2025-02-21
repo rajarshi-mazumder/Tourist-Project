@@ -9,22 +9,22 @@ const { z } = require('zod');
 const RestaurantSchema = z.object({
   name: z.string(),
   address: z.string(),
+  distance: z.string().optional(),
+  walkingTime: z.string().optional(),
   description: z.string(),
   rating: z.number().optional(),
   website: z.string().optional(),
   phone: z.string().optional(),
   openNow: z.boolean().optional(),
   photos: z.array(z.string()).optional(),
-  reviews: z
-    .array(
-      z.object({
-        author_name: z.string(),
-        text: z.string(),
-      })
-    )
-    .optional(),
-  distance: z.string().optional(),
-  walkingTime: z.string().optional(),
+  // reviews: z
+  //   .array(
+  //     z.object({
+  //       author_name: z.string(),
+  //       text: z.string(),
+  //     })
+  //   )
+  //   .optional(),
   ranking: z
     .object({
       rank: z.number().int(),
@@ -40,7 +40,7 @@ const IndexItemSchema = z.object({
 async function getOpenAIChatResponse(prompt) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-2024-08-06",
       messages: [{ role: "user", content: prompt }],
       response_format: zodResponseFormat(IndexItemSchema, "items"),
 

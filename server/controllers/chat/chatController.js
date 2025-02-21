@@ -18,7 +18,12 @@ async function getDistanceAndWalkingTime(origin, destination) {
 }
 
 async function buildOpenAIprompt(prompt, location, detailedPlaces) {
-let openAIprompt = `${prompt}\n\nFind me restaurant options for food near my current location, and describe each in detail, including cuisine type, price range, and ambiance, and format the response as a JSON:\n`;
+let openAIprompt = `${prompt}\n\n I'm trying to find food options around me, and these are the options I have, as below.
+I want you to rank these places based on  type of food, ambiance, atmosphere, reviews, 
+accesibility based on distance, time of day, etc, and and anything else relevant.
+For every place, give a brief description based on above parameters.
+Finally, rank the recommendations based on whcih one you recommend most based on above factors, and explain why.
+:\n`;
 
   for (const place of detailedPlaces) {
     openAIprompt += `- **${place.name}**\n`;
@@ -44,7 +49,7 @@ let openAIprompt = `${prompt}\n\nFind me restaurant options for food near my cur
       }
     }
     openAIprompt += `\n`;
-    openAIprompt += `  Please provide a description of this place, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
+    openAIprompt += `  Please provide a small description of this place in less than 20 words, including the type of food, ambiance, atmosphere, and anything else relevant.\n`;
   }
 
   for (const place of detailedPlaces) {
@@ -73,7 +78,7 @@ let openAIprompt = `${prompt}\n\nFind me restaurant options for food near my cur
     }
   }
   // openAIprompt += `\n\nReturn your response in the following JSON-like format:\n{\n  "restaurants": [\n    {\n      "name": "Restaurant Name",\n      "address": "Address",\n      "description": "Description",\n      "rating": 4.5,\n      "website": "Website URL",\n      "phone": "Phone Number",\n      "openNow": true,\n      "photos": ["Photo URL 1", "Photo URL 2"],\n      "reviews": [{"author_name": "Author Name", "text": "Review Text"}],\n      "distance": "1.2 km",\n      "walkingTime": "15 mins",\n      "ranking": {"rank": 1, "reason": "Reason for ranking"}\n    },\n    // ... more restaurants\n  ]\n}\n`;
-  // console.log('Gemini Prompt:', geminiPrompt);
+  console.log('OpenAI Prompt:', openAIprompt);
   // console.log('-------------------');
   return openAIprompt;
 }

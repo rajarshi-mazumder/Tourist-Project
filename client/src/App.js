@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+import './global.css';
 import TripForm from "./components/TripForm";
 import TripDisplay from "./components/TripDisplay";
 import ChatPage from "./components/ChatPage";

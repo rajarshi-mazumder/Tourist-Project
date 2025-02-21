@@ -62,7 +62,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div>
+    <div className="chat-container">
       <h1>Chat Page</h1>
       {error && <p>{error}</p>}
       {location && (
@@ -79,14 +79,16 @@ export default function ChatPage() {
       <button onClick={handleSend}>Send</button>
 
       {response && response.restaurants && (
-        <div>
+        <div className="restaurant-container">
           <h2>Restaurants:</h2>
           {response.restaurants.map((restaurant, index) => (
-            <div key={index}>
+            <div key={index} className="restaurant-container">
               <h3>{restaurant.name}</h3>
-              <p>Address: {restaurant.address}</p>
-              <p>Description: {restaurant.description}</p>
               {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
+              <p>Address: {restaurant.address}</p>
+              <p>distance: {restaurant.distance}</p>
+              <p>walkingTime: {restaurant.walkingTime}</p>
+              <p>Description: {restaurant.description}</p>
               {restaurant.website && <p>Website: <a href={restaurant.website}>{restaurant.website}</a></p>}
               {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
               {restaurant.openNow !== undefined && <p>Open Now: {restaurant.openNow ? 'Yes' : 'No'}</p>}
@@ -94,7 +96,7 @@ export default function ChatPage() {
                 <div>
                   Photos:
                   {restaurant.photos.map((photo, photoIndex) => (
-                    <img key={photoIndex} src={photo} alt="Restaurant" style={{ maxWidth: '100px', marginRight: '5px' }} />
+                    <img key={photoIndex} src={photo} alt="Restaurant" />
                   ))}
                 </div>
               )}
