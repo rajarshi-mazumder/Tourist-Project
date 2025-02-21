@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function ChatPage() {
+export default function ChatPage() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
@@ -52,8 +52,8 @@ function ChatPage() {
       .then(response => response.json())
       .then(data => {
         console.log("Response fro api")
-        console.log(data);
-        setResponse(data.response); // Assuming the response has a 'response' field
+        console.log(data.restaurants);
+        setResponse(data); // Assuming the response has a 'response' field
       })
       .catch(error => console.error('Error:', error));
     } else {
@@ -77,50 +77,42 @@ function ChatPage() {
         placeholder="Enter your message"
       />
       <button onClick={handleSend}>Send</button>
-      {response && (
+
+      {response && response.restaurants && (
         <div>
-          {response.restaurants && (
-            <div>
-              <h3>Restaurants:</h3>
-              {response.restaurants.map((restaurant, index) => (
-                <div key={index}>
-                  <p>Name: {restaurant.name}</p>
-                  <p>Address: {restaurant.address}</p>
-                  <p>Distance: {restaurant.distance}</p>
-                  <p>Walking Time: {restaurant.walking_time}</p>
-                  <p>Rating: {restaurant.rating}</p>
-                  <p>Website: {restaurant.website}</p>
-                  <p>Phone Number: {restaurant.phone_number}</p>
-                  <p>Open Now: {restaurant.open_now}</p>
-                  <p>Description: {restaurant.description}</p>
-                  {restaurant.photos && restaurant.photos.map((photo, index) => (
-                    <img key={index} src={photo} alt="Restaurant" />
+          <h2>Restaurants:</h2>
+          {response.restaurants.map((restaurant, index) => (
+            <div key={index}>
+              <h3>{restaurant.name}</h3>
+              <p>Address: {restaurant.address}</p>
+              <p>Description: {restaurant.description}</p>
+              {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
+              {restaurant.website && <p>Website: <a href={restaurant.website}>{restaurant.website}</a></p>}
+              {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
+              {restaurant.openNow !== undefined && <p>Open Now: {restaurant.openNow ? 'Yes' : 'No'}</p>}
+              {restaurant.photos && (
+                <div>
+                  Photos:
+                  {restaurant.photos.map((photo, photoIndex) => (
+                    <img key={photoIndex} src={photo} alt="Restaurant" style={{ maxWidth: '100px', marginRight: '5px' }} />
                   ))}
-                  {restaurant.reviews && (
-                    <div>
-                      <h4>Reviews:</h4>
-                      {restaurant.reviews.map((review, index) => (
-                        <div key={index}>
-                          <p>Author: {review.author_name}</p>
-                          <p>Text: {review.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
-              ))}
+              )}
+              {restaurant.reviews && (
+                <div>
+                  Reviews:
+                  {restaurant.reviews.map((review, reviewIndex) => (
+                    <div key={reviewIndex}>
+                      <p>Author: {review.author_name}</p>
+                      <p>Text: {review.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-          {response.gemini_recommendation && (
-            <div>
-              <h3>Gemini Recommendation:</h3>
-              <p>{response.gemini_recommendation}</p>
-            </div>
-          )}
+          ))}
         </div>
       )}
     </div>
   );
 }
-
-export default ChatPage;

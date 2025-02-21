@@ -121,14 +121,14 @@ async function chat(req, res) {
     
     console.log("Cleaned OpenAI Response:", cleanedResponse);
     
-    res.json(cleanedResponse);
-    // try {
-    //   const responseJson = JSON.parse(cleanedResponse);
-    //   res.json(responseJson);
-    // } catch (error) {
-    //   console.error("Failed to parse OpenAI response as JSON:", error);
-    //   res.status(500).json({ error: "Failed to parse OpenAI response as JSON", rawResponse: cleanedResponse });
-    // }
+    // res.json(cleanedResponse);
+    try {
+      const responseJson = JSON.parse(cleanedResponse);
+      res.json(responseJson);
+    } catch (error) {
+      console.error("Failed to parse OpenAI response as JSON:", error);
+      res.status(500).json({ error: "Failed to parse OpenAI response as JSON", rawResponse: cleanedResponse });
+    }
 
   
 }
