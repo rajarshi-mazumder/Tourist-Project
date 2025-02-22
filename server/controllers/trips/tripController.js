@@ -6,7 +6,7 @@ const parseJsonFromGemini = require("../../aicontrollers/geminiController.js");
 
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
 
-const { getHotels } = require("../hotel/hotelDataController.js");
+const { getHotels } = require("./hotel/hotelDataController.js");
 
 const tripController = {
   generateTrip: async (req, res) => {
@@ -16,8 +16,6 @@ const tripController = {
       const longitude = 139.6917; // Hardcoded longitude for Tokyo
       const hotels = await getHotels(to_city);
 
-  
- 
       if (!from_city || !to_city || !days) {
         return res
           .status(400)
@@ -55,8 +53,11 @@ const tripController = {
             tripPromptResponseStructure
           );
           structuredResponse.accommodations = hotels;
-          
-          console.log("Structured Response:", JSON.stringify(structuredResponse, null, 2));
+
+          console.log(
+            "Structured Response:",
+            JSON.stringify(structuredResponse, null, 2)
+          );
           return res.json(structuredResponse);
         } catch (e) {
           console.error("Error extracting content from AI response:", e);

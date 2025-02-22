@@ -1,7 +1,7 @@
-const aiController = require("../../aicontrollers/aiController");
+const aiController = require("../../../aicontrollers/aiController");
 const fs = require("fs");
 const path = require("path");
-const parseJsonFromGemini = require("../../aicontrollers/geminiController");
+const parseJsonFromGemini = require("../../../aicontrollers/geminiController");
 const attractionsController = {
   getAttractions: async (req, res) => {
     const { city_name, keywords } = req.body;
@@ -31,11 +31,10 @@ const attractionsController = {
         };
       }
 
-      // Parse AI Response
-      let attractions;
       try {
-        let parsedResponse = parseJsonFromGemini(responseText);
-        attractions = parsedResponse;
+        // Parse AI Response
+        let attractions = parseJsonFromGemini(responseText);
+
         if (!attractions || !attractions.attractions) {
           throw new Error("Invalid AI response format");
         }
