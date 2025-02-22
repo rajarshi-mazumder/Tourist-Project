@@ -31,7 +31,7 @@ const googleSearchController = {
   },
 };
 
-searchImagesWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
+const searchImagesWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
   // Replace with your actual Custom Search Engine ID and API key
   const CSE_ID = process.env.SEARCH_ENGINE_ID;
   const API_KEY = process.env.GOOGLE_SEARCH_API;
@@ -42,8 +42,13 @@ searchImagesWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
     q
   )}&searchType=image&start=${startIndex}&num=${per_page}`;
 
+  console.log("CSE_ID:", CSE_ID, "API_KEY:", API_KEY);
+
   try {
     const response = await axios.get(apiUrl);
+
+    console.log("Google Search API Response:", response.data);
+
     const images = response.data.items || []; // Handle cases where no results are returned.
     const formattedImages = images.map((item) => ({
       title: item.title,
@@ -53,6 +58,7 @@ searchImagesWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
       width: item.image?.width,
       height: item.image?.height,
     }));
+    console.log("FORMATTED IMAGES", formattedImages);
     return formattedImages;
   } catch (error) {
     console.error("Google Custom Search API error:", error);

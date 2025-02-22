@@ -39,25 +39,25 @@ You are an AI-powered travel assistant. Based on the provided **country** and **
   "trip_duration": "{num_days} days",
   "recommended_places": [
     {
-      "Name": "Tokyo",
-      "Description": "Japan’s bustling capital, known for its blend of modern skyscrapers, historic temples, and vibrant nightlife.",
-      "Region": "Kanto",
-      "Best For": "City exploration, food, culture",
-      "Image_URLs": []
+      "name": "Tokyo",
+      "description": "Japan’s bustling capital, known for its blend of modern skyscrapers, historic temples, and vibrant nightlife.",
+      "region": "kanto",
+      "best_for": "city_exploration, food, culture",
+      "image_urls": []
     },
     {
-      "Name": "Kyoto",
-      "Description": "The heart of traditional Japan, featuring beautiful temples, shrines, and geisha culture.",
-      "Region": "Kansai",
-      "Best For": "History, temples, cultural experiences",
-      "Image_URLs": []
+      "name": "Kyoto",
+      "description": "The heart of traditional Japan, featuring beautiful temples, shrines, and geisha culture.",
+      "region": "kansai",
+      "best_for": "history, temples, cultural_experiences",
+      "image_urls": []
     },
     {
-      "Name": "Okinawa",
-      "Description": "A tropical island known for stunning beaches, unique Ryukyu culture, and delicious seafood.",
-      "Region": "Okinawa Prefecture",
-      "Best For": "Beaches, relaxation, diving",
-      "Image_URLs": []
+      "name": "Okinawa",
+      "description": "A tropical island known for stunning beaches, unique Ryukyu culture, and delicious seafood.",
+      "region": "okinawa_prefecture",
+      "best_for": "beaches, relaxation, diving",
+      "image_urls": []
     }
   ]
 }
