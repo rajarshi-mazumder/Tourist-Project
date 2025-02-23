@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 export default function ChatPage() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState('');
   const [response, setResponse] = useState('');
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export default function ChatPage() {
   }, []);
 
   const handleSend = () => {
-    // Send location and message to server
+    // Send location to server
     if (location) {
       fetch('http://localhost/chat/chat', {
         method: 'POST',
@@ -45,7 +44,6 @@ export default function ChatPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: message, // Use message from input
           location: location,
         }),
       })
@@ -70,12 +68,7 @@ export default function ChatPage() {
           Latitude: {location.latitude}, Longitude: {location.longitude}
         </p>
       )}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Enter your message"
-      />
+   
       <button onClick={handleSend}>Send</button>
 
       {response && (

@@ -17,14 +17,17 @@ async function getDistanceAndWalkingTime(origin, destination) {
   }
 }
 
-async function buildLlmPrompt(prompt, location, detailedPlaces) {
-let llmPrompt = `${prompt}\n\nI'm trying to find food options around me, and these are the options I have, as below. 
-I want you to provide a brief description (10-15 words) and a ranking (with 1 being the best) 
-for each place based on type of food, ambiance, atmosphere, reviews, accessibility based on distance and time of day, 
-and anything else relevant. Do not skip any of the places, I want each of them in the rankings\n\n`;
+async function buildLlmPrompt(prompt = "", location, detailedPlaces) {
+let llmPrompt = `${prompt}\n\n
+For each of the following places, provide a concise description  [1-2 sentences] in simple friendly casual english,
+considering the cuisine, ambiance, atmosphere, and customer reviews. 
+Analyze accessibility based on distance and time of day. Supplement this information with details obtained from online research, 
+including unique characteristics, food quality, popularity, and any other relevant factors.
+\n\n`;
 
   for (const place of detailedPlaces) {
-    llmPrompt += `- **${place.name} (ID: ${place.id})**\n`;
+    llmPrompt += `- **${place.name}**\n`;
+    llmPrompt += `  ID: ${place.id}\n`;
     llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
     llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
     llmPrompt += `  Website: ${place.website || "N/A"}\n`;
@@ -55,12 +58,10 @@ and anything else relevant. Do not skip any of the places, I want each of them i
 
 async function chat(req, res) {
  
-    const prompt = req.body.message;
+    const prompt = req.body.message || "";
     const location = req.body.location;
 
-    if (!prompt) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
+  
 
     const formattedLocation = location ? formatLocation(location) : '';
     // console.log(`Maps API key: ${googleMapsApiKey}`);
