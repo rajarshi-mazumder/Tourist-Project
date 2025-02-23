@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const tripRoutes = require('./routes/tripRoutes.js')
-const chatRoutes = require('./routes/chatRoutes.js');
+const foodRoutes = require('./routes/foodRoutes.js');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use("/trip", tripRoutes);
-app.use("/chat", chatRoutes);
+app.use("/food", foodRoutes);
 
 // Start server
 app.listen(port, () => {

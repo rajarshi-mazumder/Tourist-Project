@@ -17,7 +17,7 @@ async function getDistanceAndWalkingTime(origin, destination) {
   }
 }
 
-async function buildLlmPrompt(prompt = "", location, detailedPlaces) {
+async function buildFindFoodOptionsPrompt(prompt = "", location, detailedPlaces) {
 let llmPrompt = `${prompt}\n\n
 For each of the following places, provide a concise description  [1-2 sentences] in simple friendly casual english,
 considering the cuisine, ambiance, atmosphere, and customer reviews. 
@@ -56,7 +56,7 @@ including unique characteristics, food quality, popularity, and any other releva
   return llmPrompt;
 }
 
-async function chat(req, res) {
+async function findFoodOptions(req, res) {
  
     const prompt = req.body.message || "";
     const location = req.body.location;
@@ -88,7 +88,7 @@ async function chat(req, res) {
     }
     console.log('Detailed Places:', detailedPlaces);
     // 3. Build OpenAI Prompt
-    const llmPrompt = await buildLlmPrompt(prompt, formattedLocation, detailedPlaces);
+    const llmPrompt = await buildFindFoodOptionsPrompt(prompt, formattedLocation, detailedPlaces);
 
     // 4. Call OpenAI
     const openaiResponse = await getOpenAIChatResponse(llmPrompt);
@@ -144,4 +144,4 @@ async function chat(req, res) {
     }
 }
 
-module.exports = { chat };
+module.exports = { findFoodOptions };

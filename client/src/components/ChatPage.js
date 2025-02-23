@@ -30,7 +30,7 @@ export default function ChatPage() {
 
   const handleSend = () => {
     if (location) {
-      fetch('http://localhost/chat/chat', {
+      fetch('http://localhost/food', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ location }),

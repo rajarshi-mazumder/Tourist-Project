@@ -15,7 +15,7 @@ function App() {
         <h1></h1>
         <Routes>
           <Route path="/" element={<><TripForm setTripData={setTripData} /><TripDisplay tripData={tripData} /></>} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/food" element={<ChatPage />} />
         </Routes>
       </div>
     </Router>
