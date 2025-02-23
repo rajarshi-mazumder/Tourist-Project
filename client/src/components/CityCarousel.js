@@ -7,6 +7,7 @@ import { useCityImage } from "../context/CityImageContext";
 
 function CityCarousel({ cities }) {
   const [expandedCity, setExpandedCity] = useState(null);
+  const [expandedPlanIndex, setExpandedPlanIndex] = useState(null);
   const { cityImages, setCityImages } = useCityImage();
   const [previousCity, setPreviousCity] = useState(null);
   const [tripPlans, setTripPlans] = useState([]); // Explicitly initialize to []
@@ -117,13 +118,30 @@ function CityCarousel({ cities }) {
         ))}
       </Carousel>
       <h2>Trip Plans</h2>
-      <Carousel responsive={responsive} className="city-plan-carousel">
-        {tripPlans.map((plan, index) => (
-          <div key={index}>
-            <CityPlanDisplay cityPlan={plan} key={index} />
-          </div>
-        ))}
-      </Carousel>
+      <div className="city-plan-container">
+        {tripPlans.map((plan, index) => {
+          return (
+            <div key={index} className="city-plan-item">
+              <button
+                onClick={() =>
+                  setExpandedPlanIndex(
+                    expandedPlanIndex === index ? null : index
+                  )
+                }
+              >
+                {plan.city}
+                {expandedPlanIndex === index ? "▲" : "▼"}
+              </button>
+              {expandedPlanIndex === index && (
+                <>
+                  <CityPlanDisplay cityPlan={plan} key={index} />
+                  <button onClick={() => setExpandedPlanIndex(null)}>▲</button>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

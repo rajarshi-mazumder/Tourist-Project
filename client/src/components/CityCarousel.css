@@ -21,3 +21,22 @@
 .city-plan-carousel.react-multi-carousel-list {
   display: block !important;
 }
+
+.city-plan-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.city-plan-item {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.city-plan-item button {
+  margin-bottom: 5px;
+}
+
+.city-plan-item button:last-child {
+  margin-top: 10px;
+}
