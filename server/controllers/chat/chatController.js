@@ -86,7 +86,7 @@ async function chat(req, res) {
       detailedPlace.id = require('crypto').randomBytes(16).toString('hex'); // Assign a unique ID
       detailedPlaces.push(detailedPlace);
     }
-    // console.log('Detailed Places:', detailedPlaces);
+    console.log('Detailed Places:', detailedPlaces);
     // 3. Build OpenAI Prompt
     const llmPrompt = await buildLlmPrompt(prompt, formattedLocation, detailedPlaces);
 
@@ -129,6 +129,11 @@ async function chat(req, res) {
           ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
           walking_distance: place.walking_distance || 'N/A',
           walking_duration: place.walking_duration || 'N/A',
+          price_level: place.price_level || null,
+          reservable: place.reservable || null,
+          user_ratings_total: place.user_ratings_total || null,
+          delivery: place.delivery || null,
+          dine_in: place.dine_in || null,
         };
       });
       console.log("combined results", combinedResults);

@@ -87,7 +87,7 @@ export default function ChatPage() {
 <p>Delivery: {place.delivery}</p>
 <p>Dine-in: {place.dine_in}</p>
 <p>Takeout: {place.takeout}</p>
-<p>Reservations: {place.reservations}</p>
+<p>Reservations: {place.reservable}</p>
               <p>Payment Options: {place.payment_options}</p>
 <p>Accessibility Information: {place.wheelchair_accessible}</p>
               <p>Walking Distance: {place.walking_distance} ({place.walking_duration})</p>
