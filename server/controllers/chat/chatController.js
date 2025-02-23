@@ -102,15 +102,34 @@ async function chat(req, res) {
         console.error('OpenAI response is not a JSON array:', llmResults);
         return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
       }
+
+      // Add walking distance to detailedPlaces
+      for (const place of detailedPlaces) {
+        const origin = formattedLocation;
+        const destination = place.formatted_address;
+        const { distance, duration } = await getDistanceAndWalkingTime(origin, destination);
+        place.walking_distance = distance;
+        place.walking_duration = duration;
+      }
+
       const combinedResults = detailedPlaces.map(place => {
         const llmResult = llmResults.restaurants.find(result => result.id === place.id) || {};
-        console.log(place);
         return {
-          ...place,
+          formatted_address: place.formatted_address || null,
+          formatted_phone_number: place.formatted_phone_number || null,
+          name: place.name || null,
+          opening_hours: place.opening_hours || null,
+          photos: place.photos || null,
+          rating: place.rating || null,
+          reviews: place.reviews || null,
+          id: place.id || null,
           description: llmResult.description || 'N/A',
-          ranking: llmResult.ranking || 'N/A',
+          ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
+          walking_distance: place.walking_distance || 'N/A',
+          walking_duration: place.walking_duration || 'N/A',
         };
       });
+      console.log("combined results", combinedResults);
       res.send(combinedResults);
     } catch (error) {
       console.error('Error parsing OpenAI response:', error);

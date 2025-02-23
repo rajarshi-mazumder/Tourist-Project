@@ -78,39 +78,17 @@ export default function ChatPage() {
       />
       <button onClick={handleSend}>Send</button>
 
-      {response && response.restaurants && (
+      {response && (
         <div className="restaurant-container">
           <h2>Restaurants:</h2>
-          {response.restaurants.map((restaurant, index) => (
+          {response.map((place, index) => (
             <div key={index} className="restaurant-container">
-              <h3>{restaurant.name}</h3>
-              {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
-              {/* <p>Address: {restaurant.address}</p>
-              <p>distance: {restaurant.distance}</p>
-              <p>walkingTime: {restaurant.walkingTime}</p> */}
-              <p>Description: {restaurant.description}</p>
-              {restaurant.website && <p>Website: <a href={restaurant.website}>{restaurant.website}</a></p>}
-              {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
-              {restaurant.openNow !== undefined && <p>Open Now: {restaurant.openNow ? 'Yes' : 'No'}</p>}
-              {restaurant.photos && (
-                <div>
-                  Photos:
-                  {restaurant.photos.map((photo, photoIndex) => (
-                    <img key={photoIndex} src={photo} alt="Restaurant" />
-                  ))}
-                </div>
-              )}
-              {restaurant.reviews && (
-                <div>
-                  Reviews:
-                  {restaurant.reviews.map((review, reviewIndex) => (
-                    <div key={reviewIndex}>
-                      <p>Author: {review.author_name}</p>
-                      <p>Text: {review.text}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <h3>{place.name}</h3>
+              <p>Address: {place.formatted_address}</p>
+              <p>Description: {place.description}</p>
+              {place.opening_hours && <p>Open Now: {place.opening_hours.open_now ? 'Yes' : 'No'}</p>}
+              <p>Rating: {place.rating}</p>
+              <p>Walking Distance: {place.walking_distance} ({place.walking_duration})</p>
             </div>
           ))}
         </div>
