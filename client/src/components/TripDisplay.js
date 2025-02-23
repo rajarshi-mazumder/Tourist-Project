@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function TripDisplay({ tripData }) {
+  console.log("Trip Data:", tripData);
   if (!tripData) {
     return <div>No trip data available.</div>;
   }
