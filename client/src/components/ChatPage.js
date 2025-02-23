@@ -85,9 +85,9 @@ export default function ChatPage() {
             <div key={index} className="restaurant-container">
               <h3>{restaurant.name}</h3>
               {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
-              <p>Address: {restaurant.address}</p>
+              {/* <p>Address: {restaurant.address}</p>
               <p>distance: {restaurant.distance}</p>
-              <p>walkingTime: {restaurant.walkingTime}</p>
+              <p>walkingTime: {restaurant.walkingTime}</p> */}
               <p>Description: {restaurant.description}</p>
               {restaurant.website && <p>Website: <a href={restaurant.website}>{restaurant.website}</a></p>}
               {restaurant.phone && <p>Phone: {restaurant.phone}</p>}

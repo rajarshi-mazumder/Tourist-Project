@@ -81,7 +81,7 @@ async function chat(req, res) {
       const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review&key=${googleMapsApiKey}`;
       const detailsResponse = await axios.get(detailsUrl);
       const detailedPlace = detailsResponse.data.result;
-      detailedPlace.id = i + 1; // Assign a unique ID
+      detailedPlace.id = require('crypto').randomBytes(16).toString('hex'); // Assign a unique ID
       detailedPlaces.push(detailedPlace);
     }
 
@@ -96,8 +96,26 @@ async function chat(req, res) {
     }
     console.log('OpenAI Response:', openaiResponse);
 
-
-    res.send(openaiResponse);
+   try {
+      const llmResults = JSON.parse(openaiResponse);
+      if (!Array.isArray(llmResults.restaurants)) {
+        console.error('OpenAI response is not a JSON array:', llmResults);
+        return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
+      }
+      const combinedResults = detailedPlaces.map(place => {
+        const llmResult = llmResults.restaurants.find(result => result.id === place.id) || {};
+        console.log(place);
+        return {
+          ...place,
+          description: llmResult.description || 'N/A',
+          ranking: llmResult.ranking || 'N/A',
+        };
+      });
+      res.send(combinedResults);
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      res.status(500).json({ error: 'Failed to parse OpenAI response' });
+    }
 }
 
 module.exports = { chat };
