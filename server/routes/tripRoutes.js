@@ -17,4 +17,5 @@ router.post("/attractions", attractionsController.getAttractions);
 router.post("/cities", citiesController.getCities);
 router.post("/city-plan", citiesController.generateCityPlan);
 router.get("/images", googleSearchController.searchImages);
+router.get("/hotels", googleSearchController.searchImages);
 module.exports = router;
