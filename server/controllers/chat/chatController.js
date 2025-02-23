@@ -61,9 +61,10 @@ async function chat(req, res) {
     const prompt = req.body.message || "";
     const location = req.body.location;
 
-  
+    
 
-    const formattedLocation = location ? formatLocation(location) : '';
+    let formattedLocation = location ? formatLocation(location) : '';
+    formattedLocation = '35.6561224,139.7529898'; //For now, cause at home  oon desktop i aint got gps
     // console.log(`Maps API key: ${googleMapsApiKey}`);
     const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&type=restaurant&key=${googleMapsApiKey}`;
     const placesResponse = await axios.get(placesUrl);
@@ -79,13 +80,13 @@ async function chat(req, res) {
     const detailedPlaces = [];
     for (let i = 0; i < places.length; i++) {
       const place = places[i];
-      const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review&key=${googleMapsApiKey}`;
+      const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review,price_level,reservable,user_ratings_total,delivery,dine_in&key=${googleMapsApiKey}`;
       const detailsResponse = await axios.get(detailsUrl);
       const detailedPlace = detailsResponse.data.result;
       detailedPlace.id = require('crypto').randomBytes(16).toString('hex'); // Assign a unique ID
       detailedPlaces.push(detailedPlace);
     }
-
+    // console.log('Detailed Places:', detailedPlaces);
     // 3. Build OpenAI Prompt
     const llmPrompt = await buildLlmPrompt(prompt, formattedLocation, detailedPlaces);
 

@@ -50,7 +50,7 @@ export default function ChatPage() {
       .then(response => response.json())
       .then(data => {
         console.log("Response fro api")
-        console.log(data.restaurants);
+        console.log(data);
         setResponse(data); // Assuming the response has a 'response' field
       })
       .catch(error => console.error('Error:', error));
@@ -79,8 +79,17 @@ export default function ChatPage() {
               <h3>{place.name}</h3>
               <p>Address: {place.formatted_address}</p>
               <p>Description: {place.description}</p>
-              {place.opening_hours && <p>Open Now: {place.opening_hours.open_now ? 'Yes' : 'No'}</p>}
+              {place.opening_hours && <p>Open Now: {place.opening_hours.open_now}</p>}
               <p>Rating: {place.rating}</p>
+              <p>Price Level: {place.price_level}</p>
+              <p>User Ratings Total: {place.user_ratings_total}</p>
+<p>Curbside Pickup: {place.curbside_pickup}</p>
+<p>Delivery: {place.delivery}</p>
+<p>Dine-in: {place.dine_in}</p>
+<p>Takeout: {place.takeout}</p>
+<p>Reservations: {place.reservations}</p>
+              <p>Payment Options: {place.payment_options}</p>
+<p>Accessibility Information: {place.wheelchair_accessible}</p>
               <p>Walking Distance: {place.walking_distance} ({place.walking_duration})</p>
             </div>
           ))}
