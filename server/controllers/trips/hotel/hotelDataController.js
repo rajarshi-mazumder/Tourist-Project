@@ -1,9 +1,11 @@
 const axios = require("axios");
 
-async function getHotels(cityName) {
+async function getHotels(cityName, keywords) {
   try {
     const applicationId = process.env.RAKUTEN_APP_ID;
-    const baseUrl = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?applicationId=${applicationId}&format=json&keyword=${cityName}`;
+    const encodedCityName = encodeURIComponent(cityName);
+    const encodedKeywords = encodeURIComponent(keywords);
+    const baseUrl = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?applicationId=${applicationId}&format=json&keyword=${encodedCityName}%20${encodedKeywords}%20en`;
     console.log(`API URL: ${baseUrl}`);
 
     const hotelResponse = await axios.get(baseUrl);
@@ -32,4 +34,15 @@ async function getHotels(cityName) {
   }
 }
 
-module.exports = { getHotels };
+async function getHotelsHandler(req, res) {
+  const { cityName, keywords } = req.query;
+  try {
+    const hotels = await getHotels(cityName, keywords);
+    res.status(200).json(hotels);
+  } catch (error) {
+    console.error("🚨 Error in getHotelsHandler:", error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { getHotels, getHotelsHandler };

@@ -54,7 +54,10 @@ const CityPlanDisplay = ({ cityPlan }) => {
       </div>
 
       <h3>Accommodations</h3>
-      <AccommodationCarousel accommodations={cityPlan.accommodations} />
+      <AccommodationCarousel
+        accommodations={cityPlan.accommodations}
+        city={cityPlan.city}
+      />
 
       <h3>Attractions</h3>
       <AttractionCarousel attractions={cityPlan.attractions} />

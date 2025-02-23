@@ -85,7 +85,7 @@ const citiesController = {
     try {
       const { cityName, days } = req.body;
       console.log(cityName);
-      const hotels = await getHotels(cityName);
+      const hotels = await getHotels(cityName, "");
 
       if (!cityName || !days) {
         return res

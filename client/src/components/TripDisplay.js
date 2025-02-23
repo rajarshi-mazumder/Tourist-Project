@@ -3,6 +3,7 @@ import "./TripDisplay.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import AccommodationCarousel from "./AccommodationCarousel";
 
 function TripDisplay({ tripData }) {
   console.log("Trip Data:", tripData);
@@ -17,6 +18,7 @@ function TripDisplay({ tripData }) {
     attractions,
     food_recommendations,
     travel_tips,
+    city,
   } = tripData;
 
   const settings = {
@@ -145,33 +147,7 @@ function TripDisplay({ tripData }) {
       {/* Accommodations */}
       <section className="accommodations">
         <h2>Accommodations</h2>
-        <Slider {...settings}>
-          {accommodations &&
-            accommodations.map((accommodation, index) => (
-              <div key={index} className="accommodation-item">
-                <h3>{accommodation.hotelName}</h3>
-                <img
-                  src={accommodation.hotelImageUrl}
-                  alt={accommodation.hotelName}
-                  className="accommodation-image"
-                />
-                <p>
-                  <strong>Price:</strong> {accommodation.hotelMinCharge}
-                </p>
-                <p>
-                  <strong>Rating:</strong> {accommodation.reviewAverage}
-                </p>
-                <a
-                  href={accommodation.hotelInformationUrl}
-                  className="booking-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Book Now
-                </a>
-              </div>
-            ))}
-        </Slider>
+        <AccommodationCarousel accommodations={accommodations} city={city} />
       </section>
 
       {/* Attractions */}

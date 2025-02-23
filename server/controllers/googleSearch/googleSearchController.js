@@ -29,7 +29,7 @@ const googleSearchController = {
       }
     }
   },
-  serachHotels: async (req, res) => {
+  serachAccomodations: async (req, res) => {
     const { cityName, hotelKeyword, page = 1, per_page = 10 } = req.query;
 
     if (!cityName || !hotelKeyword) {

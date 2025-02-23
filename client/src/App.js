@@ -11,6 +11,7 @@ import { CityImageProvider } from "./context/CityImageContext";
 function App() {
   const [tripData, setTripData] = useState(null);
   const [cities, setCities] = useState(null);
+  const city = cities ? cities[0]?.name : null;
 
   return (
     <CityImageProvider>
@@ -24,7 +25,7 @@ function App() {
                 <>
                   <TripOptions setCities={setCities} />
                   {cities && <CityCarousel cities={cities} />}
-                  <TripDisplay tripData={tripData} />
+                  <TripDisplay tripData={tripData} city={city} />
                 </>
               }
             />
