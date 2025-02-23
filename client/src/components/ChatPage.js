@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 export default function ChatPage() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState('');
   const [response, setResponse] = useState('');
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export default function ChatPage() {
   }, []);
 
   const handleSend = () => {
-    // Send location and message to server
+    // Send location to server
     if (location) {
       fetch('http://localhost/chat/chat', {
         method: 'POST',
@@ -45,14 +44,13 @@ export default function ChatPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: message, // Use message from input
           location: location,
         }),
       })
       .then(response => response.json())
       .then(data => {
         console.log("Response fro api")
-        console.log(data.restaurants);
+        console.log(data);
         setResponse(data); // Assuming the response has a 'response' field
       })
       .catch(error => console.error('Error:', error));
@@ -70,47 +68,29 @@ export default function ChatPage() {
           Latitude: {location.latitude}, Longitude: {location.longitude}
         </p>
       )}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Enter your message"
-      />
+   
       <button onClick={handleSend}>Send</button>
 
-      {response && response.restaurants && (
+      {response && (
         <div className="restaurant-container">
           <h2>Restaurants:</h2>
-          {response.restaurants.map((restaurant, index) => (
+          {response.map((place, index) => (
             <div key={index} className="restaurant-container">
-              <h3>{restaurant.name}</h3>
-              {restaurant.rating && <p>Rating: {restaurant.rating}</p>}
-              <p>Address: {restaurant.address}</p>
-              <p>distance: {restaurant.distance}</p>
-              <p>walkingTime: {restaurant.walkingTime}</p>
-              <p>Description: {restaurant.description}</p>
-              {restaurant.website && <p>Website: <a href={restaurant.website}>{restaurant.website}</a></p>}
-              {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
-              {restaurant.openNow !== undefined && <p>Open Now: {restaurant.openNow ? 'Yes' : 'No'}</p>}
-              {restaurant.photos && (
-                <div>
-                  Photos:
-                  {restaurant.photos.map((photo, photoIndex) => (
-                    <img key={photoIndex} src={photo} alt="Restaurant" />
-                  ))}
-                </div>
-              )}
-              {restaurant.reviews && (
-                <div>
-                  Reviews:
-                  {restaurant.reviews.map((review, reviewIndex) => (
-                    <div key={reviewIndex}>
-                      <p>Author: {review.author_name}</p>
-                      <p>Text: {review.text}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <h3>{place.name}</h3>
+              <p>Address: {place.formatted_address}</p>
+              <p>Description: {place.description}</p>
+              {place.opening_hours && <p>Open Now: {place.opening_hours.open_now}</p>}
+              <p>Rating: {place.rating}</p>
+              <p>Price Level: {place.price_level}</p>
+              <p>User Ratings Total: {place.user_ratings_total}</p>
+<p>Curbside Pickup: {place.curbside_pickup}</p>
+<p>Delivery: {place.delivery}</p>
+<p>Dine-in: {place.dine_in}</p>
+<p>Takeout: {place.takeout}</p>
+<p>Reservations: {place.reservable}</p>
+              <p>Payment Options: {place.payment_options}</p>
+<p>Accessibility Information: {place.wheelchair_accessible}</p>
+              <p>Walking Distance: {place.walking_distance} ({place.walking_duration})</p>
             </div>
           ))}
         </div>
