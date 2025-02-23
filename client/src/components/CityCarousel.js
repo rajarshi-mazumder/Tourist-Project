@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import "./CityCarousel.css";
 import CityPlanDisplay from "./CityPlanDisplay";
 import { useCityImage } from "../context/CityImageContext";
@@ -12,13 +11,22 @@ function CityCarousel({ cities }) {
   const [previousCity, setPreviousCity] = useState(null);
   const [tripPlans, setTripPlans] = useState([]); // Explicitly initialize to []
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    centerMode: false,
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+      slidesToSlide: 1, // optional, default to 1.
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+      slidesToSlide: 1, // optional, default to 1.
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      slidesToSlide: 1, // optional, default to 1.
+    },
   };
   useEffect(() => {
     console.log("Trip Plans:", tripPlans);
@@ -79,7 +87,7 @@ function CityCarousel({ cities }) {
   return (
     <div>
       <h2>Recommended Cities</h2>
-      <Slider {...settings}>
+      <Carousel responsive={responsive}>
         {cities.map((city) => (
           <div key={city.name} className="carousel-item">
             <div className="carousel-card">
@@ -92,13 +100,13 @@ function CityCarousel({ cities }) {
               {expandedCity === city.name && (
                 <div className="image-carousel-container">
                   {cityImages[city.name] ? (
-                    <Slider {...settings}>
+                    <Carousel responsive={responsive}>
                       {cityImages[city.name].map((image, index) => (
                         <div key={index} className="image-slide">
                           <img src={image.thumbnail} alt={image.title} />
                         </div>
                       ))}
-                    </Slider>
+                    </Carousel>
                   ) : (
                     <div>Loading images...</div>
                   )}
@@ -107,15 +115,15 @@ function CityCarousel({ cities }) {
             </div>
           </div>
         ))}
-      </Slider>
+      </Carousel>
       <h2>Trip Plans</h2>
-      <Slider {...settings}>
+      <Carousel responsive={responsive} className="city-plan-carousel">
         {tripPlans.map((plan, index) => (
           <div key={index}>
             <CityPlanDisplay cityPlan={plan} key={index} />
           </div>
         ))}
-      </Slider>
+      </Carousel>
     </div>
   );
 }

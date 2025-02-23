@@ -10,11 +10,22 @@ const CityPlanDisplay = ({ cityPlan }) => {
 
   useEffect(() => {
     const fetchCityImages = async (city) => {
-      const response = await fetch(
-        `http://localhost:4000/trip/images?q=${cityPlan.city}+japan`
-      );
-      const data = await response.json();
-      setCityImages((prevImages) => ({ ...prevImages, [city]: data }));
+      try {
+        const response = await fetch(
+          `http://localhost:4000/trip/images?q=${cityPlan.city}+japan`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCityImages((prevImages) => ({ ...prevImages, [city]: data }));
+      } catch (error) {
+        console.error("Failed to fetch city images:", error);
+        setCityImages((prevImages) => ({
+          ...prevImages,
+          [city]: [{ thumbnail: "error", alt: "Failed to load" }],
+        }));
+      }
     };
 
     if (cityPlan && !cityImages[cityPlan.city]) {

@@ -1,17 +1,25 @@
 import React from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import "./CityCarousel.css";
 
 function AttractionCarousel({ attractions }) {
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    centerMode: false,
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+      slidesToSlide: 1, // optional, default to 1.
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+      slidesToSlide: 1, // optional, default to 1.
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      slidesToSlide: 1, // optional, default to 1.
+    },
   };
 
   if (!attractions) {
@@ -20,7 +28,7 @@ function AttractionCarousel({ attractions }) {
 
   return (
     <div>
-      <Slider {...settings}>
+      <Carousel responsive={responsive}>
         {attractions.map((attraction) => (
           <div key={attraction.name} className="carousel-item">
             <div className="carousel-card">
@@ -30,7 +38,7 @@ function AttractionCarousel({ attractions }) {
             </div>
           </div>
         ))}
-      </Slider>
+      </Carousel>
     </div>
   );
 }
