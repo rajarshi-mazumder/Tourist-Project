@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import TripDisplay from "./TripDisplay"; // Import TripDisplay
+import "./CityCarousel.css";
+import CityPlanDisplay from "./CityPlanDisplay";
 
 function CityCarousel({ cities }) {
   const [expandedCity, setExpandedCity] = useState(null);
@@ -49,14 +50,13 @@ function CityCarousel({ cities }) {
     const fromCity = previousCity ? previousCity : "tokyo";
 
     try {
-      const response = await fetch("http://localhost:4000/trip/plan-trip", {
+      const response = await fetch("http://localhost:4000/trip/city-plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from_city: fromCity,
-          to_city: toCity,
+          cityName: toCity,
           days: 10,
         }),
       });
@@ -80,28 +80,30 @@ function CityCarousel({ cities }) {
       <h2>Recommended Cities</h2>
       <Slider {...settings}>
         {cities.map((city) => (
-          <div key={city.name} className="city-card">
-            <h3>{city.name}</h3>
-            <p>{city.description}</p>
-            <button onClick={() => toggleExpand(city)}>
-              {expandedCity === city.name ? "▲" : "▼"}
-            </button>
-            <button onClick={() => planTrip(city)}>Plan Here</button>
-            {expandedCity === city.name && (
-              <div className="image-carousel-container">
-                {cityImages[city.name] ? (
-                  <Slider {...settings}>
-                    {cityImages[city.name].map((image, index) => (
-                      <div key={index} className="image-slide">
-                        <img src={image.thumbnail} alt={image.title} />
-                      </div>
-                    ))}
-                  </Slider>
-                ) : (
-                  <div>Loading images...</div>
-                )}
-              </div>
-            )}
+          <div key={city.name} className="carousel-item">
+            <div className="carousel-card">
+              <h3>{city.name}</h3>
+              <p>{city.description}</p>
+              <button onClick={() => toggleExpand(city)}>
+                {expandedCity === city.name ? "▲" : "▼"}
+              </button>
+              <button onClick={() => planTrip(city)}>Plan Here</button>
+              {expandedCity === city.name && (
+                <div className="image-carousel-container">
+                  {cityImages[city.name] ? (
+                    <Slider {...settings}>
+                      {cityImages[city.name].map((image, index) => (
+                        <div key={index} className="image-slide">
+                          <img src={image.thumbnail} alt={image.title} />
+                        </div>
+                      ))}
+                    </Slider>
+                  ) : (
+                    <div>Loading images...</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </Slider>
@@ -109,7 +111,7 @@ function CityCarousel({ cities }) {
       <Slider {...settings}>
         {tripPlans.map((plan, index) => (
           <div key={index}>
-            <TripDisplay tripData={plan} />
+            <CityPlanDisplay cityPlan={plan} key={index} />
           </div>
         ))}
       </Slider>

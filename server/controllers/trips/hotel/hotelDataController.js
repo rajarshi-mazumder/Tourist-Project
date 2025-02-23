@@ -27,7 +27,7 @@ async function getHotels(cityName) {
 
     return hotels;
   } catch (error) {
-    console.error("🚨 Error fetching hotels:", error.message);
+    // console.error("🚨 Error fetching hotels:", error.message);
     throw error;
   }
 }

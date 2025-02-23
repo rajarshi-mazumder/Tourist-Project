@@ -47,7 +47,7 @@ const searchImagesWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
   try {
     const response = await axios.get(apiUrl);
 
-    console.log("Google Search API Response:", response.data);
+    // console.log("Google Search API Response:", response.data);
 
     const images = response.data.items || []; // Handle cases where no results are returned.
     const formattedImages = images.map((item) => ({

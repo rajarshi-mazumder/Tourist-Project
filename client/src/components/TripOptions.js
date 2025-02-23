@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function TripOptions({ setCities }) {
-  const [days, setDays] = useState(4);
+  const [days, setDays] = useState(10);
 
   const fetchCities = async () => {
     const response = await fetch("http://localhost:4000/trip/cities", {

@@ -12,8 +12,6 @@ const tripController = {
   generateTrip: async (req, res) => {
     try {
       const { from_city, to_city, days } = req.body;
-      const latitude = 35.6895; // Hardcoded latitude for Tokyo
-      const longitude = 139.6917; // Hardcoded longitude for Tokyo
       const hotels = await getHotels(to_city);
 
       if (!from_city || !to_city || !days) {

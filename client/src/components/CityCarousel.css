@@ -1,0 +1,15 @@
+.carousel-item {
+  width: 100%;
+}
+
+.carousel-card {
+  height: 300px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.carousel-card img {
+  max-height: 200px;
+  width: auto;
+  object-fit: contain;
+}

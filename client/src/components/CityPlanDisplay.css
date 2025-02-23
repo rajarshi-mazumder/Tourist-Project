@@ -1,0 +1,33 @@
+.city-plan-container {
+  padding: 10px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.city-images {
+  display: flex;
+  overflow-x: auto;
+}
+
+.city-images img {
+  width: 200px;
+  max-width: 100%;
+  height: auto;
+  margin-right: 10px;
+}
+
+.accommodations,
+.attractions,
+.food-recommendations,
+.transportation,
+.travel-tips {
+  margin-top: 20px;
+}
+
+.accommodation,
+.attraction,
+.food {
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+}
