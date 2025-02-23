@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./CityPlanDisplay.css";
 import AccommodationCarousel from "./AccommodationCarousel";
 import AttractionCarousel from "./AttractionCarousel";
 import FoodCarousel from "./FoodCarousel";
+import { useCityImage } from "../context/CityImageContext";
 
 const CityPlanDisplay = ({ cityPlan }) => {
+  const { cityImages, setCityImages } = useCityImage();
+
+  useEffect(() => {
+    const fetchCityImages = async (city) => {
+      const response = await fetch(
+        `http://localhost:4000/trip/images?q=${cityPlan.city}+japan`
+      );
+      const data = await response.json();
+      setCityImages((prevImages) => ({ ...prevImages, [city]: data }));
+    };
+
+    if (cityPlan && !cityImages[cityPlan.city]) {
+      fetchCityImages(cityPlan.city);
+    }
+  }, [cityPlan, cityImages, setCityImages]);
+
   if (!cityPlan) {
     return <div>No city plan available.</div>;
   }
@@ -16,9 +33,13 @@ const CityPlanDisplay = ({ cityPlan }) => {
       <p>{cityPlan.city_description}</p>
 
       <div className="city-images">
-        {cityPlan.city_images.map((imageUrl, index) => (
-          <img key={index} src={imageUrl} alt={cityPlan.city} />
-        ))}
+        {cityImages[cityPlan.city] ? (
+          cityImages[cityPlan.city].map((imageUrl, index) => (
+            <img key={index} src={imageUrl.thumbnail} alt={cityPlan.city} />
+          ))
+        ) : (
+          <div>Loading images...</div>
+        )}
       </div>
 
       <h3>Accommodations</h3>

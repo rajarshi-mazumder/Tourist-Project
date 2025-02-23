@@ -4,10 +4,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./CityCarousel.css";
 import CityPlanDisplay from "./CityPlanDisplay";
+import { useCityImage } from "../context/CityImageContext";
 
 function CityCarousel({ cities }) {
   const [expandedCity, setExpandedCity] = useState(null);
-  const [cityImages, setCityImages] = useState({});
+  const { cityImages, setCityImages } = useCityImage();
   const [previousCity, setPreviousCity] = useState(null);
   const [tripPlans, setTripPlans] = useState([]); // Explicitly initialize to []
 

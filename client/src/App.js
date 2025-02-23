@@ -6,30 +6,33 @@ import TripDisplay from "./components/TripDisplay";
 import ChatPage from "./components/ChatPage";
 import CityCarousel from "./components/CityCarousel";
 import TripOptions from "./components/TripOptions";
+import { CityImageProvider } from "./context/CityImageContext";
 
 function App() {
   const [tripData, setTripData] = useState(null);
   const [cities, setCities] = useState(null);
 
   return (
-    <Router>
-      <div className="App">
-        <h1></h1>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <TripOptions setCities={setCities} />
-                {cities && <CityCarousel cities={cities} />}
-                <TripDisplay tripData={tripData} />
-              </>
-            }
-          />
-          <Route path="/chat" element={<ChatPage />} />
-        </Routes>
-      </div>
-    </Router>
+    <CityImageProvider>
+      <Router>
+        <div className="App">
+          <h1></h1>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <TripOptions setCities={setCities} />
+                  {cities && <CityCarousel cities={cities} />}
+                  <TripDisplay tripData={tripData} />
+                </>
+              }
+            />
+            <Route path="/chat" element={<ChatPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </CityImageProvider>
   );
 }
 
