@@ -98,6 +98,9 @@ export default function ChatPage() {
                 <strong>Reservations:</strong> {displayBool(place.reservable)}
               </p>
               <p>
+                <strong>Seating:</strong> {(place.seating !== null && place.seating !== undefined) ? place.seating : "Uncertain"}
+              </p>
+              <p>
                 <strong>Payment Options:</strong>{" "}
                 {place.payment_options ? place.payment_options : "N/A"}
               </p>

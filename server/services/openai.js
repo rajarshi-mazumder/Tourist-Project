@@ -13,6 +13,7 @@ const RestaurantSchema = z.object({
   // distance: z.string().optional(),
   // walkingTime: z.string().optional(),
   description: z.string(),
+  seating: z.string(),
   // rating: z.number().optional(),
   // website: z.string().optional(),
   // phone: z.string().optional(),
