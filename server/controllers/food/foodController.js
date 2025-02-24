@@ -79,8 +79,9 @@ async function findFoodOptions(req, res) {
   let formattedLocation = location ? formatLocation(location) : '';
   // For testing purposes, we use a fixed location
   formattedLocation = '35.6561224,139.7529898';
+  
 
-  const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&keyword=${foodCategory}&key=${googleMapsApiKey}`;
+  const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&rankby=prominence&keyword=${foodCategory}&key=${googleMapsApiKey}`;
   console.log('Places URL:', placesUrl);
   const placesResponse = await axios.get(placesUrl);
   const places = placesResponse.data.results;
