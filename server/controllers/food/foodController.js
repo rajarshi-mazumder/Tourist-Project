@@ -195,28 +195,51 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
     location: origin,
     radius: 2000, // 2km
     type: 'restaurant',
-    // keyword: "Cicci", // Filter by "pizza" or "burger"
+    keyword: foodCategory,
     key: googleMapsApiKey,
     language: 'ja'
   };
 
   try {
 
-    
 
+    let allPlaces = [];
+    let nextPageToken = null;
 
+    do {
+      const response = await placesClient.placesNearby({
+        params: { ...nearbyRequest, pagetoken: nextPageToken }
+      });
+      const nearbyJson = response.data;
+      console.log(`Page Response (token: ${nextPageToken || 'none'}):`, JSON.stringify(nearbyJson.results.map(r => ({
+        name: r.name,
+        place_id: r.place_id,
+        distance: 'pending' // Distance calculated later
+      })), null, 2));
+
+      if (nearbyJson.status !== 'OK') {
+        console.log('Nearby Status:', nearbyJson.status, nearbyJson.error_message || '');
+        return res.json(nearbyJson);
+      }
+
+      allPlaces.push(...nearbyJson.results);
+      nextPageToken = nearbyJson.next_page_token;
+
+      // Wait briefly for next_page_token to become valid (Google’s API quirk)
+      if (nextPageToken) await new Promise(resolve => setTimeout(resolve, 2000));
+    } while (nextPageToken && allPlaces.length < 60); // Max 60 results
 
     // Make the Text Search request
     // const response = await placesClient.textSearch({ params: request });
-      const response = await placesClient.placesNearby({ params: nearbyRequest });
+    //   const response = await placesClient.placesNearby({ params: nearbyRequest });
 
-    const places = response.data.results;
-    // console.log(places);
-    // Return the raw JSON response
-    const rawJson = response.data;
+    // const places = response.data.results;
+    // // console.log(places);
+    // // Return the raw JSON response
+    // const rawJson = response.data;
 
     const enhancedResults = await Promise.all(
-      places.map(async (place) => {
+      allPlaces.map(async (place) => {
         const { lat, lng } = place.geometry.location;
         const destination = `${lat},${lng}`;
         
@@ -233,7 +256,8 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
 
     // console.log(rawJson);
     console.log(enhancedResults);
-    res.json(rawJson); // Send the raw JSON back in the response
+    res.json(enhancedResults); // Send the enhanced results back in the response
+    // res.json(rawJson); // Send the raw JSON back in the response
   } catch (error) {
     console.error('Error fetching places:', error.message);
     res.status(500).json({ error: 'Failed to fetch places' });
