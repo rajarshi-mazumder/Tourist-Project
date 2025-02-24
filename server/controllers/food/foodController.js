@@ -31,11 +31,12 @@ async function buildFindFoodOptionsPrompt(prompt = "", location, detailedPlaces)
 For each of the following places, please provide the following in simple, friendly, casual English:
 1. A concise description (1-2 sentences) summarizing the restaurant’s ambiance, unique features, and overall appeal.
 2. The primary type of cuisine (e.g., Japanese, Italian, ramen, sushi, etc.) based on the available information.
-3. An estimate of seating availability or crowding – indicate if the restaurant is usually crowded based on exact time of the day etc
-(i.e. seats are hard to come by) or if it generally has seating available.
+3. A seating availability estimate for right now – considering current conditions (such as time of day, holiday etc)
+ – indicating if the restaurant is usually crowded (i.e. seats are hard to come by) or if it generally has seating available at this time
 4. A ranking of the restaurant (a numeric rank and a brief explanation of your ranking decision).
-
-
+5. A note on reservation requirements: based on available data (including the "reservable" metric and reviews),
+ indicate whether going without a reservation is acceptable ("no reservation is ok") or 
+ if a reservation is necessary to dine at this establishment right now. 
 
 Below are the details for each place:
 \n\n`;
@@ -140,6 +141,7 @@ async function findFoodOptions(req, res) {
         description: llmResult.description || 'N/A',
         cuisine: llmResult.cuisine || 'N/A',
         seating: llmResult.seating || 'Uncertain',
+        reservation_required: llmResult.reservation_required || 'N/A',
         ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
         walking_distance: place.walking_distance || 'N/A',
         walking_duration: place.walking_duration || 'N/A',

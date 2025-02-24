@@ -71,6 +71,7 @@ export default function ChatPage() {
               <h3>{place.name}</h3>
               <p><strong>Address:</strong> {place.formatted_address}</p>
               <p><strong>Description:</strong> {place.description}</p>
+              <p><strong>Cuisine:</strong>{(place.cuisine !== null && place.cuisine !== undefined) ? place.cuisine : "N/A"}</p>
               {place.opening_hours && (
                 <p>
                   <strong>Open Now:</strong> {displayBool(place.opening_hours.open_now)}
@@ -92,21 +93,14 @@ export default function ChatPage() {
                 <strong>Dine-in:</strong> {displayBool(place.dine_in)}
               </p>
               <p>
-                <strong>Takeout:</strong> {displayBool(place.takeout)}
-              </p>
-              <p>
                 <strong>Reservations:</strong> {displayBool(place.reservable)}
               </p>
               <p>
                 <strong>Seating:</strong> {(place.seating !== null && place.seating !== undefined) ? place.seating : "Uncertain"}
               </p>
               <p>
-                <strong>Payment Options:</strong>{" "}
-                {place.payment_options ? place.payment_options : "N/A"}
-              </p>
-              <p>
-                <strong>Accessibility Information:</strong>{" "}
-                {displayBool(place.wheelchair_accessible)}
+                <strong>Reservation Required:</strong> {(place.reservation_required !== null && 
+                  place.reservation_required !== undefined) ? place.reservation_required : "Uncertain"}
               </p>
               <p>
                 <strong>Walking Distance:</strong> {place.walking_distance} ({place.walking_duration})
