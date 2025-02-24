@@ -2,6 +2,13 @@ const { getOpenAIChatResponse } = require('../../services/openai');
 const { formatLocation } = require('../../utils/location');
 const axios = require('axios');
 const crypto = require('crypto');
+const {PlacesClient} = require('@googlemaps/places').v1;
+
+const { Client } = require('@googlemaps/google-maps-services-js');
+const client = new Client({});
+// Instantiates a client
+const placesClient = new PlacesClient();
+
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 async function getDistanceAndWalkingTime(origin, destination) {
@@ -81,11 +88,11 @@ async function findFoodOptions(req, res) {
   formattedLocation = '35.6561224,139.7529898';
   
 
-  const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&rankby=prominence&keyword=${foodCategory}&key=${googleMapsApiKey}`;
+  const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${formattedLocation}&radius=1000&keyword=${encodeURIComponent(foodCategory)}&key=${googleMapsApiKey}`;
   console.log('Places URL:', placesUrl);
   const placesResponse = await axios.get(placesUrl);
   const places = placesResponse.data.results;
-
+  console.log(places);
   if (!places || places.length === 0) {
     console.error("Google Places API returned no results:", placesResponse.data);
     return res.json({ response: "No restaurants found near your location." });
@@ -163,4 +170,73 @@ async function findFoodOptions(req, res) {
   }
 }
 
-module.exports = { findFoodOptions };
+async function findFoodOptionsNewPlacesAPI(req, res) {
+  // Initialize the Google Maps client with your API key
+  console.log("This is new places api");
+  const placesClient = new Client({});
+  const origin = '35.6561224,139.7529898';
+  // Coordinates from your example (Tokyo area)
+  const latitude = 35.6561224;
+  const longitude = 139.7529898;
+  const foodCategory = req.body.foodCategory || 'restaurants'; // Default to "restaurants"
+
+  // Parameters for the Text Search request
+  const request = {
+    query: foodCategory, // e.g., "burger" or "restaurants"
+
+    location: `${latitude},${longitude}`, // Format as "lat,lng" string
+    radius: 2000, // Search within 1km (adjust as needed)
+    key: googleMapsApiKey, // Replace with your actual Google API key
+    language: 'ja', // Japanese for localized results
+    type: 'restaurant',
+  };
+
+  const nearbyRequest = {
+    location: origin,
+    radius: 2000, // 2km
+    type: 'restaurant',
+    // keyword: "Cicci", // Filter by "pizza" or "burger"
+    key: googleMapsApiKey,
+    language: 'ja'
+  };
+
+  try {
+
+    
+
+
+
+    // Make the Text Search request
+    // const response = await placesClient.textSearch({ params: request });
+      const response = await placesClient.placesNearby({ params: nearbyRequest });
+
+    const places = response.data.results;
+    // console.log(places);
+    // Return the raw JSON response
+    const rawJson = response.data;
+
+    const enhancedResults = await Promise.all(
+      places.map(async (place) => {
+        const { lat, lng } = place.geometry.location;
+        const destination = `${lat},${lng}`;
+        
+        // Use your function to get distance and walking time
+        const { distance, duration } = await getDistanceAndWalkingTime(origin, destination);
+        
+        return {
+          ...place, // Keep all original place data
+          distance, // e.g., "200 m"
+          walkingTime: duration // e.g., "3 mins"
+        };
+      })
+    );
+
+    // console.log(rawJson);
+    console.log(enhancedResults);
+    res.json(rawJson); // Send the raw JSON back in the response
+  } catch (error) {
+    console.error('Error fetching places:', error.message);
+    res.status(500).json({ error: 'Failed to fetch places' });
+  }
+}
+module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI };

@@ -30,7 +30,9 @@ export default function ChatPage() {
 
   const handleSend = (foodCategory) => {
     if (location) {
-      fetch('http://localhost/food', {
+      // fetch('http://localhost/food', {
+      fetch('http://localhost/food/new-places', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ location, foodCategory }),
@@ -63,9 +65,9 @@ export default function ChatPage() {
       )}
       <button onClick={() => handleSend('restaurants')}>Restaurants</button>
       <button onClick={() => handleSend('burger')}>Burger</button>
-      <button onClick={() => handleSend('pizza')}>Pizza</button>
+      <button onClick={() => handleSend('ピザ')}>Pizza</button>
       <button onClick={() => handleSend('izakaya')}>Izakaya</button>
-      <button onClick={() => handleSend('italian')}>Italian</button>
+      <button onClick={() => handleSend('italian_restaurant')}>Italian</button>
       <button onClick={() => handleSend('japanese')}>Japanese</button>
 
       {response && Array.isArray(response) && (
