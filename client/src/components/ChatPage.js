@@ -28,12 +28,12 @@ export default function ChatPage() {
     getLocation();
   }, []);
 
-  const handleSend = () => {
+  const handleSend = (foodCategory) => {
     if (location) {
       fetch('http://localhost/food', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ location }),
+        body: JSON.stringify({ location, foodCategory }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -61,7 +61,12 @@ export default function ChatPage() {
           Latitude: {location.latitude}, Longitude: {location.longitude}
         </p>
       )}
-      <button onClick={handleSend}>Send</button>
+      <button onClick={() => handleSend('restaurants')}>Restaurants</button>
+      <button onClick={() => handleSend('burger')}>Burger</button>
+      <button onClick={() => handleSend('pizza')}>Pizza</button>
+      <button onClick={() => handleSend('izakaya')}>Izakaya</button>
+      <button onClick={() => handleSend('italian')}>Italian</button>
+      <button onClick={() => handleSend('japanese')}>Japanese</button>
 
       {response && Array.isArray(response) && (
         <div className="restaurant-container">
