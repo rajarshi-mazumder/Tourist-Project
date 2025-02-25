@@ -10,6 +10,7 @@ async function getHotels(location, keyword) {
     console.log(`API URL: ${baseUrl}`);
 
     const hotelResponse = await axios.get(baseUrl);
+
     const hotels =
       hotelResponse.data?.hotels?.map((hotel) => {
         const hotelInfo = hotel.hotel[0].hotelBasicInfo;
@@ -38,8 +39,8 @@ async function getHotels(location, keyword) {
 async function getHotelsFromRakutenAPI(req, res) {
   const { location, keyword } = req.body;
   try {
-    const { places } = await getHotels(keyword, location);
-    res.status(200).json(places);
+    const hotels = await getHotels(keyword, location);
+    res.status(200).json(hotels);
   } catch (error) {
     console.error("🚨 Error in getHotelsFromMaps:", error);
     res.status(500).json({ message: error.message });
