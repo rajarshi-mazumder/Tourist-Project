@@ -16,6 +16,7 @@ const RestaurantSchema = z.object({
   cuisine: z.string(),
   seating: z.string(),
   reservation_required: z.string(),
+  reasoning: z.string(),
   // rating: z.number().optional(),
   // website: z.string().optional(),
   // phone: z.string().optional(),

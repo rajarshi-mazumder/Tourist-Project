@@ -33,7 +33,7 @@ async function getDistanceAndWalkingTime(origin, destination) {
  * - A ranking and explanation.
  * The response should be in JSON format.
  */
-async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
+async function buildFindFoodOptionsPromptOld(prompt = "", detailedPlaces) {
   let llmPrompt = `${prompt}\n\n
 For each of the following places, please provide the following in simple, friendly, casual English:
 1. A concise description (1-2 sentences) summarizing the restaurant’s ambiance, unique features, and overall appeal.
@@ -74,6 +74,55 @@ Below are the details for each place:
     llmPrompt += `\n`;
   }
 
+  console.log("OpenAI Prompt:", llmPrompt);
+  console.log('------------------------------------------------');
+  return llmPrompt;
+}
+
+async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
+  let llmPrompt = `${prompt}\n\n
+For each of the following places, please provide the following in simple, friendly, casual English:
+1. A concise description (1-4 sentences) summarizing the restaurant’s ambiance, unique features, and overall appeal.
+Find online from reviews, articles, maps reviews, place reviews etc and give a detailed but conbcise description.
+2. The primary type of cuisine (e.g., Japanese, Italian, ramen, sushi, etc.) based on the available information.
+3. A seating availability estimate for right now – considering current conditions (such as time of day, holiday etc)
+ – indicating if the restaurant is usually crowded (i.e. seats are hard to come by) or if it generally has seating available at this time
+4. A ranking of the restaurant (a numeric rank and a brief explanation of your ranking decision).
+5. A note on reservation requirements: based on available data,
+ indicate whether going without a reservation is acceptable ("no reservation is ok") or 
+ if a reservation is necessary to dine at this establishment right now. 
+ 6. Show me your detailed thinking and reasoning for each place, like for eg 'the reviews of this place mentioned this place has english menu,
+ so i recommend this place'
+
+Do not skip any places, i need the json result for all ${detailedPlaces.length} restaurants
+Below are the details for each place:
+\n\n`;
+
+  for (const place of detailedPlaces) {
+    llmPrompt += `- **${place.name}**\n`;
+    llmPrompt += `  ID: ${place.place_id}\n`;
+    llmPrompt += `  Address: ${place.vicinity || "N/A"}\n`;
+    llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
+    llmPrompt += `  Website: ${place.website || "N/A"}\n`;
+    llmPrompt += `  Phone: ${place.formatted_phone_number || "N/A"}\n`;
+    if (place.opening_hours) {
+      llmPrompt += `  Open Now: ${place.opening_hours.open_now ? "Yes" : "No"}\n`;
+    } else {
+      llmPrompt += `  Open Now: N/A\n`;
+    }
+    if (place.photos && place.photos.length > 0) {
+      const photoReference = place.photos[0].photo_reference;
+      const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
+      llmPrompt += `  Image: ${photoUrl}\n`;
+    }
+    if (place.reviews && place.reviews.length > 0) {
+      llmPrompt += `  Reviews:\n`;
+      for (const review of place.reviews) {
+        llmPrompt += `    - "${review.text}" by ${review.author_name}\n`;
+      }
+    }
+    llmPrompt += `\n`;
+  }
   console.log("OpenAI Prompt:", llmPrompt);
   console.log('------------------------------------------------');
   return llmPrompt;
@@ -224,11 +273,9 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       }
 
       allPlaces.push(...nearbyJson.results);
-      nextPageToken = nearbyJson.next_page_token;
-
       // Wait briefly for next_page_token to become valid (Google’s API quirk)
       if (nextPageToken) await new Promise(resolve => setTimeout(resolve, 2000));
-    } while (nextPageToken && allPlaces.length < 60); // Max 60 results
+    } while (false); // Max 60 results
 
     // Make the Text Search request
     // const response = await placesClient.textSearch({ params: request });
@@ -283,7 +330,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       const combinedResults = enhancedResults.map(place => {
         const llmResult = llmResults.restaurants.find(result => result.id === place.place_id) || {};
         return {
-          formatted_address: place.formatted_address || null,
+          formatted_address: place.vicinity || null,
           formatted_phone_number: place.formatted_phone_number || null,
           name: place.name || null,
           opening_hours: place.opening_hours || null,
@@ -299,10 +346,10 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
           walking_distance: place.distance || 'N/A',
           walking_duration: place.walkingTime || 'N/A',
           price_level: place.price_level || null,
-          reservable: place.reservable || null,
+          // reservable: place.reservable || null,
           user_ratings_total: place.user_ratings_total || null,
-          delivery: place.delivery || null,
-          dine_in: place.dine_in || null,
+          // delivery: place.delivery || null,
+          // dine_in: place.dine_in || null,
         };
       });
       console.log("Combined Results:", combinedResults);

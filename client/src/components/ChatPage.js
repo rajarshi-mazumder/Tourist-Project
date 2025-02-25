@@ -92,7 +92,7 @@ export default function ChatPage() {
                 {(place.price_level !== null && place.price_level !== undefined) ? place.price_level : "N/A"}
               </p>
               <p><strong>User Ratings Total:</strong> {place.user_ratings_total}</p>
-              <p>
+              {/* <p>
                 <strong>Curbside Pickup:</strong> {displayBool(place.curbside_pickup)}
               </p>
               <p>
@@ -100,7 +100,7 @@ export default function ChatPage() {
               </p>
               <p>
                 <strong>Dine-in:</strong> {displayBool(place.dine_in)}
-              </p>
+              </p> */}
               <p>
                 <strong>Reservations:</strong> {displayBool(place.reservable)}
               </p>
