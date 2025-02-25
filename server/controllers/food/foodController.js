@@ -8,7 +8,7 @@ const { Client } = require('@googlemaps/google-maps-services-js');
 const client = new Client({});
 // Instantiates a client
 const placesClient = new PlacesClient();
-
+const {getGeminiFlashResponse} = require('../../services/gemini');
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 async function getDistanceAndWalkingTime(origin, destination) {
@@ -185,7 +185,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
     query: foodCategory, // e.g., "burger" or "restaurants"
 
     location: `${latitude},${longitude}`, // Format as "lat,lng" string
-    radius: 2000, // Search within 1km (adjust as needed)
+    radius: 1000, // Search within 1km (adjust as needed)
     key: googleMapsApiKey, // Replace with your actual Google API key
     language: 'ja', // Japanese for localized results
     type: 'restaurant',
@@ -193,7 +193,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
 
   const nearbyRequest = {
     location: origin,
-    radius: 2000, // 2km
+    radius: 500, // 2km
     type: 'restaurant',
     keyword: foodCategory,
     key: googleMapsApiKey,
@@ -263,4 +263,69 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
     res.status(500).json({ error: 'Failed to fetch places' });
   }
 }
-module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI };
+
+// async function findFoodOptionsGemini(req, res) {
+//   const prompt = `Find 10 pizza options near me,
+//   location is '35.6561224,139.7529898'`
+//   const response = await getGeminiFlashResponse(prompt);
+//   res.send(response);
+  
+// }
+
+async function findFoodOptionsGemini(req, res) {
+  const location = '35.6561224,139.7529898';
+  const radius = 5000; // 5km radius
+  const maxResults = 10;
+
+  // Text Search (New) to get place IDs
+  const textSearchUrl = 'https://places.google.com/v1/places:search';
+  const textSearchData = {
+    searchType: 'textSearch',
+    textQuery: 'pizza',
+    includedTypes: ['restaurant'],
+    locationRestriction: {
+      circle: {
+        center: {
+          latitude: Number(location.split(',')[0]),
+          longitude: Number(location.split(',')[1])
+        },
+        radius: radius
+      }
+    },
+    maxResultCount: maxResults
+  };
+  const textSearchHeaders = {
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': googleMapsApiKey
+  };
+
+  try {
+    const textSearchResponse = await axios.post(textSearchUrl, textSearchData, { headers: textSearchHeaders });
+    const places = textSearchResponse.data.places;
+
+    // Fetch details for each place including generative summary
+    const placeDetails = await Promise.all(places.map(async place => {
+      const placeId = place.placeId;
+      const detailsUrl = `https://places.google.com/v1/places/${placeId}?fields=name,address,generativeSummary.description`;
+
+      const detailsHeaders = {
+        'X-Goog-Api-Key': googleMapsApiKey
+      };
+
+      const detailsResponse = await axios.get(detailsUrl, { headers: detailsHeaders });
+      const placeData = detailsResponse.data;
+
+      return {
+        name: placeData.name,
+        address: placeData.address,
+        description: placeData.generativeSummary?.description || 'No description available'
+      };
+    }));
+
+    res.json({ places: placeDetails });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+}
+module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI, findFoodOptionsGemini };
