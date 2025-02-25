@@ -6,7 +6,10 @@ const {
     findFoodOptionsGemini
  } = require('../controllers/food/foodController');
 
-router.post('/', findFoodOptions);
-router.post('/new-places', findFoodOptionsNewPlacesAPI)
+const { getRestaurantDetails } = require('../controllers/food/foodController');
 
-module.exports = router
+router.post('/', findFoodOptions);
+router.post('/new-places', findFoodOptionsNewPlacesAPI);
+router.get('/details', getRestaurantDetails);
+
+module.exports = router;

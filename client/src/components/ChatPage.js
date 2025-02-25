@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ChatPage() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null); // Initialize as null
+  const [response, setResponse] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getLocation = () => {
@@ -30,9 +32,7 @@ export default function ChatPage() {
 
   const handleSend = (foodCategory) => {
     if (location) {
-      // fetch('http://localhost/food', {
       fetch('http://localhost/food/new-places', {
-
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ location, foodCategory }),
@@ -40,15 +40,22 @@ export default function ChatPage() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Response from API:", data);
-          setResponse(data); // Assuming data is an array of restaurant objects
+          setResponse(data);
         })
-        .catch((err) => console.error('Error:', err));
+        .catch((err) => {
+          console.error('Error:', err);
+          setError(err.message);
+        });
     } else {
       console.error('Location not available');
+      setError('Location not available');
     }
   };
 
-  // Helper function to convert booleans or missing values to a display string.
+  const handleRestaurantClick = (place) => {
+    navigate(`/restaurant/${place.place_id}`);
+  };
+
   const displayBool = (value) => {
     if (value === null || value === undefined) return "N/A";
     return value ? "Yes" : "No";
@@ -76,7 +83,12 @@ export default function ChatPage() {
         <div className="restaurant-container">
           <h2>Restaurants:</h2>
           {response.map((place, index) => (
-            <div key={index} className="restaurant-item" style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
+            <div
+              key={index}
+              className="restaurant-item"
+              style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}
+              onClick={() => handleRestaurantClick(place)}
+            >
               <h3>{place.name}</h3>
               <p><strong>Address:</strong> {place.formatted_address}</p>
               <p><strong>Description:</strong> {place.description}</p>
@@ -92,15 +104,6 @@ export default function ChatPage() {
                 {(place.price_level !== null && place.price_level !== undefined) ? place.price_level : "N/A"}
               </p>
               <p><strong>User Ratings Total:</strong> {place.user_ratings_total}</p>
-              {/* <p>
-                <strong>Curbside Pickup:</strong> {displayBool(place.curbside_pickup)}
-              </p>
-              <p>
-                <strong>Delivery:</strong> {displayBool(place.delivery)}
-              </p>
-              <p>
-                <strong>Dine-in:</strong> {displayBool(place.dine_in)}
-              </p> */}
               <p>
                 <strong>Reservations:</strong> {displayBool(place.reservable)}
               </p>
@@ -108,7 +111,7 @@ export default function ChatPage() {
                 <strong>Seating:</strong> {(place.seating !== null && place.seating !== undefined) ? place.seating : "Uncertain"}
               </p>
               <p>
-                <strong>Reservation Required:</strong> {(place.reservation_required !== null && 
+                <strong>Reservation Required:</strong> {(place.reservation_required !== null &&
                   place.reservation_required !== undefined) ? place.reservation_required : "Uncertain"}
               </p>
               <p>

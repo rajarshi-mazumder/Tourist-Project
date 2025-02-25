@@ -280,7 +280,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       allPlaces.push(...nearbyJson.results);
       // Wait briefly for next_page_token to become valid (Google’s API quirk)
       if (nextPageToken) await new Promise(resolve => setTimeout(resolve, 2000));
-    } while (false); // Max 60 results
+    } while (false); // Max 20 results then loop breaks
 
     // Make the Text Search request
     // const response = await placesClient.textSearch({ params: request });
@@ -342,7 +342,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
           photos: place.photos || null,
           rating: place.rating || null,
           reviews: place.reviews || null,
-          id: place.place_id || null,
+          place_id: place.place_id || null,
           description: llmResult.description || 'N/A',
           cuisine: llmResult.cuisine || 'N/A',
           seating: llmResult.seating || 'Uncertain',
@@ -381,4 +381,25 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
 // }
 
 
-module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI };
+async function getRestaurantDetails(req, res) {
+  const placeId = req.query.place_id;
+
+  if (!placeId) {
+    return res.status(400).json({ error: 'Missing place_id parameter' });
+  }
+
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review,price_level,reservable,user_ratings_total,delivery,dine_in&key=${googleMapsApiKey}`;
+
+  try {
+    const detailsResponse = await axios.get(detailsUrl);
+    const detailedPlace = detailsResponse.data.result;
+
+    // You can add more details here, such as fetching reviews from other sources
+    res.send(detailedPlace);
+  } catch (error) {
+    console.error('Error fetching restaurant details:', error);
+    res.status(500).json({ error: 'Failed to fetch restaurant details' });
+  }
+}
+
+module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI, getRestaurantDetails };

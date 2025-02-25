@@ -5,6 +5,7 @@ import './global.css';
 import TripForm from "./components/TripForm";
 import TripDisplay from "./components/TripDisplay";
 import ChatPage from "./components/ChatPage";
+import RestaurantDetails from "./components/RestaurantDetails";
 
 function App() {
   const [tripData, setTripData] = useState(null);
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<><TripForm setTripData={setTripData} /><TripDisplay tripData={tripData} /></>} />
           <Route path="/food" element={<ChatPage />} />
+          <Route path="/restaurant/:placeId" element={<RestaurantDetails />} />
         </Routes>
       </div>
     </Router>
