@@ -8,6 +8,5 @@ const {
 
 router.post('/', findFoodOptions);
 router.post('/new-places', findFoodOptionsNewPlacesAPI)
-router.post('/ask-gemini', findFoodOptionsGemini)
 
 module.exports = router

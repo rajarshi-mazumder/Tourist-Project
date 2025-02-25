@@ -50,7 +50,7 @@ Below are the details for each place:
 
   for (const place of detailedPlaces) {
     llmPrompt += `- **${place.name}**\n`;
-    llmPrompt += `  ID: ${place.id}\n`;
+    llmPrompt += `  ID: ${place.place_id}\n`;
     llmPrompt += `  Address: ${place.formatted_address || "N/A"}\n`;
     llmPrompt += `  Rating: ${place.rating || "N/A"}\n`;
     llmPrompt += `  Website: ${place.website || "N/A"}\n`;
@@ -256,6 +256,60 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
 
     // console.log(rawJson);
     console.log(enhancedResults);
+    // console.log('---------------------------------------------------------------');
+    const llmPrompt = await buildFindFoodOptionsPrompt("", enhancedResults);
+    // console.log(llmPrompt);
+    // console.log('---------------------------------------------------------------');
+    // Call OpenAI
+    const openaiResponse = await getOpenAIChatResponse(llmPrompt);
+    if (!openaiResponse || openaiResponse.trim() === "") {
+      console.error("OpenAI returned an empty response:", openaiResponse);
+      return res.status(500).json({ error: "OpenAI returned an empty response" });
+    }
+    console.log('OpenAI Response:', openaiResponse);
+
+    //combine openai results with api results
+    try {
+      const llmResults = JSON.parse(openaiResponse);
+      if (!Array.isArray(llmResults.restaurants)) {
+        console.error('OpenAI response is not a JSON array:', llmResults);
+        return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
+      }
+  
+ 
+  
+      const combinedResults = enhancedResults.map(place => {
+        const llmResult = llmResults.restaurants.find(result => result.id === place.place_id) || {};
+        return {
+          formatted_address: place.formatted_address || null,
+          formatted_phone_number: place.formatted_phone_number || null,
+          name: place.name || null,
+          opening_hours: place.opening_hours || null,
+          photos: place.photos || null,
+          rating: place.rating || null,
+          reviews: place.reviews || null,
+          id: place.place_id || null,
+          description: llmResult.description || 'N/A',
+          cuisine: llmResult.cuisine || 'N/A',
+          seating: llmResult.seating || 'Uncertain',
+          reservation_required: llmResult.reservation_required || 'N/A',
+          ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
+          walking_distance: place.distance || 'N/A',
+          walking_duration: place.walkingTime || 'N/A',
+          price_level: place.price_level || null,
+          reservable: place.reservable || null,
+          user_ratings_total: place.user_ratings_total || null,
+          delivery: place.delivery || null,
+          dine_in: place.dine_in || null,
+        };
+      });
+      console.log("Combined Results:", combinedResults);
+      res.send(combinedResults);
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      res.status(500).json({ error: 'Failed to parse OpenAI response' });
+    }
+
     res.json(enhancedResults); // Send the enhanced results back in the response
     // res.json(rawJson); // Send the raw JSON back in the response
   } catch (error) {
@@ -272,60 +326,5 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
   
 // }
 
-async function findFoodOptionsGemini(req, res) {
-  const location = '35.6561224,139.7529898';
-  const radius = 5000; // 5km radius
-  const maxResults = 10;
 
-  // Text Search (New) to get place IDs
-  const textSearchUrl = 'https://places.google.com/v1/places:search';
-  const textSearchData = {
-    searchType: 'textSearch',
-    textQuery: 'pizza',
-    includedTypes: ['restaurant'],
-    locationRestriction: {
-      circle: {
-        center: {
-          latitude: Number(location.split(',')[0]),
-          longitude: Number(location.split(',')[1])
-        },
-        radius: radius
-      }
-    },
-    maxResultCount: maxResults
-  };
-  const textSearchHeaders = {
-    'Content-Type': 'application/json',
-    'X-Goog-Api-Key': googleMapsApiKey
-  };
-
-  try {
-    const textSearchResponse = await axios.post(textSearchUrl, textSearchData, { headers: textSearchHeaders });
-    const places = textSearchResponse.data.places;
-
-    // Fetch details for each place including generative summary
-    const placeDetails = await Promise.all(places.map(async place => {
-      const placeId = place.placeId;
-      const detailsUrl = `https://places.google.com/v1/places/${placeId}?fields=name,address,generativeSummary.description`;
-
-      const detailsHeaders = {
-        'X-Goog-Api-Key': googleMapsApiKey
-      };
-
-      const detailsResponse = await axios.get(detailsUrl, { headers: detailsHeaders });
-      const placeData = detailsResponse.data;
-
-      return {
-        name: placeData.name,
-        address: placeData.address,
-        description: placeData.generativeSummary?.description || 'No description available'
-      };
-    }));
-
-    res.json({ places: placeDetails });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to fetch data' });
-  }
-}
-module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI, findFoodOptionsGemini };
+module.exports = { findFoodOptions, findFoodOptionsNewPlacesAPI };
