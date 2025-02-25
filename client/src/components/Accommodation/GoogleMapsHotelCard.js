@@ -1,4 +1,5 @@
 import React from "react";
+import { BOOKING_COM_URL } from "../../constants";
 
 function GoogleMapsHotelCard({ accommodation }) {
   return (
@@ -12,19 +13,17 @@ function GoogleMapsHotelCard({ accommodation }) {
         />
       )}
       <p>Name: {accommodation.name}</p>
+      <a
+        href={`${BOOKING_COM_URL}${accommodation.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        More information
+      </a>
       {accommodation.formatted_address && (
         <p>Address: {accommodation.formatted_address}</p>
       )}
       {accommodation.rating && <p>Rating: {accommodation.rating}</p>}
-      {accommodation.website && (
-        <a
-          href={accommodation.website}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Website
-        </a>
-      )}
       {accommodation.opening_hours &&
         accommodation.opening_hours !== "Not available" &&
         accommodation.opening_hours.weekday_text && (
@@ -66,6 +65,9 @@ function GoogleMapsHotelCard({ accommodation }) {
       {accommodation.serves_wine && <p>Serves Wine: Yes</p>}
       {accommodation.takeout && <p>Takeout: Yes</p>}
       {accommodation.reservable && <p>Reservable: Yes</p>}
+      {accommodation.ai_summary && (
+        <p>AI Summary: {accommodation.ai_summary}</p>
+      )}
     </div>
   );
 }

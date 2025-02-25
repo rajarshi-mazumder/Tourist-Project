@@ -36,7 +36,6 @@ function AccommodationCarousel({ accommodations, city }) {
   const keywordOptions = [
     "贅沢", //Luxury
     "予算に優しい", //budget
-    "家族", //Family
     "仕事", // Business
     "ロマンチック", // Romantic
     "ペット可", // pet friendly
@@ -57,7 +56,7 @@ function AccommodationCarousel({ accommodations, city }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          keyword: keywords,
+          keyword: `${keywords} hotel`,
           location: city,
         }),
       });
@@ -103,7 +102,11 @@ function AccommodationCarousel({ accommodations, city }) {
       {googleMapsHotelData.map((googleMapsHotels, index) => (
         <Carousel key={index} responsive={responsive}>
           {googleMapsHotels?.map((accommodation) => (
-            <div key={accommodation.name} className="carousel-item">
+            <div
+              key={accommodation.name}
+              className="carousel-item"
+              style={{ height: "800px" }}
+            >
               <GoogleMapsHotelCard accommodation={accommodation} />
             </div>
           ))}
