@@ -33,7 +33,7 @@ async function getDistanceAndWalkingTime(origin, destination) {
  * - A ranking and explanation.
  * The response should be in JSON format.
  */
-async function buildFindFoodOptionsPrompt(prompt = "", location, detailedPlaces) {
+async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
   let llmPrompt = `${prompt}\n\n
 For each of the following places, please provide the following in simple, friendly, casual English:
 1. A concise description (1-2 sentences) summarizing the restaurant’s ambiance, unique features, and overall appeal.

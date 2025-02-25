@@ -64,7 +64,9 @@ export default function ChatPage() {
         </p>
       )}
       <button onClick={() => handleSend('restaurants')}>Restaurants</button>
-      <button onClick={() => handleSend('burger')}>Burger</button>
+      <button onClick={() => handleSend('ハンバーガー')}>HamBurger</button>
+      <button onClick={() => handleSend('Burger')}>Burger</button>
+
       <button onClick={() => handleSend('ピザ')}>Pizza</button>
       <button onClick={() => handleSend('izakaya')}>Izakaya</button>
       <button onClick={() => handleSend('italian_restaurant')}>Italian</button>
