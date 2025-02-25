@@ -1,4 +1,9 @@
 const axios = require("axios");
+const { getGeminiFlashResponse } = require("../../services/gemini");
+const fs = require("fs");
+const path = require("path");
+const aiController = require("../../aicontrollers/aiController");
+const parseJsonFromGemini = require("../../aicontrollers/geminiController");
 
 /**
  * Searches for places with a keyword in a given location and fetches detailed info.
@@ -115,16 +120,69 @@ const searchPlacesAndGetDetails = async (
 ) => {
   try {
     const places = await searchPlaces(keyword, location, radius, maxResults);
-
+    const task = "trips";
     if (places.error) {
       return { error: places.error };
     }
 
-    const placeDetailsPromises = places.map(async (place) => {
-      return await getPlaceDetails(place.place_id);
+    const placeDetailsPromises = places.map(async (place, index) => {
+      const placeDetails = await getPlaceDetails(place.place_id);
+      placeDetails.place_id = places[index].place_id;
+      return placeDetails;
     });
 
     const placesWithDetails = await Promise.all(placeDetailsPromises);
+
+    const extractedData = placesWithDetails.map((place) => ({
+      name: place.name,
+      reviews: place.reviews,
+    }));
+
+    // Load the prompt
+    const placeDescriptionPromptPath = path.resolve(
+      __dirname,
+      "../../prompts/PlaceDescriptionFromReviews.txt"
+    );
+    const placeDescriptionPrompt = fs.readFileSync(
+      placeDescriptionPromptPath,
+      "utf-8"
+    );
+
+    // Prepare the data for the prompt
+    const promptData = extractedData;
+
+    // Create the prompt
+    const prompt = `${placeDescriptionPrompt}\n${JSON.stringify(
+      promptData,
+      null,
+      2
+    )}`;
+
+    // Generate the AI response
+    let responseText = await aiController.generateAIResponse(prompt, task);
+
+    // Parse the AI response
+    let summaries;
+    try {
+      summaries = parseJsonFromGemini(responseText);
+    } catch (error) {
+      console.error("Error parsing AI response:", error);
+      return {
+        error: "Failed to process AI response",
+      };
+    }
+
+    // Add ai_summary to each place
+    if (
+      summaries &&
+      placesWithDetails &&
+      placesWithDetails.length === summaries.length
+    ) {
+      placesWithDetails.forEach((place, index) => {
+        place.ai_summary = summaries[index].summary;
+      });
+    }
+
     return { places: placesWithDetails };
   } catch (error) {
     console.error("Error fetching place details:", error);
