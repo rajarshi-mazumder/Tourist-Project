@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import "./CityPlanDisplay.css";
-import AccommodationCarousel from "./AccommodationCarousel";
-import AttractionCarousel from "./AttractionCarousel";
-import FoodCarousel from "./FoodCarousel";
-import { useCityImage } from "../context/CityImageContext";
+import AccommodationCarousel from "../Accommodation/AccommodationCarousel.js";
+import AttractionCarousel from "./AttractionCarousel.js";
+import FoodCarousel from "./FoodCarousel.js";
+import { useCityImage } from "../../context/CityImageContext.js";
 
 const CityPlanDisplay = ({ cityPlan }) => {
   const { cityImages, setCityImages } = useCityImage();

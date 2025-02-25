@@ -3,7 +3,7 @@ import "./TripDisplay.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import AccommodationCarousel from "./AccommodationCarousel";
+import AccommodationCarousel from "../Accommodation/AccommodationCarousel.js";
 
 function TripDisplay({ tripData }) {
   console.log("Trip Data:", tripData);

@@ -1,5 +1,5 @@
 import React from "react";
-import { BOOKING_COM_URL } from "../constants";
+import { BOOKING_COM_URL } from "../../constants";
 
 function RakutenHotelCard({ accommodation }) {
   return (

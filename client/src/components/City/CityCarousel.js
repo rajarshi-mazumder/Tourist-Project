@@ -3,7 +3,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import "./CityCarousel.css";
 import CityPlanDisplay from "./CityPlanDisplay";
-import { useCityImage } from "../context/CityImageContext";
+import { useCityImage } from "../../context/CityImageContext.js";
 
 function CityCarousel({ cities }) {
   const [expandedCity, setExpandedCity] = useState(null);

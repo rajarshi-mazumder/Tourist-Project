@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./global.css";
-import TripDisplay from "./components/TripDisplay";
+import TripDisplay from "./components/Trip/TripDisplay.js";
 import ChatPage from "./components/ChatPage";
-import CityCarousel from "./components/CityCarousel";
-import TripOptions from "./components/TripOptions";
+import CityCarousel from "./components/City/CityCarousel";
+import TripOptions from "./components/Trip/TripOptions";
 import { CityImageProvider } from "./context/CityImageContext";
 
 function App() {

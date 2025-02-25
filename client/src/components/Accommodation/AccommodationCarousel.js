@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import "./CityCarousel.css";
-import { BOOKING_COM_URL } from "../constants";
+import "../City/CityCarousel.css";
+import { BOOKING_COM_URL } from "../../constants";
 import RakutenHotelCard from "./RakutenHotelCard";
 import GoogleMapsHotelCard from "./GoogleMapsHotelCard";
 
