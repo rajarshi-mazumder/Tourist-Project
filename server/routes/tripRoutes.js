@@ -11,15 +11,20 @@ const {
   googleSearchController,
 } = require("../controllers/googleSearch/googleSearchController.js");
 const {
-  getHotelsHandler,
+  getHotelsFromMaps,
+  getHotelsFromRakutenAPI,
 } = require("../controllers/trips/hotel/hotelDataController.js");
+const {
+  searchPlacesAndDetailsHandler,
+} = require("../controllers/maps/mapsController.js");
 
 router.post("/plan-trip", tripController.generateTrip);
 router.post("/attractions", attractionsController.getAttractions);
 router.post("/cities", citiesController.getCities);
 router.post("/city-plan", citiesController.generateCityPlan);
-router.get("/city-plan", citiesController.generateCityPlan);
 router.get("/images", googleSearchController.searchImages);
-router.get("/hotels", getHotelsHandler);
+router.post("/hotels-from-maps", getHotelsFromMaps);
+router.post("/hotels-from-rakuten", getHotelsFromRakutenAPI);
+router.post("/search-places", searchPlacesAndDetailsHandler);
 
 module.exports = router;

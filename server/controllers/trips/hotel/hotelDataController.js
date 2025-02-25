@@ -1,10 +1,11 @@
 const axios = require("axios");
+const { searchPlacesAndGetDetails } = require("../../maps/mapsController");
 
-async function getHotels(cityName, keywords) {
+async function getHotels(location, keyword) {
   try {
     const applicationId = process.env.RAKUTEN_APP_ID;
-    const encodedCityName = encodeURIComponent(cityName);
-    const encodedKeywords = encodeURIComponent(keywords);
+    const encodedCityName = encodeURIComponent(location);
+    const encodedKeywords = encodeURIComponent(keyword);
     const baseUrl = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?applicationId=${applicationId}&format=json&keyword=${encodedCityName}%20${encodedKeywords}%20en`;
     console.log(`API URL: ${baseUrl}`);
 
@@ -34,15 +35,26 @@ async function getHotels(cityName, keywords) {
   }
 }
 
-async function getHotelsHandler(req, res) {
-  const { cityName, keywords } = req.query;
+async function getHotelsFromRakutenAPI(req, res) {
+  const { location, keyword } = req.body;
   try {
-    const hotels = await getHotels(cityName, keywords);
-    res.status(200).json(hotels);
+    const { places } = await getHotels(keyword, location);
+    res.status(200).json(places);
   } catch (error) {
-    console.error("🚨 Error in getHotelsHandler:", error);
+    console.error("🚨 Error in getHotelsFromMaps:", error);
     res.status(500).json({ message: error.message });
   }
 }
 
-module.exports = { getHotels, getHotelsHandler };
+async function getHotelsFromMaps(req, res) {
+  try {
+    const { keyword, location } = req.body;
+    const result = await searchPlacesAndGetDetails(keyword, location);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error in searchPlacesAndDetailsHandler:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+module.exports = { getHotels, getHotelsFromMaps, getHotelsFromRakutenAPI };
