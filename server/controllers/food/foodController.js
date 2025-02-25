@@ -75,6 +75,7 @@ Below are the details for each place:
   }
 
   console.log("OpenAI Prompt:", llmPrompt);
+  console.log('------------------------------------------------');
   return llmPrompt;
 }
 
@@ -255,6 +256,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
     );
 
     // console.log(rawJson);
+    console.log('Adding distance and time');
     console.log(enhancedResults);
     // console.log('---------------------------------------------------------------');
     const llmPrompt = await buildFindFoodOptionsPrompt("", enhancedResults);
@@ -310,7 +312,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       res.status(500).json({ error: 'Failed to parse OpenAI response' });
     }
 
-    res.json(enhancedResults); // Send the enhanced results back in the response
+    // res.json(enhancedResults); // Send the enhanced results back in the response
     // res.json(rawJson); // Send the raw JSON back in the response
   } catch (error) {
     console.error('Error fetching places:', error.message);
