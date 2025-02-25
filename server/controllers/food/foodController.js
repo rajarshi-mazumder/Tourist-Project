@@ -73,6 +73,8 @@ Below are the details for each place:
     }
     llmPrompt += `\n`;
   }
+  llmPrompt += `\n Return a JSON array with exactly ${detailedPlaces} objects. 
+  Each object must have keys: description, primaryCuisine, seatingAvailability, ranking, reservationNote, and reasoning.`;
 
   console.log("OpenAI Prompt:", llmPrompt);
   console.log('------------------------------------------------');
@@ -123,6 +125,9 @@ Below are the details for each place:
     }
     llmPrompt += `\n`;
   }
+  llmPrompt += `\n Return a JSON array with exactly ${detailedPlaces.length} objects. 
+  Each object must have keys: description, primaryCuisine, seatingAvailability, ranking, reservationNote, and reasoning`;
+
   console.log("OpenAI Prompt:", llmPrompt);
   console.log('------------------------------------------------');
   return llmPrompt;
