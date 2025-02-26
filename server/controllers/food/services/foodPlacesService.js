@@ -134,6 +134,7 @@ function appendLLMDataToPlacesData(enhancedResults, llmResponse){
     }
 } 
 
+//Main service function to handle incoming request
 async function foodPlacesOptionsService(origin, foodCategory){
 
     try {

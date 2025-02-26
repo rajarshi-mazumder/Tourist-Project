@@ -1,44 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function RestaurantDetails() {
-  const { placeId } = useParams();
-  const [restaurantDetails, setRestaurantDetails] = useState(null);
-  const [error, setError] = useState(null);
+  const location = useLocation();
+  const { restaurant } = location.state;
 
-  useEffect(() => {
-    const fetchRestaurantDetails = async () => {
-      try {
-        const response = await fetch("http://localhost/food/details?place_id=" + placeId);
-        if (!response.ok) {
-          throw new Error("HTTP error! status: " + response.status);
-        }
-        const data = await response.json();
-        setRestaurantDetails(data);
-      } catch (e) {
-        setError(e.message);
-      }
-    };
-
-    fetchRestaurantDetails();
-  }, [placeId]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (!restaurant) {
+    return <div>No restaurant details found.</div>;
   }
 
-  if (!restaurantDetails) {
-    return <div>Loading restaurant details...</div>;
-  }
+  const displayBool = (value) => {
+    if (value === null || value === undefined) return "N/A";
+    return value ? "Yes" : "No";
+  };
 
   return (
     <div>
-      <h1>{restaurantDetails.name}</h1>
-      <p>Rating: {restaurantDetails.rating}</p>
-      <p>Address: {restaurantDetails.formatted_address}</p>
-      <p>Phone: {restaurantDetails.formatted_phone_number}</p>
-      <p>Website: {restaurantDetails.website}</p>
-      {/* Display other details as needed */}
+      <h1>{restaurant.name}</h1>
+      <p><strong>Address:</strong> {restaurant.formatted_address}</p>
+      <p><strong>Description:</strong> {restaurant.description}</p>
+      <p><strong>Cuisine:</strong>{(restaurant.cuisine !== null && restaurant.cuisine !== undefined) ? restaurant.cuisine : "N/A"}</p>
+      {restaurant.opening_hours && (
+        <p>
+          <strong>Open Now:</strong> {displayBool(restaurant.opening_hours.open_now)}
+        </p>
+      )}
+      <p><strong>Rating:</strong> {restaurant.rating}</p>
+      <p>
+        <strong>Price Level:</strong>{" "}
+        {(restaurant.price_level !== null && restaurant.price_level !== undefined) ? restaurant.price_level : "N/A"}
+      </p>
+      <p><strong>User Ratings Total:</strong> {restaurant.user_ratings_total}</p>
+      <p>
+        <strong>Reservations:</strong> {displayBool(restaurant.reservable)}
+      </p>
+      <p>
+        <strong>Seating:</strong> {(restaurant.seating !== null && restaurant.seating !== undefined) ? restaurant.seating : "Uncertain"}
+      </p>
+      <p>
+        <strong>Reservation Required:</strong> {(restaurant.reservation_required !== null &&
+          restaurant.reservation_required !== undefined) ? restaurant.reservation_required : "Uncertain"}
+      </p>
+      <p>
+        <strong>Walking Distance:</strong> {restaurant.walking_distance} ({restaurant.walking_duration})
+      </p>
     </div>
   );
 }

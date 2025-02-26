@@ -53,7 +53,7 @@ export default function ChatPage() {
   };
 
   const handleRestaurantClick = (place) => {
-    navigate(`/restaurant/${place.place_id}`);
+    navigate(`/restaurant/${place.place_id}`, { state: { restaurant: place } });
   };
 
   const displayBool = (value) => {
