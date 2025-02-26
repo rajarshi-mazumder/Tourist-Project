@@ -3,7 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const OpenAI = require("openai");
 
 const aiController = {
-  generateAIResponse: async (prompt, task) => {
+  generateAIResponse: async (prompt, task, schema) => {
     try {
       const modelName = aiModels[task];
 
@@ -18,7 +18,19 @@ const aiController = {
         const model = genAI.getGenerativeModel({
           model: "gemini-2.0-flash-001",
         });
-        const response = await model.generateContent(prompt);
+
+        let formattedPrompt = prompt;
+        if (schema) {
+          formattedPrompt = `
+            Please provide the response in the following JSON format:
+            ${JSON.stringify(schema, null, 2)}
+
+            Based on the following prompt:
+            ${prompt}
+          `;
+        }
+
+        const response = await model.generateContent(formattedPrompt);
         responseText =
           typeof response.response === "string"
             ? response.response

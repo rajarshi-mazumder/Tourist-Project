@@ -6,6 +6,7 @@ const {
   searchImagesWithGoogle,
 } = require("../../googleSearch/googleSearchController"); // Import the function
 const { getHotels } = require("../hotel/hotelDataController");
+const citiesWithDataSchema = require("../../../schemas/citiesWithDataSchema.json");
 
 const citiesController = {
   getCities: async (req, res) => {
@@ -24,7 +25,7 @@ const citiesController = {
         .replace(/{num_days}/g, days);
 
       try {
-        responseText = await aiController.generateAIResponse(prompt, task);
+        responseText = await aiController.generateAIResponse(prompt, task, citiesWithDataSchema);
       } catch (error) {
         console.error("Error generating AI response:", error);
         return res.status(500).json({
