@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.restaurant-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.slick-next:before,
+.slick-prev:before {
+  color: black;
+}

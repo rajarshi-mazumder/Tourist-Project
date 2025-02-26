@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import { RestaurantContext } from '../context/RestaurantContext';
 
 export default function ChatPage() {
@@ -63,6 +66,14 @@ export default function ChatPage() {
     return value ? "Yes" : "No";
   };
 
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <div className="chat-container">
       <h1>Chat Page</h1>
@@ -91,6 +102,15 @@ export default function ChatPage() {
             onClick={() => handleRestaurantClick(place)}
           >
             <h3>{place.name}</h3>
+            {place.photos && place.photos.length > 0 && (
+              <Slider {...sliderSettings}>
+                {place.photos.map((photo, photoIndex) => (
+                  <div key={photoIndex}>
+                    <img src={photo} alt={place.name} className="restaurant-image" style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </Slider>
+            )}
             <p><strong>Address:</strong> {place.formatted_address}</p>
             <p><strong>Description:</strong> {place.description}</p>
             <p><strong>Cuisine:</strong>{(place.cuisine !== null && place.cuisine !== undefined) ? place.cuisine : "N/A"}</p>
