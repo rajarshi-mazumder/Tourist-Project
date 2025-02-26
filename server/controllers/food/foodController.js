@@ -27,7 +27,7 @@ async function getDistanceAndWalkingTime(origin, destination) {
 }
 
 /**
- * Build a prompt that instructs OpenAI to synthesize additional details:
+ * Build a prompt that instructs LLM to synthesize additional details:
  * - A concise description that includes ambiance and any special features
  * - The primary type of cuisine based on the provided details
  * - A seating/crowding estimate (i.e. whether the restaurant is typically crowded or usually has seating available)
@@ -77,7 +77,7 @@ Below are the details for each place:
   llmPrompt += `\n Return a JSON array with exactly ${detailedPlaces} objects. 
   Each object must have keys: description, primaryCuisine, seatingAvailability, ranking, reservationNote, and reasoning.`;
 
-  console.log("OpenAI Prompt:", llmPrompt);
+  console.log("LLM Prompt:", llmPrompt);
   console.log('------------------------------------------------');
   return llmPrompt;
 }
@@ -134,11 +134,11 @@ Below are the details for each place:
   llmPrompt += `\n Return a JSON array with exactly ${detailedPlaces.length} objects. 
   Each object must have keys: description, primaryCuisine, seatingAvailability, ranking, reservationNote, and reasoning`;
 
-  console.log("OpenAI Prompt:", llmPrompt);
+  console.log("Prompt for LLM:", llmPrompt);
   console.log('------------------------------------------------');
   return llmPrompt;
 }
-
+//Obsolete function
 async function findFoodOptions(req, res) {
   const prompt = req.body.message || "";
   const location = req.body.location;
@@ -171,22 +171,22 @@ async function findFoodOptions(req, res) {
   }
   console.log('Detailed Places:', detailedPlaces);
 
-  // Build OpenAI prompt with additional instructions for cuisine and seating info.
+  // Build LLM prompt with additional instructions for cuisine and seating info.
   const llmPrompt = await buildFindFoodOptionsPrompt(prompt, formattedLocation, detailedPlaces);
 
-  // Call OpenAI
-  const openaiResponse = await getDeepseekChatResponse(llmPrompt);
-  if (!openaiResponse || openaiResponse.trim() === "") {
-    console.error("OpenAI returned an empty response:", openaiResponse);
-    return res.status(500).json({ error: "OpenAI returned an empty response" });
+  // Call LLM
+  const llmResponse = await getDeepseekChatResponse(llmPrompt);
+  if (!llmResponse || llmResponse.trim() === "") {
+    console.error("LLM returned an empty response:", llmResponse);
+    return res.status(500).json({ error: "LLM returned an empty response" });
   }
-  console.log('OpenAI Response:', openaiResponse);
+  console.log('LLM Response:', llmResponse);
 
   try {
-    const llmResults = JSON.parse(openaiResponse);
+    const llmResults = JSON.parse(llmResponse);
     if (!Array.isArray(llmResults.restaurants)) {
-      console.error('OpenAI response is not a JSON array:', llmResults);
-      return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
+      console.error('LLM response is not a JSON array:', llmResults);
+      return res.status(500).json({ error: 'LLM response is not a JSON array' });
     }
 
     // Add walking distance to detailedPlaces
@@ -225,8 +225,8 @@ async function findFoodOptions(req, res) {
     console.log("Combined Results:", combinedResults);
     res.send(combinedResults);
   } catch (error) {
-    console.error('Error parsing OpenAI response:', error);
-    res.status(500).json({ error: 'Failed to parse OpenAI response' });
+    console.error('Error parsing LLM response:', error);
+    res.status(500).json({ error: 'Failed to parse LLM response' });
   }
 }
 
@@ -323,20 +323,20 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
 
     // console.log('---------------------------------------------------------------');
     const llmPrompt = await buildFindFoodOptionsPrompt("", enhancedResults);
-    // Call OpenAI
-    const openaiResponse = await getOpenAIChatResponse(llmPrompt);
-    if (!openaiResponse || openaiResponse.trim() === "") {
-      console.error("OpenAI returned an empty response:", openaiResponse);
-      return res.status(500).json({ error: "OpenAI returned an empty response" });
+    // Call LLM
+    const llmResponse = await getOpenAIChatResponse(llmPrompt);
+    if (!llmResponse || llmResponse.trim() === "") {
+      console.error("LLM returned an empty response:", llmResponse);
+      return res.status(500).json({ error: "LLM returned an empty response" });
     }
-    console.log('OpenAI Response:', openaiResponse);
+    console.log('LLM Response:', llmResponse);
 
-    //combine openai results with api results
+    //combine LLM results with api results
     try {
-      const llmResults = JSON.parse(openaiResponse);
+      const llmResults = JSON.parse(llmResponse);
       if (!Array.isArray(llmResults.restaurants)) {
-        console.error('OpenAI response is not a JSON array:', llmResults);
-        return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
+        console.error('LLM response is not a JSON array:', llmResults);
+        return res.status(500).json({ error: 'LLM response is not a JSON array' });
       }
       const combinedResults = enhancedResults.map(place => {
         const llmResult = llmResults.restaurants.find(result => result.id === place.place_id) || {};
@@ -356,8 +356,8 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
           ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
           walking_distance: place.distance || 'N/A',
           walking_duration: place.walkingTime || 'N/A',
-		  price_level: place.price_level || null,
-          // reservable: place.reservable || null,
+		      price_level: place.price_level || null,
+          reservable: place.reservable || null,
           user_ratings_total: place.user_ratings_total || null,
           // delivery: place.delivery || null,
           dine_in: place.dine_in || null,
@@ -366,8 +366,8 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       console.log("Combined Results:", combinedResults);
       res.send(combinedResults);
         } catch (error) {
-          console.error('Error parsing OpenAI response:', error);
-          res.status(500).json({ error: 'Failed to parse OpenAI response' });
+          console.error('Error parsing LLM response:', error);
+          res.status(500).json({ error: 'Failed to parse LLM response' });
         }
 
     // res.json(enhancedResults); // Send the enhanced results back in the response
@@ -378,13 +378,6 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
   }
 }
 
-// async function findFoodOptionsGemini(req, res) {
-//   const prompt = `Find 10 pizza options near me,
-//   location is '35.6561224,139.7529898'`
-//   const response = await getGeminiFlashResponse(prompt);
-//   res.send(response);
-  
-// }
 
 
 async function getRestaurantDetails(req, res) {
