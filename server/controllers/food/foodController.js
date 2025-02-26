@@ -1,24 +1,22 @@
 const { getDeepseekChatResponse } = require("../../services/deepseek");
 const { getOpenAIChatResponse } = require("../../services/openai");
 const { formatLocation } = require("../../utils/location");
-const crypto = require("crypto");
-const { PlacesClient } = require("@googlemaps/places").v1;
+const axios = require("axios");
 
 const { Client } = require("@googlemaps/google-maps-services-js");
-const client = new Client({});
 // Instantiates a client
 const placesClient = new Client();
-const {
-  getDistanceAndWalkingTime,
-  buildFindFoodOptionsPrompt,
-  getPlaceDetails,
-} = require("../../services/foodService");
+
+
+const {buildFindFoodOptionsPrompt} = require("./modules/promptBuilder");
+const {getPlaceDetails} = require("../../utils/placeDetailsGoogleMaps");
+const { getDistanceAndWalkingTime } = require("../../utils/distanceFromOriginGoogleMaps");
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 //Obsolete function
 
 
-async function findFoodOptionsNewPlacesAPI(req, res) {
+async function fetchFoodPlaces(req, res) {
   // Initialize the Google Maps client with your API key
   console.log("This is new places api");
   const origin = "35.6561224,139.7529898";
@@ -172,11 +170,11 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
   }
 }
 
-async function getRestaurantDetails(req, res) {
+async function fetchFoodPlaceDetails(req, res) {
   const placeId = req.query.place_id;
 
   if (!placeId) {
-    return res.status(400).json({ error: "Missing place_id parameter" });
+    return res.status(400).json({ error: "Missing placeId parameter" });
   }
 
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review,price_level,reservable,user_ratings_total,delivery,dine_in&key=${googleMapsApiKey}`;
@@ -194,6 +192,6 @@ async function getRestaurantDetails(req, res) {
 }
 
 module.exports = {
-  findFoodOptionsNewPlacesAPI,
-  getRestaurantDetails,
+  fetchFoodPlaces,
+  fetchFoodPlaceDetails,
 };

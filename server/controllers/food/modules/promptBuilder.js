@@ -1,24 +1,6 @@
-const { getDeepseekChatResponse } = require("./deepseek");
-const { getOpenAIChatResponse } = require("./openai");
-const { formatLocation } = require("../utils/location");
+
 const axios = require("axios");
-const { Client } = require("@googlemaps/google-maps-services-js");
-const client = new Client({});
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
-
-async function getDistanceAndWalkingTime(origin, destination) {
-  const distanceMatrixUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=walking&key=${googleMapsApiKey}`;
-  const distanceMatrixResponse = await axios.get(distanceMatrixUrl);
-  const data = distanceMatrixResponse.data;
-
-  if (data.rows[0].elements[0].status === "OK") {
-    const distance = data.rows[0].elements[0].distance.text;
-    const duration = data.rows[0].elements[0].duration.text;
-    return { distance, duration };
-  } else {
-    return { distance: "N/A", duration: "N/A" };
-  }
-}
 
 async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
   let llmPrompt = `${prompt}\n\n
@@ -77,19 +59,7 @@ Below are the details for each place:
   return llmPrompt;
 }
 
-async function getPlaceDetails(placeId) {
-  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review,price_level,reservable,user_ratings_total,delivery,dine_in&key=${googleMapsApiKey}`;
-  try {
-    const detailsResponse = await axios.get(detailsUrl);
-    return detailsResponse.data.result;
-  } catch (error) {
-    console.error("Error fetching place details:", error);
-    return null;
-  }
-}
 
 module.exports = {
-  getDistanceAndWalkingTime,
-  buildFindFoodOptionsPrompt,
-  getPlaceDetails,
+  buildFindFoodOptionsPrompt
 };

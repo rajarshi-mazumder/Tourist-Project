@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { 
-    findFoodOptionsNewPlacesAPI,
+    fetchFoodPlaces,
  } = require('../controllers/food/foodController');
 
-const { getRestaurantDetails } = require('../controllers/food/foodController');
+const { fetchFoodPlaceDetails } = require('../controllers/food/foodController');
 
-router.post('/new-places', findFoodOptionsNewPlacesAPI);
-router.get('/details', getRestaurantDetails);
+router.post('/new-places', fetchFoodPlaces);
+router.get('/details', fetchFoodPlaceDetails);
 
 module.exports = router;
