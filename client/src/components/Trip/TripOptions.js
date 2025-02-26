@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import CityPlanDisplay from "../../components/City/CityPlanDisplay";
 import japanPlaces from "../../schemas/japanPlaces.json";
 
 function TripOptions({ setCities }) {
   const [days, setDays] = useState(10);
   const [tripPlans, setTripPlans] = useState([]);
   const [previousCity, setPreviousCity] = useState(null);
+  const [expandedPlanIndex, setExpandedPlanIndex] = useState(null);
 
-  const places1 = japanPlaces.places.slice(41, 52);
-  const places2 = japanPlaces.places.slice(53, 72);
+  const places = japanPlaces.places[0];
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -15,8 +16,8 @@ function TripOptions({ setCities }) {
   const handleSearch = (event) => {
     const value = event.target.value;
     setSearchTerm(value);
-    const filtered = places1.filter((place) =>
-      place.toLowerCase().includes(value.toLowerCase())
+    const filtered = Object.entries(places).filter(([key, place]) =>
+      place.eng.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredPlaces(filtered);
   };
@@ -51,11 +52,11 @@ function TripOptions({ setCities }) {
     console.log("From City:", fromCity, "To City:", toCity);
   };
 
-
-  const handleSelectItem = (place) => {
-    setSearchTerm(place);
+ const handleSelectItem = (key) => {
+    setSearchTerm(key);
     setFilteredPlaces([]);
   };
+
 
   const fetchCities = async () => {
     const response = await fetch("http://localhost:4000/trip/cities", {
@@ -96,9 +97,9 @@ function TripOptions({ setCities }) {
           />
           {filteredPlaces.length > 0 && (
             <ul>
-              {filteredPlaces.map((place) => (
-                <li key={place} onClick={() => handleSelectItem(place)}>
-                  {place}
+              {filteredPlaces.map(([key, place]) => (
+                <li key={key} onClick={() => handleSelectItem(key)}>
+                  {place.eng}
                 </li>
               ))}
             </ul>
@@ -108,6 +109,11 @@ function TripOptions({ setCities }) {
           Plan to {searchTerm}
         </button>
       </div>
+       <CityPlanDisplay
+        tripPlans={tripPlans}
+        setExpandedPlanIndex={setExpandedPlanIndex}
+        expandedPlanIndex={expandedPlanIndex}
+      />
     </div>
   );
 }
