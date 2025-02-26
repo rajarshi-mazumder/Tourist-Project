@@ -1,39 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
 import "./App.css";
-import "./global.css";
-import TripDisplay from "./components/Trip/TripDisplay.js";
-import ChatPage from "./components/ChatPage";
-import CityCarousel from "./components/City/CityCarousel";
 import TripOptions from "./components/Trip/TripOptions";
-import { CityImageProvider } from "./context/CityImageContext";
+import CityCarousel from "./components/City/CityCarousel";
+import CityPlanDisplay from "./components/City/CityPlanDisplay";
 
 function App() {
-  const [tripData, setTripData] = useState(null);
-  const [cities, setCities] = useState(null);
-  const city = cities ? cities[0]?.name : null;
+  const [cities, setCities] = useState([]);
+  const [tripPlans, setTripPlans] = useState([]);
+  const [expandedPlanIndex, setExpandedPlanIndex] = useState(null);
 
   return (
-    <CityImageProvider>
-      <Router>
-        <div className="App">
-          <h1></h1>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <TripOptions setCities={setCities} />
-                  {cities && <CityCarousel cities={cities} />}
-                  <TripDisplay tripData={tripData} city={city} />
-                </>
-              }
-            />
-            <Route path="/chat" element={<ChatPage />} />
-          </Routes>
-        </div>
-      </Router>
-    </CityImageProvider>
+    <div className="App">
+      <h1>Trip Planner</h1>
+      <TripOptions setCities={setCities} />
+      <CityCarousel cities={cities} />
+      <CityPlanDisplay
+        tripPlans={tripPlans}
+        setExpandedPlanIndex={setExpandedPlanIndex}
+        expandedPlanIndex={expandedPlanIndex}
+      />
+    </div>
   );
 }
 

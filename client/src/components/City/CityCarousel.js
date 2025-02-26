@@ -117,31 +117,11 @@ function CityCarousel({ cities }) {
           </div>
         ))}
       </Carousel>
-      <h2>Trip Plans</h2>
-      <div className="city-plan-container">
-        {tripPlans.map((plan, index) => {
-          return (
-            <div key={index} className="city-plan-item">
-              <button
-                onClick={() =>
-                  setExpandedPlanIndex(
-                    expandedPlanIndex === index ? null : index
-                  )
-                }
-              >
-                {plan.city}
-                {expandedPlanIndex === index ? "▲" : "▼"}
-              </button>
-              {expandedPlanIndex === index && (
-                <>
-                  <CityPlanDisplay cityPlan={plan} key={index} />
-                  <button onClick={() => setExpandedPlanIndex(null)}>▲</button>
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <CityPlanDisplay
+        tripPlans={tripPlans}
+        setExpandedPlanIndex={setExpandedPlanIndex}
+        expandedPlanIndex={expandedPlanIndex}
+      />
     </div>
   );
 }

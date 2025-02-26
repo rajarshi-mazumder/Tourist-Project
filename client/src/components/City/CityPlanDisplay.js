@@ -5,7 +5,39 @@ import AttractionCarousel from "./AttractionCarousel.js";
 import FoodCarousel from "./FoodCarousel.js";
 import { useCityImage } from "../../context/CityImageContext.js";
 
-const CityPlanDisplay = ({ cityPlan }) => {
+const CityPlanDisplay = ({
+  tripPlans,
+  setExpandedPlanIndex,
+  expandedPlanIndex,
+}) => {
+  return (
+    <div className="city-plan-container">
+      <h2>Trip Plans</h2>
+      {tripPlans.map((plan, index) => {
+        return (
+          <div key={index} className="city-plan-item">
+            <button
+              onClick={() =>
+                setExpandedPlanIndex(expandedPlanIndex === index ? null : index)
+              }
+            >
+              {plan.city}
+              {expandedPlanIndex === index ? "▲" : "▼"}
+            </button>
+            {expandedPlanIndex === index && (
+              <>
+                <PlanDetails cityPlan={plan} key={index} />
+                <button onClick={() => setExpandedPlanIndex(null)}>▲</button>
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const PlanDetails = ({ cityPlan }) => {
   const { cityImages, setCityImages } = useCityImage();
 
   useEffect(() => {
@@ -38,7 +70,7 @@ const CityPlanDisplay = ({ cityPlan }) => {
   }
 
   return (
-    <div className="city-plan-container">
+    <div className="city-plan-details">
       <h2>{cityPlan.city}</h2>
       <p>Trip Duration: {cityPlan.trip_duration}</p>
       <p>{cityPlan.city_description}</p>
