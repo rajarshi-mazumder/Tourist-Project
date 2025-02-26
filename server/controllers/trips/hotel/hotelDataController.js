@@ -1,5 +1,8 @@
 const axios = require("axios");
 const { searchPlacesAndGetDetails } = require("../../maps/mapsController");
+const {
+  searchHotelPriceWithGoogle,
+} = require("../../googleSearch/googleSearchController");
 
 async function getHotels(location, keyword) {
   try {
@@ -51,6 +54,7 @@ async function getHotelsFromMaps(req, res) {
   try {
     const { keyword, location } = req.body;
     const result = await searchPlacesAndGetDetails(keyword, location);
+
     return res.json(result);
   } catch (error) {
     console.error("Error in searchPlacesAndDetailsHandler:", error);

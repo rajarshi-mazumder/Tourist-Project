@@ -4,6 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const aiController = require("../../aicontrollers/aiController");
 const parseJsonFromGemini = require("../../aicontrollers/geminiController");
+const {
+  searchHotelPriceWithGoogle,
+} = require("../googleSearch/googleSearchController");
 
 /**
  * Searches for places with a keyword in a given location and fetches detailed info.
@@ -146,6 +149,7 @@ const searchPlacesAndGetDetails = async (
     }
 
     const placeDetailsPromises = places.map(async (place, index) => {
+      const x = await searchHotelPriceWithGoogle(place.name, location);
       const placeDetails = await getPlaceDetailsNewAPI(place.place_id);
       placeDetails.place_id = places[index].place_id;
       return placeDetails;
