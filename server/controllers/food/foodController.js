@@ -1,4 +1,4 @@
-const { getOpenAIChatResponse } = require('../../services/openai');
+const { getDeepseekChatResponse } = require('../../services/deepseek');
 const { formatLocation } = require('../../utils/location');
 const axios = require('axios');
 const crypto = require('crypto');
@@ -84,7 +84,7 @@ Below are the details for each place:
 async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
   let llmPrompt = `${prompt}\n\n
 For each of the following places, please provide the following in simple, friendly, casual English:
-1. A concise description (1-4 sentences) summarizing the restaurant’s ambiance, unique features, and overall appeal.
+1. A concise description (2-4 sentences) in very simple friendly casual english, summarizing the restaurant’s ambiance, unique features, and overall appeal.
 Find online from reviews, articles, maps reviews, place reviews etc and give a detailed but conbcise description.
 2. The primary type of cuisine (e.g., Japanese, Italian, ramen, sushi, etc.) based on the available information.
 3. A seating availability estimate for right now – considering current conditions (such as time of day, holiday etc)
@@ -96,7 +96,24 @@ Find online from reviews, articles, maps reviews, place reviews etc and give a d
  6. Show me your detailed thinking and reasoning for each place, like for eg 'the reviews of this place mentioned this place has english menu,
  so i recommend this place'
 
-Do not skip any places, i need the json result for all ${detailedPlaces.length} restaurants
+
+ EXAMPLE JSON OUTPUT:
+ 
+ [{  "name": "Ramen Shop",
+   "id": "1234567890",
+   "description": "This is a description of the restaurant",
+   "cuisine": "Italian",
+   "seating": "Seating available now",
+   "ranking": 1,
+   "reservation_required": "No reservation is ok",
+   "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place",
+   "ranking": {
+    "rank": 1,
+    "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place"
+   },
+ },]
+
+Do not skip any places, i need the result as a JSON array for all ${detailedPlaces.length} restaurants
 Below are the details for each place:
 \n\n`;
 
@@ -169,7 +186,7 @@ async function findFoodOptions(req, res) {
   const llmPrompt = await buildFindFoodOptionsPrompt(prompt, formattedLocation, detailedPlaces);
 
   // Call OpenAI
-  const openaiResponse = await getOpenAIChatResponse(llmPrompt);
+  const openaiResponse = await getDeepseekChatResponse(llmPrompt);
   if (!openaiResponse || openaiResponse.trim() === "") {
     console.error("OpenAI returned an empty response:", openaiResponse);
     return res.status(500).json({ error: "OpenAI returned an empty response" });
@@ -315,7 +332,7 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
     // console.log(llmPrompt);
     // console.log('---------------------------------------------------------------');
     // Call OpenAI
-    const openaiResponse = await getOpenAIChatResponse(llmPrompt);
+    const openaiResponse = await getDeepseekChatResponse(llmPrompt);
     if (!openaiResponse || openaiResponse.trim() === "") {
       console.error("OpenAI returned an empty response:", openaiResponse);
       return res.status(500).json({ error: "OpenAI returned an empty response" });
