@@ -43,18 +43,7 @@ function GoogleMapsHotelCard({ accommodation }) {
       {accommodation.price_level && (
         <p>Price Level: {accommodation.price_level}</p>
       )}
-      {accommodation.reviews && accommodation.reviews.length > 0 && (
-        <div>
-          <p>Reviews:</p>
-          {accommodation.reviews.map((review, index) => (
-            <div key={index}>
-              <p>Author: {review.author}</p>
-              <p>Rating: {review.rating}</p>
-              <p>Text: {review.text}</p>
-            </div>
-          ))}
-        </div>
-      )}
+
       {accommodation.delivery && <p>Delivery: Yes</p>}
       {accommodation.dine_in && <p>Dine-in: Yes</p>}
       {accommodation.serves_beer && <p>Serves Beer: Yes</p>}
@@ -65,8 +54,70 @@ function GoogleMapsHotelCard({ accommodation }) {
       {accommodation.serves_wine && <p>Serves Wine: Yes</p>}
       {accommodation.takeout && <p>Takeout: Yes</p>}
       {accommodation.reservable && <p>Reservable: Yes</p>}
-      {accommodation.ai_summary && (
-        <p>AI Summary: {accommodation.ai_summary}</p>
+      {accommodation.description && (
+        <p>Description: {accommodation.description}</p>
+      )}
+      {accommodation.formatted_phone_number && (
+        <p>Phone: {accommodation.formatted_phone_number}</p>
+      )}
+      {accommodation.website && (
+        <p>
+          Website: <a href={accommodation.website}>{accommodation.website}</a>
+        </p>
+      )}
+      {accommodation.price_level && (
+        <p>Price Level: {accommodation.price_level}</p>
+      )}
+      {accommodation.serves_beer && (
+        <p>Serves Beer: {accommodation.serves_beer ? "Yes" : "No"}</p>
+      )}
+      {accommodation.serves_breakfast && (
+        <p>Serves Breakfast: {accommodation.serves_breakfast ? "Yes" : "No"}</p>
+      )}
+      {accommodation.serves_dinner && (
+        <p>Serves Dinner: {accommodation.serves_dinner ? "Yes" : "No"}</p>
+      )}
+      {accommodation.serves_lunch && (
+        <p>Serves Lunch: {accommodation.serves_lunch ? "Yes" : "No"}</p>
+      )}
+      {accommodation.serves_vegetarian_food && (
+        <p>Vegetarian: {accommodation.serves_vegetarian_food ? "Yes" : "No"}</p>
+      )}
+      {accommodation.serves_wine && (
+        <p>Serves Wine: {accommodation.serves_wine ? "Yes" : "No"}</p>
+      )}
+      {accommodation.takeout && (
+        <p>Takeout: {accommodation.takeout ? "Yes" : "No"}</p>
+      )}
+      {accommodation.delivery && (
+        <p>Delivery: {accommodation.delivery ? "Yes" : "No"}</p>
+      )}
+      {accommodation.dine_in && (
+        <p>Dine-in: {accommodation.dine_in ? "Yes" : "No"}</p>
+      )}
+      {accommodation.reservable && (
+        <p>Reservable: {accommodation.reservable ? "Yes" : "No"}</p>
+      )}
+      {accommodation.editorial_summary &&
+        accommodation.editorial_summary.overview && (
+          <p>Summary: {accommodation.editorial_summary.overview}</p>
+        )}
+
+      {accommodation.cuisine && <p>Cuisine: {accommodation.cuisine}</p>}
+      {accommodation.seating && <p>Seating: {accommodation.seating}</p>}
+      {accommodation.reservation_required && (
+        <p>Reservation Required: {accommodation.reservation_required}</p>
+      )}
+      {accommodation.ranking && (
+        <p>
+          Ranking: {accommodation.ranking.rank} - {accommodation.ranking.reason}
+        </p>
+      )}
+      {accommodation.walking_distance && (
+        <p>Walking Distance: {accommodation.walking_distance}</p>
+      )}
+      {accommodation.walking_duration && (
+        <p>Walking Duration: {accommodation.walking_duration}</p>
       )}
     </div>
   );
