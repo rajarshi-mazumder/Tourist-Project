@@ -7,8 +7,9 @@ const {PlacesClient} = require('@googlemaps/places').v1;
 const { Client } = require('@googlemaps/google-maps-services-js');
 const client = new Client({});
 // Instantiates a client
-const placesClient = new PlacesClient();
+const placesClient = new Client();
 const {getGeminiFlashResponse} = require('../../services/gemini');
+const { getOpenAIChatResponse } = require('../../services/openai');
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 async function getDistanceAndWalkingTime(origin, destination) {
@@ -97,21 +98,6 @@ Find online from reviews, articles, maps reviews, place reviews etc and give a d
  so i recommend this place'
 
 
- EXAMPLE JSON OUTPUT:
- 
- [{  "name": "Ramen Shop",
-   "id": "1234567890",
-   "description": "This is a description of the restaurant",
-   "cuisine": "Italian",
-   "seating": "Seating available now",
-   "ranking": 1,
-   "reservation_required": "No reservation is ok",
-   "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place",
-   "ranking": {
-    "rank": 1,
-    "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place"
-   },
- },]
 
 Do not skip any places, i need the result as a JSON array for all ${detailedPlaces.length} restaurants
 Below are the details for each place:
@@ -221,13 +207,12 @@ async function findFoodOptions(req, res) {
         reviews: place.reviews || null,
         id: place.id || null,
         description: llmResult.description || 'N/A',
-        cuisine: llmResult.cuisine || 'N/A',
-        seating: llmResult.seating || 'Uncertain',
+        cuisine: llmResult.cuisine || 'Uncertain',
         reservation_required: llmResult.reservation_required || 'N/A',
         ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
         walking_distance: place.walking_distance || 'N/A',
         walking_duration: place.walking_duration || 'N/A',
-        price_level: place.price_level || null,
+		price_level: place.price_level || null,
         reservable: place.reservable || null,
         user_ratings_total: place.user_ratings_total || null,
         delivery: place.delivery || null,
@@ -242,10 +227,20 @@ async function findFoodOptions(req, res) {
   }
 }
 
+async function getPlaceDetails(placeId) {
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,photo,review,price_level,reservable,user_ratings_total,delivery,dine_in&key=${googleMapsApiKey}`;
+  try {
+    const detailsResponse = await axios.get(detailsUrl);
+    return detailsResponse.data.result;
+  } catch (error) {
+    console.error('Error fetching place details:', error);
+    return null;
+  }
+}
+
 async function findFoodOptionsNewPlacesAPI(req, res) {
   // Initialize the Google Maps client with your API key
   console.log("This is new places api");
-  const placesClient = new Client({});
   const origin = '35.6561224,139.7529898';
   // Coordinates from your example (Tokyo area)
   const latitude = 35.6561224;
@@ -273,8 +268,6 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
   };
 
   try {
-
-
     let allPlaces = [];
     let nextPageToken = null;
 
@@ -299,40 +292,36 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
       if (nextPageToken) await new Promise(resolve => setTimeout(resolve, 2000));
     } while (false); // Max 20 results then loop breaks
 
-    // Make the Text Search request
-    // const response = await placesClient.textSearch({ params: request });
-    //   const response = await placesClient.placesNearby({ params: nearbyRequest });
-
-    // const places = response.data.results;
-    // // console.log(places);
-    // // Return the raw JSON response
-    // const rawJson = response.data;
-
     const enhancedResults = await Promise.all(
       allPlaces.map(async (place) => {
+        
+		
+
         const { lat, lng } = place.geometry.location;
         const destination = `${lat},${lng}`;
         
         // Use your function to get distance and walking time
         const { distance, duration } = await getDistanceAndWalkingTime(origin, destination);
         
+        const placeDetails = await getPlaceDetails(place.place_id);
+        
         return {
-          ...place, // Keep all original place data
+          ...place,
+          ...placeDetails,
           distance, // e.g., "200 m"
           walkingTime: duration // e.g., "3 mins"
         };
       })
     );
-
-    // console.log(rawJson);
-    console.log('Adding distance and time');
+    console.log("********************************************************");
+    console.log('Enhanced results after adding distance and time');
     console.log(enhancedResults);
+    console.log("********************************************************");
+
     // console.log('---------------------------------------------------------------');
     const llmPrompt = await buildFindFoodOptionsPrompt("", enhancedResults);
-    // console.log(llmPrompt);
-    // console.log('---------------------------------------------------------------');
     // Call OpenAI
-    const openaiResponse = await getDeepseekChatResponse(llmPrompt);
+    const openaiResponse = await getOpenAIChatResponse(llmPrompt);
     if (!openaiResponse || openaiResponse.trim() === "") {
       console.error("OpenAI returned an empty response:", openaiResponse);
       return res.status(500).json({ error: "OpenAI returned an empty response" });
@@ -346,9 +335,6 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
         console.error('OpenAI response is not a JSON array:', llmResults);
         return res.status(500).json({ error: 'OpenAI response is not a JSON array' });
       }
-  
- 
-  
       const combinedResults = enhancedResults.map(place => {
         const llmResult = llmResults.restaurants.find(result => result.id === place.place_id) || {};
         return {
@@ -367,19 +353,19 @@ async function findFoodOptionsNewPlacesAPI(req, res) {
           ranking: llmResult.ranking || { rank: 'N/A', reason: 'N/A' },
           walking_distance: place.distance || 'N/A',
           walking_duration: place.walkingTime || 'N/A',
-          price_level: place.price_level || null,
+		  price_level: place.price_level || null,
           // reservable: place.reservable || null,
           user_ratings_total: place.user_ratings_total || null,
           // delivery: place.delivery || null,
-          // dine_in: place.dine_in || null,
+          dine_in: place.dine_in || null,
         };
       });
       console.log("Combined Results:", combinedResults);
       res.send(combinedResults);
-    } catch (error) {
-      console.error('Error parsing OpenAI response:', error);
-      res.status(500).json({ error: 'Failed to parse OpenAI response' });
-    }
+        } catch (error) {
+          console.error('Error parsing OpenAI response:', error);
+          res.status(500).json({ error: 'Failed to parse OpenAI response' });
+        }
 
     // res.json(enhancedResults); // Send the enhanced results back in the response
     // res.json(rawJson); // Send the raw JSON back in the response
