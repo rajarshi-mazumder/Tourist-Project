@@ -84,9 +84,12 @@ Below are the details for each place:
 
 async function buildFindFoodOptionsPrompt(prompt = "", detailedPlaces) {
   let llmPrompt = `${prompt}\n\n
-For each of the following places, please provide the following in simple, friendly, casual English:
-1. A concise description (2-4 sentences) in very simple friendly casual english, summarizing the restaurant’s ambiance, unique features, and overall appeal.
-Find online from reviews, articles, maps reviews, place reviews etc and give a detailed but conbcise description.
+For each of the following places,  Go through all the details of the place thoroughly, 
+including reviews, photos, and other relevant information, please provide the following:
+1. Describe the place (2-4 sentences) in very simple friendly casual english, 
+summarizing the restaurant’s ambiance, unique features, and overall appeal.
+Find online from reviews, articles, maps reviews, place reviews etc 
+and give a detailed but conbcise description.
 2. The primary type of cuisine (e.g., Japanese, Italian, ramen, sushi, etc.) based on the available information.
 3. A seating availability estimate for right now – considering current conditions (such as time of day, holiday etc)
  – indicating if the restaurant is usually crowded (i.e. seats are hard to come by) or if it generally has seating available at this time
