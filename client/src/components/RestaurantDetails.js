@@ -1,9 +1,10 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { RestaurantContext } from '../context/RestaurantContext';
 
 export default function RestaurantDetails() {
-  const location = useLocation();
-  const { restaurant } = location.state;
+  const { placeId } = useParams();
+  const { restaurant } = useContext(RestaurantContext);
 
   if (!restaurant) {
     return <div>No restaurant details found.</div>;

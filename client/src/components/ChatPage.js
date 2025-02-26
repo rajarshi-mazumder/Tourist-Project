@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RestaurantContext } from '../context/RestaurantContext';
 
 export default function ChatPage() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
   const navigate = useNavigate();
+  const { setRestaurant } = useContext(RestaurantContext);
 
   useEffect(() => {
     const getLocation = () => {
@@ -53,7 +55,8 @@ export default function ChatPage() {
   };
 
   const handleRestaurantClick = (place) => {
-    navigate(`/restaurant/${place.place_id}`, { state: { restaurant: place } });
+    setRestaurant(place);
+    navigate(`/restaurant/${place.place_id}`);
   };
 
   const displayBool = (value) => {
