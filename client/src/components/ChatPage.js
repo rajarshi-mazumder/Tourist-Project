@@ -104,7 +104,9 @@ export default function ChatPage() {
               onClick={() => handleRestaurantClick(place)}
             >
               <h3>{place.name}</h3>
-              {place.photos && place.photos.length > 0 && (
+              {place.thumbnail_img ? (
+                <img src={place.thumbnail_img} alt={place.name} className="restaurant-image" style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+              ) : (place.photos && place.photos.length > 0 && (
                 <Slider {...sliderSettings}>
                   {place.photos.map((photo, photoIndex) => (
                     <div key={photoIndex}>
@@ -112,7 +114,7 @@ export default function ChatPage() {
                     </div>
                   ))}
                 </Slider>
-              )}
+              ))}
               <p><strong>Address:</strong> {place.formatted_address}</p>
               <p><strong>Description:</strong> {place.description}</p>
               <p><strong>Cuisine:</strong>{(place.cuisine !== null && place.cuisine !== undefined) ? place.cuisine : "N/A"}</p>

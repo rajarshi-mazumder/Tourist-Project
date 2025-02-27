@@ -101,6 +101,11 @@ function appendLLMDataToPlacesData(enhancedResults, llmResponse){
             llmResults.restaurants.find(
             (result) => result.id === place.place_id,
             ) || {};
+        let thumbnail_img = null;
+        if (place.photos && place.photos.length > 0) {
+            const photoReference = place.photos[0].photo_reference;
+            thumbnail_img = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleMapsApiKey}`;
+        }
         return {
             formatted_address: place.vicinity || null,
             formatted_phone_number: place.formatted_phone_number || null,
@@ -122,6 +127,7 @@ function appendLLMDataToPlacesData(enhancedResults, llmResponse){
             user_ratings_total: place.user_ratings_total || null,
             // delivery: place.delivery || null,
             dine_in: place.dine_in || null,
+            thumbnail_img: thumbnail_img,
         };
         });
         console.log("Combined Results:", combinedResults);
@@ -132,7 +138,7 @@ function appendLLMDataToPlacesData(enhancedResults, llmResponse){
         console.error("Error parsing LLM response:", error);
         // res.status(500).json({ error: "Failed to parse LLM response" });
     }
-} 
+}
 
 //Main service function to handle incoming request
 async function foodPlacesOptionsService(origin, foodCategory){
