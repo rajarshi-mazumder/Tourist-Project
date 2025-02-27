@@ -10,6 +10,8 @@ export default function ChatPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { setRestaurant, places, setPlaces } = useContext(RestaurantContext);
+  const [geminiRequest, setGeminiRequest] = useState('');
+  const [geminiResponse, setGeminiResponse] = useState('');
 
   useEffect(() => {
     const getLocation = () => {
@@ -44,7 +46,7 @@ export default function ChatPage() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Response from API:", data);
-          setPlaces(data); // Update places in context
+          setPlaces(data);
         })
         .catch((err) => {
           console.error('Error:', err);
@@ -53,6 +55,29 @@ export default function ChatPage() {
     } else {
       console.error('Location not available');
       setError('Location not available');
+    }
+  };
+
+  const handleGeminiSend = async () => {
+    try {
+      const response = await fetch('http://localhost/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: geminiRequest }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setGeminiResponse(data.response);
+    } catch (error) {
+      console.error('Error sending request to Gemini:', error);
+      setError(error.message);
+      setGeminiResponse('Error occurred while fetching response.');
     }
   };
 
@@ -86,15 +111,25 @@ export default function ChatPage() {
       <button onClick={() => handleSend('restaurants')}>Restaurants</button>
       <button onClick={() => handleSend('ハンバーガー')}>HamBurger</button>
       <button onClick={() => handleSend('Burger')}>Burger</button>
-
       <button onClick={() => handleSend('ピザ')}>Pizza</button>
       <button onClick={() => handleSend('izakaya')}>Izakaya</button>
       <button onClick={() => handleSend('italian_restaurant')}>Italian</button>
       <button onClick={() => handleSend('japanese')}>Japanese</button>
 
+      <div>
+        <input
+          type="text"
+          value={geminiRequest}
+          onChange={(e) => setGeminiRequest(e.target.value)}
+          placeholder="Enter your Gemini request"
+        />
+        <button onClick={handleGeminiSend}>Send to Gemini</button>
+        {geminiResponse && <p>Gemini Response: {geminiResponse}</p>}
+      </div>
+
       <div className="restaurant-container">
         <h2>Restaurants:</h2>
-        {places.map((place, index) => { // Use places from context
+        {places.map((place, index) => {
           console.log("Place Photos:", place.photos);
           return (
             <div
