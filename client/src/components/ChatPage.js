@@ -105,12 +105,12 @@ export default function ChatPage() {
             >
               <h3>{place.name}</h3>
               {place.thumbnail_img ? (
-                <img src={place.thumbnail_img} alt={place.name} className="restaurant-image" style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+                <img src={place.thumbnail_img} alt={place.name} className="restaurant-image" style={{ width: '300px', height: '200px', objectFit: 'cover' }} />
               ) : (place.photos && place.photos.length > 0 && (
                 <Slider {...sliderSettings}>
                   {place.photos.map((photo, photoIndex) => (
                     <div key={photoIndex}>
-                      <img src={photo} alt={place.name} className="restaurant-image" style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+                      <img src={photo} alt={place.name} className="restaurant-image" style={{ width: '300px', height: '200px', objectFit: 'cover' }} />
                     </div>
                   ))}
                 </Slider>
