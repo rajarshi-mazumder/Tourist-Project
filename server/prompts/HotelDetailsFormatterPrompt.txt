@@ -1,0 +1,24 @@
+You are an AI that extracts structured data from a given response and formats it into a valid JSON object.  
+
+**Instructions:**  
+- Return **only** a JSON object, no explanations.  
+- Use the following JSON schema strictly:  
+
+```json
+{
+  "hotel_name": "",
+  "price_per_night": "",
+  "currency": "JPY",
+  "total_price": "",
+  "nights": "",
+  "address": "",
+  "rating": "",
+  "reviews": [],
+  "description": "",
+  "booking_link": "",
+  "photos": [],
+  "amenities": []
+}
+
+
+Extract it from the following data:

@@ -1,15 +1,14 @@
-
-const express = require('express');
-const cors = require('cors');
-const tripRoutes = require('./routes/tripRoutes.js')
-const chatRoutes = require('./routes/chatRoutes.js');
+const express = require("express");
+const cors = require("cors");
+const tripRoutes = require("./routes/tripRoutes.js");
+const chatRoutes = require("./routes/chatRoutes.js");
 const axios = require("axios");
-const parseJsonFromGemini = require('./aicontrollers/geminiController.js');
+const parseJsonFromGemini = require("./aicontrollers/geminiController.js");
 const fs = require("fs");
 const path = require("path");
 const app = express();
 const port = process.env.PORT || 4000;
-require('dotenv').config();
+require("dotenv").config();
 
 // Middleware
 app.use(
@@ -18,14 +17,16 @@ app.use(
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow cookies if needed
   })
-);app.use(express.json());
+);
+app.use(express.json());
 
 // Routes
 app.use("/trip", tripRoutes);
 app.use("/chat", chatRoutes);
 
-const { z } = require('zod');
-const { zodResponseFormat } = require('openai/helpers/zod');
+const { z } = require("zod");
+const { zodResponseFormat } = require("openai/helpers/zod");
+const aiController = require("./aicontrollers/aiController.js");
 
 const hotelSchema = z.object({
   name: z.string(),
@@ -50,7 +51,6 @@ const hotelSchema = z.object({
   price_per_night: z.string(),
 });
 
-
 /**
  * Searches for a hotel using Perplexity API and retrieves details including price, reviews, images, and description.
  * @param {string} hotelName - The name of the hotel (e.g., "Park Hyatt Tokyo").
@@ -60,23 +60,36 @@ const hotelSchema = z.object({
 app.post("/perp", async (req, res) => {
   try {
     const { hotelName, location } = req.body;
-    const promptFilePath = path.join(__dirname, "./prompts/HotelDetailsPrompt.txt");
-    const schemaFilePath = path.join(__dirname, "./schemas/hotelDetailsSchema.json");
+    const promptFilePath = path.join(
+      __dirname,
+      "./prompts/HotelDetailsPrompt.txt"
+    );
+    const schemaFilePath = path.join(
+      __dirname,
+      "./schemas/hotelDetailsSchema.json"
+    );
     const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
-      const PERPLEXITY_API_KEY = "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";
-    
+    const PERPLEXITY_API_KEY =
+      "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";
+
     const promptTemplate = fs.readFileSync(promptFilePath, "utf8");
     const schemaTemplate = JSON.parse(fs.readFileSync(schemaFilePath, "utf8"));
-    
-    const prompt = promptTemplate.replace("{{hotelName}}", hotelName).replace("{{location}}", location);
+
+    const prompt = promptTemplate
+      .replace("{{hotelName}}", hotelName)
+      .replace("{{location}}", location);
     const IndexItemSchema = z.object({
       hotel: z.array(hotelSchema),
     });
     const payload = {
       model: "r1-1776",
       messages: [
-        { role: "system", content: "Be precise and concise." },
-        { role: "user", content: prompt }
+        {
+          role: "system",
+          content:
+            "Respond **only** in JSON format, following the provided schema. Do not include any explanations or additional text.",
+        },
+        { role: "user", content: prompt },
       ],
       // response_format: {
       //   type: "json_object",
@@ -91,63 +104,67 @@ app.post("/perp", async (req, res) => {
         "Content-Type": "application/json",
       },
     });
+    const reformattedData = await reformatHotelDetailsData({
+      res: response.data.choices[0].message.content,
+    });
 
-    res.json(response.data.choices[0].message.content);
+    res.json(reformattedData);
+    // res.json(response.data.choices[0].message.content);
   } catch (error) {
     console.error("Error querying Perplexity API:", error);
     res.status(500).json({ error: "Failed to retrieve hotel details" });
   }
 });
 
-
-app.get("/michael-jordan", async (req, res) => {
+const reformatHotelDetailsData = async ({ res }) => {
   try {
-      const PERPLEXITY_API_KEY = "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";
+    const task = "trips";
+    const hotelDetailsResponseFormatterPromptPath = path.resolve(
+      __dirname,
+      "./prompts/HotelDetailsFormatterPrompt.txt"
+    );
+    const hotelDetailsFormatterPrompt = fs.readFileSync(
+      hotelDetailsResponseFormatterPromptPath,
+      "utf-8"
+    );
+    const prompt = hotelDetailsFormatterPrompt + res;
 
-    const payload = {
-      model: "sonar",
-      messages: [
-        { role: "system", content: "Be precise and concise." },
-        {
-          role: "user",
-          content:
-            "Tell me about Michael Jordan. Please output a JSON object containing the following fields: first_name, last_name, year_of_birth, num_seasons_in_nba. ",
-        },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          schema: {
-            type: "object",
-            properties: {
-              first_name: { type: "string" },
-              last_name: { type: "string" },
-              year_of_birth: { type: "integer" },
-              num_seasons_in_nba: { type: "integer" },
-            },
-            required: ["first_name", "last_name", "year_of_birth", "num_seasons_in_nba"],
-          },
-        },
-      },
-    };
+    let responseText;
+    try {
+      responseText = await aiController.generateAIResponse(prompt, task);
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      return res
+        .status(500)
+        .json({ message: "Failed to generate trip", error: error.message });
+    }
+    console.log("RESSPPPP", responseText);
+    try {
+      try {
+        let parsedResponse = parseJsonFromGemini(responseText);
 
-    const response = await axios.post("https://api.perplexity.ai/chat/completions", payload, {
-      headers: {
-        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    res.json(response.data.choices[0].message.content);
+        return parsedResponse;
+      } catch (e) {
+        console.error("Error extracting content from AI response:", e);
+        return res
+          .status(500)
+          .json({ message: "Failed to extract content", error: e.message });
+      }
+    } catch (parseError) {
+      console.error("Error parsing or transforming AI response:", parseError);
+      return res.status(500).json({
+        message: "Failed to process AI response",
+        error: parseError.message,
+      });
+    }
   } catch (error) {
-    console.error("Error fetching data:", error.response ? error.response.data : error.message);
-    res.status(500).json({ error: "Failed to fetch data" });
+    console.error("Error generating city plan:", error);
+    return res.status(500).json({
+      message: "Failed to generate city plan",
+      error: error.message,
+    });
   }
-});
-
-
-
-
+};
 // Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

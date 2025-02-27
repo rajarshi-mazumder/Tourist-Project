@@ -177,9 +177,6 @@ const searchHotelPriceWithGoogle = async ({
   }
 };
 
-
-
-
 module.exports = {
   googleSearchController,
   searchImagesWithGoogle,
