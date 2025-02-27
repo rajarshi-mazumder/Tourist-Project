@@ -177,18 +177,8 @@ const searchHotelPriceWithGoogle = async ({
   }
 };
 
-// Example Usage
-searchHotelPriceWithGoogle({
-  hotel_name: "Park Hyatt Tokyo",
-  hotel_address: "Shinjuku, Tokyo",
-})
-  .then((data) => console.log(data))
-  .catch((error) => console.error(error));
 
-// Example Usage
-// searchHotelPriceWithGoogle({ hotel_name: "Park Hyatt Tokyo", hotel_address: "Shinjuku, Tokyo" })
-//   .then(data => console.log(data))
-//   .catch(error => console.error(error));
+
 
 module.exports = {
   googleSearchController,

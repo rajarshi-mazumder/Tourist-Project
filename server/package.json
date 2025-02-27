@@ -18,6 +18,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "node_perplexityai": "^1.0.4",
     "openai": "^4.85.1",
     "zod": "^3.24.2"
   }
