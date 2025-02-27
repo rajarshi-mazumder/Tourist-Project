@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const tripRoutes = require('./routes/tripRoutes.js')
@@ -14,6 +13,7 @@ app.use(express.json());
 
 // Routes
 const { getGeminiFlashResponse } = require('./services/gemini.js');
+const { getDeepseekResponse } = require('./services/deepseek.js');
 
 app.use("/trip", tripRoutes);
 app.use("/food", foodRoutes);
@@ -22,6 +22,17 @@ app.post('/gemini', async (req, res) => {
   try {
     const prompt = req.body.prompt;
     const response = await getGeminiFlashResponse(prompt);
+    res.json({ response });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/deepseek', async (req, res) => {
+  try {
+    const prompt = req.body.prompt;
+    const response = await getDeepseekResponse(prompt);
     res.json({ response });
   } catch (error) {
     console.error('Error:', error);

@@ -43,14 +43,12 @@ const IndexItemSchema = z.object({
   restaurants: z.array(RestaurantSchema),
 });
 
-async function getDeepseekChatResponse(prompt) {
+async function getDeepseekResponse(prompt) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "deepseek-chat", // Replace with the actual Deepseek model
+      model: "deepseek-reasoner", // Replace with the actual Deepseek model
       messages: [{ role: "user", content: prompt }],
-      response_format: {
-        'type': 'json_object'
-    },
+      
 
     });
      // Log the token usage details
@@ -62,4 +60,4 @@ async function getDeepseekChatResponse(prompt) {
   }
 }
 
-module.exports = { getDeepseekChatResponse };
+module.exports = { getDeepseekResponse };

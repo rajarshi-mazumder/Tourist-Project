@@ -10,6 +10,8 @@ export default function ChatPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { setRestaurant, places, setPlaces } = useContext(RestaurantContext);
+  const [deepseekRequest, setDeepseekRequest] = useState('');
+  const [deepseekResponse, setDeepseekResponse] = useState('');
   const [geminiRequest, setGeminiRequest] = useState('');
   const [geminiResponse, setGeminiResponse] = useState('');
 
@@ -55,6 +57,29 @@ export default function ChatPage() {
     } else {
       console.error('Location not available');
       setError('Location not available');
+    }
+  };
+
+  const handleDeepseekSend = async () => {
+    try {
+      const response = await fetch('http://localhost/deepseek', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: deepseekRequest }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setDeepseekResponse(data.response);
+    } catch (error) {
+      console.error('Error sending request to Deepseek:', error);
+      setError(error.message);
+      setDeepseekResponse('Error occurred while fetching response.');
     }
   };
 
@@ -115,6 +140,17 @@ export default function ChatPage() {
       <button onClick={() => handleSend('izakaya')}>Izakaya</button>
       <button onClick={() => handleSend('italian_restaurant')}>Italian</button>
       <button onClick={() => handleSend('japanese')}>Japanese</button>
+
+      <div>
+        <input
+          type="text"
+          value={deepseekRequest}
+          onChange={(e) => setDeepseekRequest(e.target.value)}
+          placeholder="Enter your Deepseek request"
+        />
+        <button onClick={handleDeepseekSend}>Send to Deepseek</button>
+        {deepseekResponse && <p>Deepseek Response: {deepseekResponse}</p>}
+      </div>
 
       <div>
         <input
