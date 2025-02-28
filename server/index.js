@@ -16,13 +16,12 @@ app.use(express.json());
 const { getGeminiFlashResponse } = require('./services/gemini.js');
 const { getDeepseekResponse } = require('./services/deepseek.js');
 
+const chatController = require('./controllers/chat/chatController.js');
+
 app.use("/trip", tripRoutes);
 app.use("/food", foodRoutes);
-
-
-
-app.use('/llm', llmRoutes);
-
+app.use("/llm", llmRoutes);
+app.post('/chat', chatController.handleClassifiedPrompt);
 
 // Start server
 app.listen(port, () => {

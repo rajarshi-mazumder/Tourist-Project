@@ -45,44 +45,24 @@ User Query: "{userPrompt}"
     }
   };
 
-
   const handleDeepseekSend = async () => {
-    try {
-      const category = await classifyPrompt(deepseekRequest);
-      const modifiedPrompt = `${deepseekRequest}\nCategory: ${category}`;
-
-      const response = await fetch('http://localhost/llm/deepseek', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: modifiedPrompt }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setDeepseekResponse(data.response);
-    } catch (error) {
-      console.error('Error sending request to Deepseek:', error);
-      setError(error.message);
-      setDeepseekResponse('Error occurred while fetching response.');
-    }
+    handleSend(deepseekRequest, "Deepseek");
   };
 
   const handleGeminiSend = async () => {
-    try {
-      const category = await classifyPrompt(geminiRequest);
-      const modifiedPrompt = `${geminiRequest}\nCategory: ${category}`;
+    handleSend(geminiRequest, "Gemini");
+  };
 
-      const response = await fetch('http://localhost/llm/gemini', {
+  const handleSend = async (userPrompt, model) => {
+    try {
+      const category = await classifyPrompt(userPrompt);
+
+      const response = await fetch('http://localhost/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: modifiedPrompt }),
+        body: JSON.stringify({ prompt: userPrompt, promptType: category }),
       });
 
       if (!response.ok) {
@@ -90,11 +70,19 @@ User Query: "{userPrompt}"
       }
 
       const data = await response.json();
-      setGeminiResponse(data.response);
+      if (model === "Deepseek") {
+        setDeepseekResponse(data.response);
+      } else {
+        setGeminiResponse(data.response);
+      }
     } catch (error) {
-      console.error('Error sending request to Gemini:', error);
+      console.error('Error sending request:', error);
       setError(error.message);
-      setGeminiResponse('Error occurred while fetching response.');
+      if (model === "Deepseek") {
+        setDeepseekResponse('Error occurred while fetching response.');
+      } else {
+        setGeminiResponse('Error occurred while fetching response.');
+      }
     }
   };
 
