@@ -24,7 +24,7 @@ User Query: "{userPrompt}"
     const prompt = classificationPrompt.replace('{userPrompt}', userPrompt);
 
     try {
-      const response = await fetch('http://localhost/gemini', { // Using Gemini for classification
+      const response = await fetch('http://localhost/llm/gemini', { // Using Gemini for classification
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ User Query: "{userPrompt}"
       const category = await classifyPrompt(deepseekRequest);
       const modifiedPrompt = `${deepseekRequest}\nCategory: ${category}`;
 
-      const response = await fetch('http://localhost/deepseek', {
+      const response = await fetch('http://localhost/llm/deepseek', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ User Query: "{userPrompt}"
       const category = await classifyPrompt(geminiRequest);
       const modifiedPrompt = `${geminiRequest}\nCategory: ${category}`;
 
-      const response = await fetch('http://localhost/gemini', {
+      const response = await fetch('http://localhost/llm/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
