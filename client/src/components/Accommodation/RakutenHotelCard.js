@@ -1,10 +1,32 @@
 import React from "react";
 import { BOOKING_COM_URL } from "../../constants";
 
-function RakutenHotelCard({ accommodation }) {
+function RakutenHotelCard({
+  accommodation,
+  city,
+  fetchHotelPrice,
+  hotelPrices,
+}) {
+  const hotelName = accommodation.hotelName;
+  const priceData = hotelPrices[hotelName];
+
   return (
     <div className="carousel-card">
-      <h3>{accommodation.hotelName}</h3>
+      <h3>{accommodation.hotelName}
+      {priceData ? (
+        priceData.error ? (
+          <p>{priceData.error}</p>
+        ) : (
+          <p>
+            Price: {priceData.price_per_night} {priceData.currency}
+          </p>
+        )
+      ) : (
+        <button onClick={() => fetchHotelPrice(hotelName, city)}>
+          Show Price
+        </button>
+      )}
+      </h3>
       <img
         src={accommodation.hotelImageUrl}
         alt={accommodation.hotelName}

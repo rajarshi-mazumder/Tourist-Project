@@ -1,10 +1,32 @@
 import React from "react";
 import { BOOKING_COM_URL } from "../../constants";
 
-function GoogleMapsHotelCard({ accommodation }) {
+function GoogleMapsHotelCard({
+  accommodation,
+  city,
+  fetchHotelPrice,
+  hotelPrices,
+}) {
+  const hotelName = accommodation.name;
+  const priceData = hotelPrices[hotelName];
+
   return (
     <div className="carousel-card">
-      <h3>{accommodation.name}</h3>
+      <h3>{accommodation.name}
+      {priceData ? (
+        priceData.error ? (
+          <p>{priceData.error}</p>
+        ) : (
+          <p>
+            Price: {priceData.price_per_night} {priceData.currency}
+          </p>
+        )
+      ) : (
+        <button onClick={() => fetchHotelPrice(hotelName, city)}>
+          Show Price
+        </button>
+      )}
+      </h3>
       {accommodation.photos && accommodation.photos.length > 0 && (
         <img
           src={accommodation.photos[0]}

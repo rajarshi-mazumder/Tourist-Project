@@ -3,8 +3,12 @@ const { searchPlacesAndGetDetails } = require("../../maps/mapsController");
 const {
   searchHotelPriceWithGoogle,
 } = require("../../googleSearch/googleSearchController");
+const fs = require("fs");
+const path = require("path");
+const aiController = require("../../../aicontrollers/aiController");
 
-async function getHotels(location, keyword) {
+
+async function getHotelsFromRakutenAPI(location, keyword) {
   try {
     const applicationId = process.env.RAKUTEN_APP_ID;
     const encodedCityName = encodeURIComponent(location);
@@ -34,15 +38,14 @@ async function getHotels(location, keyword) {
 
     return hotels;
   } catch (error) {
-    // console.error("🚨 Error fetching hotels:", error.message);
-    throw error;
+    return error;
   }
 }
 
-async function getHotelsFromRakutenAPI(req, res) {
+async function getHotelsFromRakuten(req, res) {
   const { location, keyword } = req.body;
   try {
-    const hotels = await getHotels(keyword, location);
+    const hotels = await getHotelsFromRakutenAPI(keyword, location);
     res.status(200).json(hotels);
   } catch (error) {
     console.error("🚨 Error in getHotelsFromMaps:", error);
@@ -62,4 +65,71 @@ async function getHotelsFromMaps(req, res) {
   }
 }
 
-module.exports = { getHotels, getHotelsFromMaps, getHotelsFromRakutenAPI };
+ const getHotelPriceFromPerplexity = async (req, res) => {
+   const { hotelName, location } = req.body;
+   
+   try {
+     const hotelPriceInfo = await getHotelInfoFromPerplexity(hotelName, location);
+
+     return res.status(200).json(hotelPriceInfo);
+   }
+   catch (error) {
+     console.error("🚨 Error in getHotelPriceFromPerplexity:", error);
+     return res.status(500).json({ message: error.message });
+   }
+};
+
+const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
+const PERPLEXITY_MODEL = "r1-1776";
+
+async function getHotelInfoFromPerplexity(hotelName, location) {
+  try {
+    const promptFilePath = path.join(
+      __dirname,
+      "../../../prompts/HotelDetailsPrompt.txt"
+    );
+
+    const perplexityApiKey = process.env.PERPLEXITY_API_KEY;
+    if (!perplexityApiKey) {
+      throw new Error("Perplexity API key is missing in environment variables.");
+    }
+
+    const promptTemplate = fs.readFileSync(promptFilePath, "utf8");
+
+    const prompt = promptTemplate
+      .replace("{{hotelName}}", hotelName)
+      .replace("{{location}}", location);
+
+    const payload = {
+      model: PERPLEXITY_MODEL,
+      messages: [
+        {
+          role: "system",
+          content:
+            "Respond **only** in JSON format, following the provided schema. Do not include any explanations or additional text.",
+        },
+        { role: "user", content: prompt },
+      ],
+    };
+
+    const response = await axios.post(PERPLEXITY_API_URL, payload, {
+      headers: {
+        Authorization: `Bearer ${perplexityApiKey}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Directly return the content from Perplexity, remove reformatting
+    const hotelDetails = response.data.choices[0].message.content;
+    return hotelDetails;
+
+  } catch (error) {
+    console.error("Error in getHotelInfoFromPerplexity:", error);
+    throw new Error(
+      `Failed to get hotel info from Perplexity: ${error.message}`
+    );
+  }
+}
+
+
+module.exports = { getHotels: getHotelsFromRakutenAPI, getHotelsFromMaps, getHotelsFromRakutenAPI: getHotelsFromRakuten, getHotelPriceFromPerplexity };

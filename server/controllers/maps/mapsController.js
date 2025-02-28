@@ -53,11 +53,6 @@ const searchPlaces = async (
   }
 };
 
-/**
- * Fetches detailed information for a specific place.
- * @param {string} place_id The ID of the place to fetch details for.
- * @returns {Object} Detailed information about the place.
- */
 
 const getPlaceDetailsNewAPI = async (placeId) => {
   const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
@@ -127,14 +122,55 @@ const getPlaceDetailsNewAPI = async (placeId) => {
   }
 };
 
-/**
- * Searches for places with a keyword in a given location and fetches detailed info.
- * @param {string} keyword Search term (e.g., "ramen restaurant", "onsen hotel").
- * @param {string} location Location name (e.g., "Shinjuku, Tokyo").
- * @param {number} radius Search radius in meters (default: 5000).
- * @param {number} maxResults Maximum number of places to return (default: 5).
- * @returns {Array} List of places with full details.
- */
+const getPlaceDetails = async (place_id) => {
+  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+  try {
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,rating,formatted_address,editorial_summary,website,opening_hours,photos,reviews,editorial_summary,price_level,reservable,serves_breakfast,serves_lunch,serves_dinner,serves_beer,serves_wine,serves_vegetarian_food,takeout,delivery,dine_in&key=${GOOGLE_MAPS_API_KEY}`;
+    console.log(`DETAILS URL ${detailsUrl}`);
+
+    const detailsResponse = await axios.get(detailsUrl);
+    const details = detailsResponse.data.result;
+
+    return {
+      name: details.name || "Unknown",
+      formatted_address: details.formatted_address || "No address available",
+      rating: details.rating || "No rating",
+      website: details.website || "Not available",
+      opening_hours: details.opening_hours || "Not available",
+      reviews: details.reviews
+        ? details.reviews.slice(0, 3).map((review) => ({
+            author: review.author_name,
+            rating: review.rating,
+            text: review.text,
+          }))
+        : [],
+      photos: details.photos
+        ? details.photos
+            .slice(0, 5)
+            .map(
+              (photo) =>
+                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photo.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
+            )
+        : [],
+      delivery: details.delivery || false,
+      dine_in: details.dine_in || false,
+      editorial_summary: details.editorial_summary || "Not available",
+      price_level: details.price_level || "Not available",
+      serves_beer: details.serves_beer || false,
+      serves_breakfast: details.serves_breakfast || false,
+      serves_dinner: details.serves_dinner || false,
+      serves_lunch: details.serves_lunch || false,
+      serves_vegetarian_food: details.serves_vegetarian_food || false,
+      serves_wine: details.serves_wine || false,
+      takeout: details.takeout || false,
+      reservable: details.reservable || false,
+    };
+  } catch (error) {
+    console.error("Error fetching place details:", error);
+    return { error: "Failed to fetch place details" };
+  }
+};
+
 const searchPlacesAndGetDetails = async (
   keyword,
   location,
@@ -149,7 +185,6 @@ const searchPlacesAndGetDetails = async (
     }
 
     const placeDetailsPromises = places.map(async (place, index) => {
-      const x = await searchHotelPriceWithGoogle(place.name, location);
       const placeDetails = await getPlaceDetailsNewAPI(place.place_id);
       placeDetails.place_id = places[index].place_id;
       return placeDetails;

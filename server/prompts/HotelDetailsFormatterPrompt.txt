@@ -9,15 +9,6 @@ You are an AI that extracts structured data from a given response and formats it
   "hotel_name": "",
   "price_per_night": "",
   "currency": "JPY",
-  "total_price": "",
-  "nights": "",
-  "address": "",
-  "rating": "",
-  "reviews": [],
-  "description": "",
-  "booking_link": "",
-  "photos": [],
-  "amenities": []
 }
 
 

@@ -10,6 +10,7 @@ function AccommodationCarousel({ accommodations, city }) {
   const [keywords, setKeywords] = useState("");
   const [rakutenHotelData, setRakutenHotelData] = useState(accommodations);
   const [googleMapsHotelData, setGoogleMapsHotelData] = useState([]);
+  const [hotelPrices, setHotelPrices] = useState({});
 
   useEffect(() => {
     setRakutenHotelData(accommodations);
@@ -72,6 +73,37 @@ function AccommodationCarousel({ accommodations, city }) {
     }
   }, [city, keywords, googleMapsHotelData]);
 
+  const fetchHotelPrice = async (hotelName, location) => {
+    try {
+      const response = await fetch("http://localhost:4000/trip/get-hotel-price", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hotelName: hotelName,
+          location: location,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setHotelPrices((prevPrices) => ({
+        ...prevPrices,
+        [hotelName]: data,
+      }));
+    } catch (error) {
+      console.error("Could not fetch price:", error);
+      setHotelPrices((prevPrices) => ({
+        ...prevPrices,
+        [hotelName]: { error: "Could not fetch price" },
+      }));
+    }
+  };
+
   if (!rakutenHotelData) {
     return <div>No accommodations available.</div>;
   }
@@ -93,9 +125,14 @@ function AccommodationCarousel({ accommodations, city }) {
         <button onClick={searchHotels}>Search Hotels</button>
       </div>
       <Carousel responsive={responsive}>
-        {rakutenHotelData?.map((accommodation) => (
+        {!rakutenHotelData && rakutenHotelData?.map((accommodation) => (
           <div key={accommodation.hotelName} className="carousel-item">
-            <RakutenHotelCard accommodation={accommodation} />
+            <RakutenHotelCard
+              accommodation={accommodation}
+              city={city}
+              fetchHotelPrice={fetchHotelPrice}
+              hotelPrices={hotelPrices}
+            />
           </div>
         ))}
       </Carousel>
@@ -107,7 +144,12 @@ function AccommodationCarousel({ accommodations, city }) {
               className="carousel-item"
               style={{ height: "800px" }}
             >
-              <GoogleMapsHotelCard accommodation={accommodation} />
+              <GoogleMapsHotelCard
+                accommodation={accommodation}
+                city={city}
+                fetchHotelPrice={fetchHotelPrice}
+                hotelPrices={hotelPrices}
+              />
             </div>
           ))}
         </Carousel>

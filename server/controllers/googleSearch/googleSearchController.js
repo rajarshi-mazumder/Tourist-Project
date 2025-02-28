@@ -127,58 +127,8 @@ const searchHotelWithGoogle = async ({ q, page = 1, per_page = 10 }) => {
   }
 };
 
-/**
- * Searches for hotel price information using Google Custom Search API.
- * @param {string} hotel_name - The name of the hotel.
- * @param {string} hotel_address - The address of the hotel.
- * @param {number} page - The page number for pagination (default: 1).
- * @param {number} per_page - Number of results per page (default: 10).
- * @returns {Array} - List of relevant search results with possible price links.
- */
-const searchHotelPriceWithGoogle = async ({
-  hotel_name,
-  hotel_address,
-  page = 1,
-  per_page = 10,
-}) => {
-  const CSE_ID = process.env.SEARCH_ENGINE_ID;
-  const API_KEY = process.env.GOOGLE_SEARCH_API;
-  const startIndex = (page - 1) * per_page + 1;
-
-  // Modify query to include "price" explicitly
-  const searchQuery = `${hotel_name} ${hotel_address} price OR booking site:booking.com OR site:agoda.com OR site:expedia.com OR site:hotels.com`;
-
-  const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CSE_ID}&q=${encodeURIComponent(
-    searchQuery
-  )}&start=${startIndex}&num=${per_page}`;
-
-  try {
-    const response = await axios.get(apiUrl);
-    const hotels = response.data.items || [];
-
-    const formattedHotels = hotels.map((item) => {
-      // Try to extract price from snippet
-      const priceMatch = item.snippet.match(/[\$¥€]\s?\d{1,5}(,\d{3})*/);
-      const price = priceMatch ? priceMatch[0] : "Price not found";
-
-      return {
-        title: item.title,
-        link: item.link,
-        snippet: item.snippet,
-        price_estimate: price, // Extracted price or "not found"
-      };
-    });
-
-    console.log("FORMATTED HOTEL", formattedHotels);
-    return formattedHotels;
-  } catch (error) {
-    console.error("Google Custom Search API error:", error);
-    throw error;
-  }
-};
 
 module.exports = {
   googleSearchController,
   searchImagesWithGoogle,
-  searchHotelPriceWithGoogle,
 };
