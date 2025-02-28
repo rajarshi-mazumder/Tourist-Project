@@ -1,9 +1,10 @@
 const { getGeminiFlashResponse } = require('../../services/gemini.js');
 
 exports.handleClassifiedPrompt = async (req, res) => {
-  const { prompt, promptType } = req.body;
+  let { prompt, promptType } = req.body;
 
   try {
+    promptType = promptType.replace(/\s/g, '');
     let enhancedPrompt = prompt;
 
     switch (promptType) {
@@ -26,15 +27,14 @@ exports.handleClassifiedPrompt = async (req, res) => {
         enhancedPrompt = `You are a helpful emergency assistant. Please provide information about the following emergency topic: ${prompt}`;
         break;
       default:
-        enhancedPrompt = `You are a helpful travel assistant. Please provide information about the following travel topic: ${prompt}`;
         break;
     }
 
     // Send the enhanced prompt to Gemini
+    const { getGeminiFlashResponse } = require('../../services/gemini.js');
     const response = await getGeminiFlashResponse(enhancedPrompt);
     res.json({ response });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
-  }
 };
