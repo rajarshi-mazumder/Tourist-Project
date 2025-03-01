@@ -27,16 +27,15 @@ const {
  */
 const searchPlaces = async (
   keyword,
-  location,
-  radius = 5000,
-  maxResults = 5
+  location
+  // radius = 5000,
 ) => {
   const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
   try {
     // Step 1: Search for places matching the keyword in the given location
     const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
       keyword + " in " + location
-    )}&radius=${radius}&key=${GOOGLE_MAPS_API_KEY}`;
+    )}&key=${GOOGLE_MAPS_API_KEY}`;
 
     console.log(`SEARCH URL ${searchUrl}`);
     const searchResponse = await axios.get(searchUrl);
@@ -45,14 +44,13 @@ const searchPlaces = async (
     }
 
     // Step 2: Extract place IDs for detailed lookup
-    const places = searchResponse.data.results.slice(0, maxResults); // Limit to maxResults
+    const places = searchResponse.data.results;
     return places;
   } catch (error) {
     console.error("Error searching for places:", error);
     return { error: "Failed to search for places" };
   }
 };
-
 
 const getPlaceDetailsNewAPI = async (placeId) => {
   const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
@@ -260,4 +258,8 @@ async function searchPlacesAndDetailsHandler(req, res) {
   }
 }
 
-module.exports = { searchPlacesAndGetDetails, searchPlacesAndDetailsHandler };
+module.exports = {
+  searchPlaces,
+  searchPlacesAndGetDetails,
+  searchPlacesAndDetailsHandler,
+};

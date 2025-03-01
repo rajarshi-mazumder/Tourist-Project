@@ -19,12 +19,16 @@ const {
 } = require("../controllers/maps/mapsController.js");
 
 router.post("/plan-trip", tripController.generateTrip);
-router.post("/attractions", attractionsController.getAttractions);
 router.post("/cities", citiesController.getCities);
 router.post("/city-plan", citiesController.generateCityPlan);
 router.get("/images", googleSearchController.searchImages);
 router.post("/hotels-from-maps", getHotelsFromMaps);
 router.post("/search-places", searchPlacesAndDetailsHandler);
+router.post("/attractions", attractionsController.getAttractionsFromGemini);
+router.post(
+  "/attractions-from-maps",
+  attractionsController.getAttractionsFromMaps
+);
 
 router.post("/get-hotel-price", getHotelPriceFromPerplexity);
 

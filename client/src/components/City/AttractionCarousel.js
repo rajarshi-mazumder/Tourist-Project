@@ -50,11 +50,37 @@ function AttractionCarousel({ attractions, location }) {
     });
 
     const newAttractionsData = await response.json();
-    const concatenatedKeyword = "Search results for :" + keywords;
+    const concatenatedKeyword = "Search results for : " + keywords;
     setNewAttractions([
       ...newAttractions,
       { [concatenatedKeyword]: newAttractionsData.attractions },
     ]); // Store fetched attractions
+  };
+
+  const handleGetMoreAttractionsFromMaps = async () => {
+    const data = await getMonthSeasonWeather(location);
+    const { month, season, dailyForecast } = data;
+
+    const keywords = keywordsInput.split(",").map((keyword) => keyword.trim());
+
+    const response = await fetch(
+      "http://localhost:4000/trip/attractions-from-maps",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          keyword: keywords,
+          location,
+          month,
+          season,
+          dailyForecast,
+        }),
+      }
+    );
+
+    const x = await response.json();
   };
 
   return (
@@ -90,6 +116,14 @@ function AttractionCarousel({ attractions, location }) {
         value={keywordsInput}
         onChange={(e) => setKeywordsInput(e.target.value)}
       />
+      <br />
+      <button
+        onClick={() => {
+          handleGetMoreAttractionsFromMaps();
+        }}
+      >
+        Get Attractions Data from maps
+      </button>
     </div>
   );
 }
