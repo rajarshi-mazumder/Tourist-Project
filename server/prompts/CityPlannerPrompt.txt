@@ -45,6 +45,7 @@ Ensure the response is structured in **JSON format** and includes **concise, acc
   - Example (Tokyo, 10 days): `"Tokyo Tower, Senso-ji, Shinjuku Gyoen, Meiji Shrine, Odaiba, Akihabara, Ginza, Ueno Park, teamLab Borderless, Kamakura Day Trip"`
 
 ⚠ **If no specific attractions are available, return a mix of famous landmarks, nature spots, and cultural sites. DO NOT return an empty list.**  
+⚠ **For Attractions, make sure the images are real image urls, if you cant find real images for an attraction, return dempty list. DO NOT MAKE UP URLS**  
 
 For each attraction, include:
   - **Name**
@@ -116,14 +117,34 @@ Each dish must include:
     }
   ],
   "attractions": [
-    {
-      "name": "Tokyo Tower",
-      "description": "A 333m tall communications and observation tower, offering breathtaking city views.",
-      "best_time_to_visit": "Evening for city lights",
-      "entry_fee": "900 JPY",
-      "location": "4 Chome-2-8 Shibakoen, Minato City, Tokyo",
-      "image_url": "https://example.com/tokyo_tower.jpg"
-    }
+     {
+            "name": "string",              
+            "address": "string",           
+            "region": "string",             
+            "reason": "string",             
+            "unique_things_to_do": [       
+                "string"
+            ],
+            "known_for": [                  
+                "string"
+            ],
+            "best_months_to_visit": [       
+                "string"
+            ],
+            "seasonal_events": [            
+                {
+                    "name": "string",
+                    "description": "string",
+                    "date_range": "string"
+                }
+            ],
+            "recommended_for_weather": "string",  // NEW FIELD - e.g., "Perfect for sunny days" or "Good indoor spot for rainy days"
+            "images": ["string"],           
+            "links": {                      
+                "official_website": "string",
+                "google_maps": "string"
+            }
+        }
   ],
   "food_recommendations": [
     {

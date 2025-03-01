@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { getMonthSeasonWeather } from "../../services/dateAndSeason/getDateAndSeason";
 import "./CityCarousel.css";
+import AttractionCard from "./AttractionCard";
 
 function AttractionCarousel({ attractions, location }) {
+  const [newAttractions, setNewAttractions] = useState([...attractions]);
+  const [x, setX] = React.useState("1");
+
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -23,54 +27,47 @@ function AttractionCarousel({ attractions, location }) {
     },
   };
 
-  if (!attractions) {
-    return <div>No attractions available.</div>;
-  }
+  const handleGetMoreAttractions = async () => {
+    const data = await getMonthSeasonWeather(location);
+    const { month, season, dailyForecast } = data;
+
+    const response = await fetch("http://localhost:4000/trip/attractions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        location,
+        keywords: [],
+        month,
+        season,
+        dailyForecast,
+      }),
+    });
+
+    const newAttractionsData = await response.json();
+    setNewAttractions([...attractions, ...newAttractionsData.attractions]); // Store fetched attractions
+  };
 
   return (
     <div>
+      hii
+      {x != null && <div>{JSON.stringify(newAttractions.length)}</div>}
       <Carousel responsive={responsive}>
-        {attractions.map((attraction) => (
-          <div key={attraction.name} className="carousel-item">
-            <div className="carousel-card">
-              <h3>{attraction.name}</h3>
-              <p>{attraction.description}</p>
-              <img src={attraction.image_url} alt={attraction.name} />
-            </div>
-          </div>
+        {newAttractions.map((attraction, index) => (
+          <AttractionCard
+            key={`${attraction.name}-${index}`}
+            attraction={attraction}
+          />
         ))}
       </Carousel>
-
       <button
-        onClick={async () => {
-          const data = await getMonthSeasonWeather(location);
-          const { month, season, dailyForecast } = data;
-
-          const response = await fetch(
-            "http://localhost:4000/trip/attractions",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                location,
-                keywords: [],
-                month,
-                season,
-                dailyForecast,
-              }),
-            }
-          );
-
-          if (response.ok) {
-            console.log("Attractions sent successfully!");
-          } else {
-            console.error("Failed to send attractions");
-          }
+        onClick={() => {
+          handleGetMoreAttractions();
+          setX("40");
         }}
       >
-        Send Attractions Data
+        More Attractions Data
       </button>
     </div>
   );
