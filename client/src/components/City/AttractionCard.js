@@ -62,7 +62,9 @@ const AttractionCard = ({ attraction }) => {
             <br />
             {attraction.links && attraction.links.google_maps && (
               <a
-                href={attraction.links.google_maps}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  attraction.name
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

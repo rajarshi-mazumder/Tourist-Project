@@ -6,8 +6,10 @@ import "./CityCarousel.css";
 import AttractionCard from "./AttractionCard";
 
 function AttractionCarousel({ attractions, location }) {
-  const [newAttractions, setNewAttractions] = useState([...attractions]);
-  const [x, setX] = React.useState("1");
+  const [newAttractions, setNewAttractions] = useState([
+    { "Suggested Attractions": attractions },
+  ]);
+  const [keywordsInput, setKeywordsInput] = useState("");
 
   const responsive = {
     desktop: {
@@ -31,6 +33,8 @@ function AttractionCarousel({ attractions, location }) {
     const data = await getMonthSeasonWeather(location);
     const { month, season, dailyForecast } = data;
 
+    const keywords = keywordsInput.split(",").map((keyword) => keyword.trim());
+
     const response = await fetch("http://localhost:4000/trip/attractions", {
       method: "POST",
       headers: {
@@ -38,7 +42,7 @@ function AttractionCarousel({ attractions, location }) {
       },
       body: JSON.stringify({
         location,
-        keywords: [],
+        keywords: keywords,
         month,
         season,
         dailyForecast,
@@ -46,29 +50,46 @@ function AttractionCarousel({ attractions, location }) {
     });
 
     const newAttractionsData = await response.json();
-    setNewAttractions([...attractions, ...newAttractionsData.attractions]); // Store fetched attractions
+    const concatenatedKeyword = "Search results for :" + keywords;
+    setNewAttractions([
+      ...newAttractions,
+      { [concatenatedKeyword]: newAttractionsData.attractions },
+    ]); // Store fetched attractions
   };
 
   return (
     <div>
-      hii
-      {x != null && <div>{JSON.stringify(newAttractions.length)}</div>}
-      <Carousel responsive={responsive}>
-        {newAttractions.map((attraction, index) => (
-          <AttractionCard
-            key={`${attraction.name}-${index}`}
-            attraction={attraction}
-          />
-        ))}
-      </Carousel>
+      {newAttractions.map((attraction) => (
+        <div>
+          {Object.entries(attraction).map(([key, value]) => (
+            <div>
+              {key}
+              <div>
+                {/* {JSON.stringify(value)} */}
+                <Carousel responsive={responsive}>
+                  {value.map((attraction) => (
+                    <AttractionCard attraction={attraction} />
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+
       <button
         onClick={() => {
           handleGetMoreAttractions();
-          setX("40");
         }}
       >
         More Attractions Data
       </button>
+      <input
+        type="text"
+        placeholder="Enter keywords separated by commas"
+        value={keywordsInput}
+        onChange={(e) => setKeywordsInput(e.target.value)}
+      />
     </div>
   );
 }
