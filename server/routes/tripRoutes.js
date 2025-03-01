@@ -11,7 +11,8 @@ const {
   googleSearchController,
 } = require("../controllers/googleSearch/googleSearchController.js");
 const {
-  getHotelsFromMaps,  getHotelPriceFromPerplexity,
+  getHotelsFromMaps,
+  getHotelPriceFromPerplexity,
 } = require("../controllers/trips/hotel/hotelDataController.js");
 const {
   searchPlacesAndDetailsHandler,
@@ -24,7 +25,6 @@ router.post("/city-plan", citiesController.generateCityPlan);
 router.get("/images", googleSearchController.searchImages);
 router.post("/hotels-from-maps", getHotelsFromMaps);
 router.post("/search-places", searchPlacesAndDetailsHandler);
-
 
 router.post("/get-hotel-price", getHotelPriceFromPerplexity);
 

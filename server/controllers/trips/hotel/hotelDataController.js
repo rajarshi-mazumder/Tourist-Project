@@ -6,7 +6,7 @@ const {
 const fs = require("fs");
 const path = require("path");
 const aiController = require("../../../aicontrollers/aiController");
-
+const parseJsonFromGemini = require("../../../aicontrollers/geminiController");
 
 async function getHotelsFromRakutenAPI(location, keyword) {
   try {
@@ -65,18 +65,20 @@ async function getHotelsFromMaps(req, res) {
   }
 }
 
- const getHotelPriceFromPerplexity = async (req, res) => {
-   const { hotelName, location } = req.body;
-   
-   try {
-     const hotelPriceInfo = await getHotelInfoFromPerplexity(hotelName, location);
+const getHotelPriceFromPerplexity = async (req, res) => {
+  const { hotelName, location } = req.body;
 
-     return res.status(200).json(hotelPriceInfo);
-   }
-   catch (error) {
-     console.error("🚨 Error in getHotelPriceFromPerplexity:", error);
-     return res.status(500).json({ message: error.message });
-   }
+  try {
+    const hotelPriceInfo = await getHotelInfoFromPerplexity(
+      hotelName,
+      location
+    );
+
+    return res.status(200).json(hotelPriceInfo);
+  } catch (error) {
+    console.error("🚨 Error in getHotelPriceFromPerplexity:", error);
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
@@ -91,7 +93,9 @@ async function getHotelInfoFromPerplexity(hotelName, location) {
 
     const perplexityApiKey = process.env.PERPLEXITY_API_KEY;
     if (!perplexityApiKey) {
-      throw new Error("Perplexity API key is missing in environment variables.");
+      throw new Error(
+        "Perplexity API key is missing in environment variables."
+      );
     }
 
     const promptTemplate = fs.readFileSync(promptFilePath, "utf8");
@@ -121,8 +125,8 @@ async function getHotelInfoFromPerplexity(hotelName, location) {
 
     // Directly return the content from Perplexity, remove reformatting
     const hotelDetails = response.data.choices[0].message.content;
-    return hotelDetails;
-
+    const hotelPriceDetails = await extractHotelPrice(hotelDetails);
+    return hotelPriceDetails;
   } catch (error) {
     console.error("Error in getHotelInfoFromPerplexity:", error);
     throw new Error(
@@ -131,5 +135,35 @@ async function getHotelInfoFromPerplexity(hotelName, location) {
   }
 }
 
+async function extractHotelPrice(hotelDetails) {
+  try {
+    const task = "trips";
+    const hotelDetailsFormatterPromptPath = path.resolve(
+      __dirname,
+      "../../../prompts/HotelDetailsFormatterPrompt.txt"
+    );
+    const hotelDetailsFormatterPrompt = fs.readFileSync(
+      hotelDetailsFormatterPromptPath,
+      "utf-8"
+    );
+    const prompt = hotelDetailsFormatterPrompt + hotelDetails;
 
-module.exports = { getHotels: getHotelsFromRakutenAPI, getHotelsFromMaps, getHotelsFromRakutenAPI: getHotelsFromRakuten, getHotelPriceFromPerplexity };
+    let responseText;
+    try {
+      responseText = await aiController.generateAIResponse(prompt, task);
+      let parsedResponse = parseJsonFromGemini(responseText);
+      return parsedResponse;
+    } catch (error) {
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = {
+  getHotels: getHotelsFromRakutenAPI,
+  getHotelsFromMaps,
+  getHotelsFromRakutenAPI: getHotelsFromRakuten,
+  getHotelPriceFromPerplexity,
+};

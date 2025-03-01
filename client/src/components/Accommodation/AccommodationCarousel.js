@@ -75,16 +75,19 @@ function AccommodationCarousel({ accommodations, city }) {
 
   const fetchHotelPrice = async (hotelName, location) => {
     try {
-      const response = await fetch("http://localhost:4000/trip/get-hotel-price", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          hotelName: hotelName,
-          location: location,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:4000/trip/get-hotel-price",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            hotelName: hotelName,
+            location: location,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -109,7 +112,13 @@ function AccommodationCarousel({ accommodations, city }) {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid black",
+        backgroundColor: "#f0f0f0",
+        padding: "10px",
+      }}
+    >
       <div>
         {keywordOptions.map((option) => (
           <label key={option}>
@@ -125,16 +134,17 @@ function AccommodationCarousel({ accommodations, city }) {
         <button onClick={searchHotels}>Search Hotels</button>
       </div>
       <Carousel responsive={responsive}>
-        {!rakutenHotelData && rakutenHotelData?.map((accommodation) => (
-          <div key={accommodation.hotelName} className="carousel-item">
-            <RakutenHotelCard
-              accommodation={accommodation}
-              city={city}
-              fetchHotelPrice={fetchHotelPrice}
-              hotelPrices={hotelPrices}
-            />
-          </div>
-        ))}
+        {!rakutenHotelData &&
+          rakutenHotelData?.map((accommodation) => (
+            <div key={accommodation.hotelName} className="carousel-item">
+              <RakutenHotelCard
+                accommodation={accommodation}
+                city={city}
+                fetchHotelPrice={fetchHotelPrice}
+                hotelPrices={hotelPrices}
+              />
+            </div>
+          ))}
       </Carousel>
       {googleMapsHotelData.map((googleMapsHotels, index) => (
         <Carousel key={index} responsive={responsive}>
@@ -154,6 +164,11 @@ function AccommodationCarousel({ accommodations, city }) {
           ))}
         </Carousel>
       ))}
+      <input
+        type="text"
+        placeholder="Approx Accomodation Price"
+        style={{ marginBottom: "10px" }}
+      />
     </div>
   );
 }

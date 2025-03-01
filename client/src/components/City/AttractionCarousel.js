@@ -1,9 +1,10 @@
 import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { getMonthSeasonWeather } from "../../services/dateAndSeason/getDateAndSeason";
 import "./CityCarousel.css";
 
-function AttractionCarousel({ attractions }) {
+function AttractionCarousel({ attractions, location }) {
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -39,6 +40,38 @@ function AttractionCarousel({ attractions }) {
           </div>
         ))}
       </Carousel>
+
+      <button
+        onClick={async () => {
+          const data = await getMonthSeasonWeather(location);
+          const { month, season, dailyForecast } = data;
+
+          const response = await fetch(
+            "http://localhost:4000/trip/attractions",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                location,
+                keywords: [],
+                month,
+                season,
+                dailyForecast,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            console.log("Attractions sent successfully!");
+          } else {
+            console.error("Failed to send attractions");
+          }
+        }}
+      >
+        Send Attractions Data
+      </button>
     </div>
   );
 }

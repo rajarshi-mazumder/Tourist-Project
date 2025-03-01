@@ -92,7 +92,10 @@ const PlanDetails = ({ cityPlan }) => {
       />
 
       <h3>Attractions</h3>
-      <AttractionCarousel attractions={cityPlan.attractions} />
+      <AttractionCarousel
+        attractions={cityPlan.attractions}
+        location={cityPlan.city}
+      />
 
       <h3>Food Recommendations</h3>
       <FoodCarousel foodRecommendations={cityPlan.food_recommendations} />
