@@ -62,7 +62,7 @@ function AttractionCarousel({ attractions, location }) {
       {newAttractions.map((attraction) => (
         <div>
           {Object.entries(attraction).map(([key, value]) => (
-            <div>
+            <div className="attraction-row">
               {key}
               <div>
                 {/* {JSON.stringify(value)} */}

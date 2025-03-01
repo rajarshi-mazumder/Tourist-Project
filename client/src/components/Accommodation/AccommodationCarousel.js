@@ -134,7 +134,8 @@ function AccommodationCarousel({ accommodations, city }) {
         <button onClick={searchHotels}>Search Hotels</button>
       </div>
       <Carousel responsive={responsive}>
-        {!rakutenHotelData &&
+        {rakutenHotelData &&
+          rakutenHotelData.length > 0 &&
           rakutenHotelData?.map((accommodation) => (
             <div key={accommodation.hotelName} className="carousel-item">
               <RakutenHotelCard

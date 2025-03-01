@@ -1,44 +1,8 @@
-.carousel-item {
-  padding: 0 10px;
-  background-color: #f0f0f0;
+/* CityCarousel.css */
+
+.attraction-row {
   border: 1px solid #ccc;
-}
-
-.carousel-card {
-  height: 650px;
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  text-align: left;
-  overflow: hidden;
-}
-
-.carousel-card img {
-  max-height: 200px;
-  width: auto;
-  object-fit: contain;
-}
-
-.city-plan-carousel.react-multi-carousel-list {
-  display: block !important;
-}
-
-.city-plan-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.city-plan-item {
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-.city-plan-item button {
-  margin-bottom: 5px;
-}
-
-.city-plan-item button:last-child {
-  margin-top: 10px;
+  background-color: #f9f9f9;
+  margin: 5px;
+  padding: 5px;
 }
