@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
+import GoogleMapPlacesDisplay from "./GoogleMapPlacesDisplay";
 
 const enrichAttraction = async (
   attraction,
@@ -21,7 +23,7 @@ const enrichAttraction = async (
         month: month,
         season: season,
         dailyForecast: dailyForecast,
-        googlePlacesData: [attraction], // Send one attraction at a time
+        googlePlacesData: [attraction],
       }),
     }
   );
@@ -40,6 +42,7 @@ const AttractionCard = ({
   dailyForecast,
 }) => {
   const [enrichedAttraction, setEnrichedAttraction] = useState(attraction);
+  const [displayEnriched, setDisplayEnriched] = useState(false);
 
   const fetchEnrichedData = async () => {
     const enrichedData = await enrichAttraction(
@@ -51,93 +54,20 @@ const AttractionCard = ({
       dailyForecast
     );
     setEnrichedAttraction(enrichedData);
+    setDisplayEnriched(true);
   };
 
   return (
-    <div className="attraction-card" key={enrichedAttraction.name}>
-      <div className="attraction-image">
-        {enrichedAttraction.images?.length > 0 && (
-          <img
-            src={enrichedAttraction.images[0]}
-            alt={enrichedAttraction.name}
-          />
-        )}
-      </div>
-      <div className="attraction-details">
-        <h3>{enrichedAttraction.name}</h3>
-        {enrichedAttraction.address && (
-          <p>Address: {enrichedAttraction.address}</p>
-        )}
-        {enrichedAttraction.region && (
-          <p>Region: {enrichedAttraction.region}</p>
-        )}
-        {enrichedAttraction.reason && (
-          <p>Reason: {enrichedAttraction.reason}</p>
-        )}
-        {enrichedAttraction.unique_things_to_do?.length > 0 && (
-          <>
-            <h4>Unique Things to Do:</h4>
-            <ul>
-              {enrichedAttraction.unique_things_to_do.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </>
-        )}
-        {enrichedAttraction.known_for?.length > 0 && (
-          <>
-            <h4>Known For:</h4>
-            <ul>
-              {enrichedAttraction.known_for.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </>
-        )}
-        {enrichedAttraction.best_months_to_visit?.length > 0 && (
-          <p>
-            Best Months to Visit:{" "}
-            {enrichedAttraction.best_months_to_visit.join(", ")}
-          </p>
-        )}
-        {enrichedAttraction.seasonal_events?.length > 0 && (
-          <p>
-            Seasonal Events: {enrichedAttraction.seasonal_events.join(", ")}
-          </p>
-        )}
-        {enrichedAttraction.recommended_for_weather && (
-          <p>
-            Recommended for Weather:{" "}
-            {enrichedAttraction.recommended_for_weather}
-          </p>
-        )}
-        {enrichedAttraction.links && (
-          <>
-            {enrichedAttraction.links.official_website && (
-              <a
-                href={enrichedAttraction.links.official_website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Official Website
-              </a>
-            )}
-            {enrichedAttraction.links.google_maps && (
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  enrichedAttraction.name
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Google Maps
-              </a>
-            )}
-          </>
-        )}
+    <>
+      {!displayEnriched ? (
+        <GoogleMapPlacesDisplay place={attraction} />
+      ) : (
+        <EnrichedAttractionDisplay enrichedAttraction={enrichedAttraction} />
+      )}
+      {!displayEnriched && (
         <button onClick={fetchEnrichedData}>Enrich Attraction</button>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
