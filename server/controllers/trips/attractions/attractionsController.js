@@ -89,7 +89,9 @@ const attractionsController = {
     const plannedDates = datesToVisit;
     let allPlaces = [];
     try {
-      for (var keyword in keywords) {
+      for (let i = 0; i < keywords.length; i++) {
+        const keyword = keywords[i];
+        console.log(`SEARCHING FOR ${keyword} ${keywords}`);
         const places = await searchPlaces(keyword, location);
         if (places.error) {
           return res.status(500).json({
@@ -157,9 +159,9 @@ const attractionsController = {
         null,
         2
       );
-      const placesJson = JSON.stringify(googlePlacesData, null, 2);
+      const placesJson = JSON.stringify(googlePlacesData);
       const plannedDatesJson = JSON.stringify(plannedDates, null, 2);
-
+      const extractedData = extractUsefulBits(googlePlacesData);
       // Replace placeholders in the prompt
       const prompt = attractionsPrompt
         .replace(/{LOCATION_PROVIDED}/g, location)
@@ -168,7 +170,7 @@ const attractionsController = {
         .replace(/{CURRENT_SEASON}/g, season)
         .replace(/{WEATHER_FORECAST_JSON}/g, weatherJson)
         .replace(/{PLANNED_DATES}/g, plannedDatesJson)
-        .replace(/{GOOGLE_PLACES_JSON}/g, placesJson);
+        .replace(/{GOOGLE_PLACES_JSON}/g, extractedData);
 
       // console.log("Generated Prompt:\n", prompt);
 
@@ -197,7 +199,6 @@ const attractionsController = {
         return res.status(500).json({
           success: false,
           message: "Failed to process AI response",
-          error: aiError.message,
         });
       }
 

@@ -104,6 +104,11 @@ function AttractionCarousel({ attractions, location }) {
 
     const enrichedData = await enrichResponse.json();
     console.log("Enriched Data:", enrichedData);
+    const concatenatedKeyword = "Search results for : " + keywords;
+    setNewAttractions([
+      ...newAttractions,
+      { [concatenatedKeyword]: enrichedData.attractions },
+    ]);
   };
 
   return (
