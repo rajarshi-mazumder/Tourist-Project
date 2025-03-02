@@ -91,7 +91,7 @@ const attractionsController = {
     try {
       for (let i = 0; i < keywords.length; i++) {
         const keyword = keywords[i];
-        console.log(`SEARCHING FOR ${keyword} ${keywords}`);
+
         const places = await searchPlaces(keyword, location);
         if (places.error) {
           return res.status(500).json({
@@ -159,9 +159,8 @@ const attractionsController = {
         null,
         2
       );
-      const placesJson = JSON.stringify(googlePlacesData);
       const plannedDatesJson = JSON.stringify(plannedDates, null, 2);
-      const extractedData = extractUsefulBits(googlePlacesData);
+
       // Replace placeholders in the prompt
       const prompt = attractionsPrompt
         .replace(/{LOCATION_PROVIDED}/g, location)
@@ -170,13 +169,14 @@ const attractionsController = {
         .replace(/{CURRENT_SEASON}/g, season)
         .replace(/{WEATHER_FORECAST_JSON}/g, weatherJson)
         .replace(/{PLANNED_DATES}/g, plannedDatesJson)
-        .replace(/{GOOGLE_PLACES_JSON}/g, extractedData);
+        .replace(/{GOOGLE_PLACES_JSON}/g, JSON.stringify(googlePlacesData));
 
-      // console.log("Generated Prompt:\n", prompt);
+      console.log("Generated Prompt:\n", prompt);
 
       let responseText;
       try {
         responseText = await aiController.generateAIResponse(prompt, task);
+        console.log(`GEMINI response ${JSON.stringify(responseText)}`);
       } catch (aiError) {
         console.error("Error generating AI response:", aiError);
         return res.status(500).json({

@@ -1,64 +1,131 @@
-import React from "react";
+import React, { useState } from "react";
 
-const AttractionCard = ({ attraction }) => {
+const enrichAttraction = async (
+  attraction,
+  location,
+  keywords,
+  month,
+  season,
+  dailyForecast
+) => {
+  const enrichResponse = await fetch(
+    "http://localhost:4000/trip/enrich-attractions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        location: location,
+        keywords: keywords,
+        month: month,
+        season: season,
+        dailyForecast: dailyForecast,
+        googlePlacesData: [attraction], // Send one attraction at a time
+      }),
+    }
+  );
+
+  const enrichedData = await enrichResponse.json();
+  console.log("Enriched Data:", enrichedData);
+  return enrichedData.attractions[0];
+};
+
+const AttractionCard = ({
+  attraction,
+  location,
+  keywords,
+  month,
+  season,
+  dailyForecast,
+}) => {
+  const [enrichedAttraction, setEnrichedAttraction] = useState(attraction);
+
+  const fetchEnrichedData = async () => {
+    const enrichedData = await enrichAttraction(
+      attraction,
+      location,
+      keywords,
+      month,
+      season,
+      dailyForecast
+    );
+    setEnrichedAttraction(enrichedData);
+  };
+
   return (
-    <div className="attraction-card" key={attraction.name}>
+    <div className="attraction-card" key={enrichedAttraction.name}>
       <div className="attraction-image">
-        {attraction.images?.length > 0 && (
-          <img src={attraction.images[0]} alt={attraction.name} />
+        {enrichedAttraction.images?.length > 0 && (
+          <img
+            src={enrichedAttraction.images[0]}
+            alt={enrichedAttraction.name}
+          />
         )}
       </div>
       <div className="attraction-details">
-        <h3>{attraction.name}</h3>
-        {attraction.address && <p>Address: {attraction.address}</p>}
-        {attraction.region && <p>Region: {attraction.region}</p>}
-        {attraction.reason && <p>Reason: {attraction.reason}</p>}
-        {attraction.unique_things_to_do?.length > 0 && (
+        <h3>{enrichedAttraction.name}</h3>
+        {enrichedAttraction.address && (
+          <p>Address: {enrichedAttraction.address}</p>
+        )}
+        {enrichedAttraction.region && (
+          <p>Region: {enrichedAttraction.region}</p>
+        )}
+        {enrichedAttraction.reason && (
+          <p>Reason: {enrichedAttraction.reason}</p>
+        )}
+        {enrichedAttraction.unique_things_to_do?.length > 0 && (
           <>
             <h4>Unique Things to Do:</h4>
             <ul>
-              {attraction.unique_things_to_do.map((item, index) => (
+              {enrichedAttraction.unique_things_to_do.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
             </ul>
           </>
         )}
-        {attraction.known_for?.length > 0 && (
+        {enrichedAttraction.known_for?.length > 0 && (
           <>
             <h4>Known For:</h4>
             <ul>
-              {attraction.known_for.map((item, index) => (
+              {enrichedAttraction.known_for.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
             </ul>
           </>
         )}
-        {attraction.best_months_to_visit?.length > 0 && (
+        {enrichedAttraction.best_months_to_visit?.length > 0 && (
           <p>
-            Best Months to Visit: {attraction.best_months_to_visit.join(", ")}
+            Best Months to Visit:{" "}
+            {enrichedAttraction.best_months_to_visit.join(", ")}
           </p>
         )}
-        {attraction.seasonal_events?.length > 0 && (
-          <p>Seasonal Events: {attraction.seasonal_events.join(", ")}</p>
+        {enrichedAttraction.seasonal_events?.length > 0 && (
+          <p>
+            Seasonal Events: {enrichedAttraction.seasonal_events.join(", ")}
+          </p>
         )}
-        {attraction.recommended_for_weather && (
-          <p>Recommended for Weather: {attraction.recommended_for_weather}</p>
+        {enrichedAttraction.recommended_for_weather && (
+          <p>
+            Recommended for Weather:{" "}
+            {enrichedAttraction.recommended_for_weather}
+          </p>
         )}
-        {attraction.links && (
+        {enrichedAttraction.links && (
           <>
-            {attraction.links.official_website && (
+            {enrichedAttraction.links.official_website && (
               <a
-                href={attraction.links.official_website}
+                href={enrichedAttraction.links.official_website}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Official Website
               </a>
             )}
-            {attraction.links.google_maps && (
+            {enrichedAttraction.links.google_maps && (
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  attraction.name
+                  enrichedAttraction.name
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -68,6 +135,7 @@ const AttractionCard = ({ attraction }) => {
             )}
           </>
         )}
+        <button onClick={fetchEnrichedData}>Enrich Attraction</button>
       </div>
     </div>
   );
