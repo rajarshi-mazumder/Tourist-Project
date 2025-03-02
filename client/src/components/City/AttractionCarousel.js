@@ -71,7 +71,7 @@ function AttractionCarousel({ attractions, location }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          keyword: keywords,
+          keywords: keywords,
           location,
           month,
           season,
@@ -80,7 +80,30 @@ function AttractionCarousel({ attractions, location }) {
       }
     );
 
-    const x = await response.json();
+    const initialAttractions = await response.json();
+    console.log("Initial Attractions from Maps:", initialAttractions);
+
+    const enrichResponse = await fetch(
+      "http://localhost:4000/trip/enrich-attractions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location: location,
+          keywords: keywords,
+          month: month,
+          season: season,
+          dailyForecast: dailyForecast,
+          plannedDates: new Date().toISOString().slice(0, 10),
+          googlePlacesData: initialAttractions.attractions,
+        }),
+      }
+    );
+
+    const enrichedData = await enrichResponse.json();
+    console.log("Enriched Data:", enrichedData);
   };
 
   return (

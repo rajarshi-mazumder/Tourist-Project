@@ -29,6 +29,10 @@ router.post(
   "/attractions-from-maps",
   attractionsController.getAttractionsFromMaps
 );
+router.post(
+  "/enrich-attractions",
+  attractionsController.enrichAttractionsUsingGemini
+);
 
 router.post("/get-hotel-price", getHotelPriceFromPerplexity);
 
