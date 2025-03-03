@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
-import GoogleMapPlacesDisplay from "./GoogleMapPlacesDisplay";
+import GoogleMapAttractionDisplay from "./GoogleMapAttractionDisplay";
 import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
 
 const enrichAttraction = async (
@@ -65,7 +65,7 @@ const AttractionCard = ({
         attraction.type === "gemini_attraction" ? (
           <GeminiAttractionDisplay attraction={attraction} />
         ) : (
-          <GoogleMapPlacesDisplay place={attraction} />
+          <EnrichedAttractionDisplay place={attraction} />
         )
       ) : (
         <EnrichedAttractionDisplay enrichedAttraction={enrichedAttraction} />

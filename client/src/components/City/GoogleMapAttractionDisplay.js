@@ -1,6 +1,6 @@
 import React from "react";
 
-const GoogleMapPlacesDisplay = ({ place }) => {
+const GoogleMapAttractionDisplay = ({ place }) => {
   return (
     <div className="google-map-place">
       <h3>{place.name}</h3>
@@ -34,4 +34,4 @@ const GoogleMapPlacesDisplay = ({ place }) => {
   );
 };
 
-export default GoogleMapPlacesDisplay;
+export default GoogleMapAttractionDisplay;
