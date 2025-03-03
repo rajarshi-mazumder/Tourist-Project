@@ -7,6 +7,7 @@ const {
 } = require("../../googleSearch/googleSearchController"); // Import the function
 const { getHotels } = require("../hotel/hotelDataController");
 const citiesWithDataSchema = require("../../../schemas/citiesWithDataSchema.json");
+const { AttractionType } = require("../../../constants");
 
 const citiesController = {
   getCities: async (req, res) => {
@@ -25,7 +26,11 @@ const citiesController = {
         .replace(/{num_days}/g, days);
 
       try {
-        responseText = await aiController.generateAIResponse(prompt, task, citiesWithDataSchema);
+        responseText = await aiController.generateAIResponse(
+          prompt,
+          task,
+          citiesWithDataSchema
+        );
       } catch (error) {
         console.error("Error generating AI response:", error);
         return res.status(500).json({
@@ -117,16 +122,19 @@ const citiesController = {
       try {
         try {
           let parsedResponse = parseJsonFromGemini(responseText);
-          // let structuredResponse = structureResponse(<-
-          //   parsedResponse,
-          //   tripPromptResponseStructure
-          // );
+
           parsedResponse.accommodations = hotels;
 
-          // console.log(
-          //   "Parsed Response:",
-          //   JSON.stringify(parsedResponse, null, 2)
-          // );
+          // Assign AttractionType.GEMINI_ATTRACTION to attractions
+          if (
+            parsedResponse.attractions &&
+            Array.isArray(parsedResponse.attractions)
+          ) {
+            parsedResponse.attractions.forEach((attraction) => {
+              attraction.type = AttractionType.GEMINI_ATTRACTION;
+            });
+          }
+
           return res.json(parsedResponse);
         } catch (e) {
           console.error("Error extracting content from AI response:", e);

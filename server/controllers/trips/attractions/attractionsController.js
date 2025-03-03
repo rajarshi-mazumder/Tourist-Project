@@ -4,6 +4,8 @@ const path = require("path");
 const parseJsonFromGemini = require("../../../aicontrollers/geminiController");
 const { searchPlaces } = require("../../maps/mapsController");
 const { error } = require("console");
+const { AttractionType } = require("../../../constants");
+
 const attractionsController = {
   getAttractionsFromGemini: async (req, res) => {
     const { location, keywords, month, season, dailyForecast } = req.body;
@@ -69,6 +71,17 @@ const attractionsController = {
         });
       }
 
+      // Assign AttractionType.GEMINI_ATTRACTION to attractions
+      if (
+        attractions &&
+        attractions.attractions &&
+        Array.isArray(attractions.attractions)
+      ) {
+        attractions.attractions.forEach((attraction) => {
+          attraction.type = AttractionType.GEMINI_ATTRACTION;
+        });
+      }
+
       return res.status(200).json(attractions);
     } catch (error) {
       console.error("Unexpected error in getAttractions:", error);
@@ -104,6 +117,11 @@ const attractionsController = {
         // allPlaces.push(...usefulPlacesData);
         allPlaces.push(...places);
       }
+
+      // Assign AttractionType.GOOGLE_MAP_ATTRACTION to attractions
+      allPlaces.forEach((place) => {
+        place.type = AttractionType.GOOGLE_MAP_ATTRACTION;
+      });
 
       res.status(200).json({ attractions: allPlaces }); // Send initial response
 
@@ -199,6 +217,17 @@ const attractionsController = {
         return res.status(500).json({
           success: false,
           message: "Failed to process AI response",
+        });
+      }
+
+      // Assign AttractionType.GEMINI_ATTRACTION to attractions
+      if (
+        attractions &&
+        attractions.attractions &&
+        Array.isArray(attractions.attractions)
+      ) {
+        attractions.attractions.forEach((attraction) => {
+          attraction.type = AttractionType.GEMINI_ATTRACTION;
         });
       }
 

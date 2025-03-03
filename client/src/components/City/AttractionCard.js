@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
 import GoogleMapPlacesDisplay from "./GoogleMapPlacesDisplay";
+import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
 
 const enrichAttraction = async (
   attraction,
@@ -58,16 +59,21 @@ const AttractionCard = ({
   };
 
   return (
-    <>
+    <div>
+      {attraction.type}
       {!displayEnriched ? (
-        <GoogleMapPlacesDisplay place={attraction} />
+        attraction.type === "gemini_attraction" ? (
+          <GeminiAttractionDisplay attraction={attraction} />
+        ) : (
+          <GoogleMapPlacesDisplay place={attraction} />
+        )
       ) : (
         <EnrichedAttractionDisplay enrichedAttraction={enrichedAttraction} />
       )}
       {!displayEnriched && (
         <button onClick={fetchEnrichedData}>Enrich Attraction</button>
       )}
-    </>
+    </div>
   );
 };
 
