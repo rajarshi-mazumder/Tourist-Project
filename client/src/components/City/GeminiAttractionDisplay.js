@@ -1,35 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
-const GeminiAttractionDisplay = ({ attraction }) => {
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/trip/images?q=${encodeURIComponent(
-            attraction.name
-          )}`
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setImages(data);
-        } else {
-          console.error("Failed to fetch images:", response.status);
-        }
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-
-    if (attraction.name) {
-      fetchImages();
-    }
-  }, [attraction.name]);
-
+const GeminiAttractionDisplay = ({ attraction, images }) => {
   const displayField = (fieldName, fieldValue) => {
     if (!fieldValue || (Array.isArray(fieldValue) && fieldValue.length === 0)) {
       return null;

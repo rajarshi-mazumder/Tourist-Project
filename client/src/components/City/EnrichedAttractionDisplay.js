@@ -1,17 +1,25 @@
 import React from "react";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
-const EnrichedAttractionDisplay = ({ enrichedAttraction }) => {
+const EnrichedAttractionDisplay = ({ place, enrichedAttraction, images }) => {
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
+
   return (
     <div className="attraction-card" key={enrichedAttraction.name}>
-      <div className="attraction-image">
-        {enrichedAttraction != null &&
-          enrichedAttraction.images?.length > 0 && (
-            <img
-              src={enrichedAttraction.images[0]}
-              alt={enrichedAttraction.name}
-            />
-          )}
-      </div>
       <div className="attraction-details">
         <h3>{enrichedAttraction.name}</h3>
         {enrichedAttraction.address && (
@@ -70,6 +78,28 @@ const EnrichedAttractionDisplay = ({ enrichedAttraction }) => {
               >
                 Official Website
               </a>
+            )}
+            {JSON.stringify(images)}
+            {images && (
+              <div>
+                <strong>Images:</strong>
+                <Carousel responsive={responsive}>
+                  {images.map((image, index) => (
+                    <div key={index} className="carousel-image-container">
+                      <img
+                        src={image.link}
+                        alt="Attraction"
+                        style={{
+                          maxWidth: "100%",
+                          height: "150px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
             )}
             {enrichedAttraction.links.google_maps && (
               <a

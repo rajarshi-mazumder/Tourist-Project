@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
 import GoogleMapAttractionDisplay from "./GoogleMapAttractionDisplay";
 import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
@@ -31,6 +31,25 @@ const enrichAttraction = async (
 
   const enrichedData = await enrichResponse.json();
   console.log("Enriched Data:", enrichedData);
+
+  // Fetch images
+  try {
+    const imageResponse = await fetch(
+      `http://localhost:4000/trip/images?q=${encodeURIComponent(
+        attraction.name
+      )}`
+    );
+
+    if (imageResponse.ok) {
+      const imageData = await imageResponse.json();
+      enrichedData.attractions[0].images = imageData.map((image) => image.link);
+    } else {
+      console.error("Failed to fetch images:", imageResponse.status);
+    }
+  } catch (error) {
+    console.error("Error fetching images:", error);
+  }
+
   return enrichedData.attractions[0];
 };
 
@@ -44,6 +63,32 @@ const AttractionCard = ({
 }) => {
   const [enrichedAttraction, setEnrichedAttraction] = useState(attraction);
   const [displayEnriched, setDisplayEnriched] = useState(false);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/trip/images?q=${encodeURIComponent(
+            attraction.name
+          )}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setImages(data);
+        } else {
+          console.error("Failed to fetch images:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    if (attraction.name) {
+      fetchImages();
+    }
+  }, [attraction, attraction.name, attraction.photos]);
 
   const fetchEnrichedData = async () => {
     const enrichedData = await enrichAttraction(
@@ -63,9 +108,14 @@ const AttractionCard = ({
       {attraction.type}
       {!displayEnriched ? (
         attraction.type === "gemini_attraction" ? (
-          <GeminiAttractionDisplay attraction={attraction} />
+          <GeminiAttractionDisplay attraction={attraction} images={images} />
+        ) : attraction.type === "google_map_attraction" ? (
+          <GoogleMapAttractionDisplay place={attraction} images={images} />
         ) : (
-          <EnrichedAttractionDisplay place={attraction} />
+          <EnrichedAttractionDisplay
+            place={attraction}
+            enrichedAttraction={enrichedAttraction}
+          />
         )
       ) : (
         <EnrichedAttractionDisplay enrichedAttraction={enrichedAttraction} />
