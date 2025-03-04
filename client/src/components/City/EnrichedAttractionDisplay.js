@@ -4,12 +4,13 @@ const EnrichedAttractionDisplay = ({ enrichedAttraction }) => {
   return (
     <div className="attraction-card" key={enrichedAttraction.name}>
       <div className="attraction-image">
-        {enrichedAttraction.images?.length > 0 && (
-          <img
-            src={enrichedAttraction.images[0]}
-            alt={enrichedAttraction.name}
-          />
-        )}
+        {enrichedAttraction != null &&
+          enrichedAttraction.images?.length > 0 && (
+            <img
+              src={enrichedAttraction.images[0]}
+              alt={enrichedAttraction.name}
+            />
+          )}
       </div>
       <div className="attraction-details">
         <h3>{enrichedAttraction.name}</h3>
