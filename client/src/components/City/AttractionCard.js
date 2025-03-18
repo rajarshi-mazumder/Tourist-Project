@@ -4,6 +4,13 @@ import GoogleMapAttractionDisplay from "./GoogleMapAttractionDisplay";
 import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
 import { base_url } from "../../services/apiServiceSetup";
 
+const SmartAttractionLoadingState = {
+  NotStarted: "not_started",
+  Loading: "loading",
+  Completed: "completed",
+  Failed: "failed",
+};
+
 const enrichAttraction = async (
   attraction,
   location,
@@ -12,38 +19,66 @@ const enrichAttraction = async (
   season,
   dailyForecast
 ) => {
-  const enrichResponse = await fetch(`${base_url}/trip/enrich-attractions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      location: location,
-      keywords: keywords,
-      month: month,
-      season: season,
-      dailyForecast: dailyForecast,
-      googlePlacesData: [attraction],
-    }),
-  });
-
-  const enrichedData = await enrichResponse.json();
-  console.log("Enriched Data:", enrichedData);
+  let enrichedData = {};
+  try {
+    const enrichResponse = await fetch(`${base_url}/trip/enrich-attractions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        location: location,
+        keywords: keywords,
+        month: month,
+        season: season,
+        dailyForecast: dailyForecast,
+        googlePlacesData: [attraction],
+      }),
+    });
+    enrichedData = await enrichResponse.json();
+    console.log("Enriched Data:", enrichedData);
+  } catch (error) {
+    console.error(
+      "Error fetching smart attraction for :",
+      attraction.name,
+      error
+    );
+    enrichedData.error = error;
+    console.log("enrichAttraction failed", error);
+    return null;
+  }
 
   // Fetch images
-  try {
-    const imageResponse = await fetch(
-      `${base_url}/trip/images?q=${encodeURIComponent(attraction.name)}`
-    );
+  // try {
+  //   const imageResponse = await fetch(
+  //     `${base_url}/trip/images?q=${encodeURIComponent(attraction.name)}`
+  //   );
 
-    if (imageResponse.ok) {
-      const imageData = await imageResponse.json();
-      enrichedData.attractions[0].images = imageData.map((image) => image.link);
-    } else {
-      console.error("Failed to fetch images:", imageResponse.status);
-    }
-  } catch (error) {
-    console.error("Error fetching images:", error);
+  //   if (imageResponse.ok) {
+  //     const imageData = await imageResponse.json();
+  //     if (enrichedData.attractions && enrichedData.attractions.length > 0) {
+  //       enrichedData.attractions[0].images = imageData.map(
+  //         (image) => image.link
+  //       );
+  //     } else {
+  //       console.warn("enrichedData.attractions is empty or undefined");
+  //     }
+  //   } else {
+  //     console.error("Failed to fetch images:", imageResponse.status);
+  //   }
+  // } catch (error) {
+  //   console.error("Error fetching images:", error);
+  // }
+
+  if (
+    !enrichedData ||
+    !enrichedData.attractions ||
+    enrichedData.attractions.length === 0
+  ) {
+    console.warn(
+      "No enriched attractions found, returning original attraction"
+    );
+    return attraction;
   }
 
   return enrichedData.attractions[0];
@@ -60,6 +95,9 @@ const AttractionCard = ({
   const [enrichedAttraction, setEnrichedAttraction] = useState(attraction);
   const [displayEnriched, setDisplayEnriched] = useState(false);
   const [images, setImages] = useState([]);
+  const [loadingSmartAttraction, setLoadingSmartAttraction] = useState(
+    SmartAttractionLoadingState.NotStarted
+  );
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -82,9 +120,10 @@ const AttractionCard = ({
     if (attraction.name) {
       fetchImages();
     }
-  }, [attraction, attraction.name, attraction.photos]);
+  }, [attraction, attraction.name]);
 
   const fetchEnrichedData = async () => {
+    setLoadingSmartAttraction(SmartAttractionLoadingState.Loading);
     const enrichedData = await enrichAttraction(
       attraction,
       location,
@@ -95,10 +134,22 @@ const AttractionCard = ({
     );
     setEnrichedAttraction(enrichedData);
     setDisplayEnriched(true);
+    if (enrichedData && enrichedData.error == null) {
+      setLoadingSmartAttraction(SmartAttractionLoadingState.Completed);
+    } else {
+      setLoadingSmartAttraction(SmartAttractionLoadingState.Failed);
+    }
   };
+
+  useEffect(() => {
+    fetchEnrichedData();
+  }, []);
 
   return (
     <div>
+      {loadingSmartAttraction === SmartAttractionLoadingState.Loading && (
+        <div>Enhancing using AI...</div>
+      )}
       {attraction.type}
       {!displayEnriched ? (
         attraction.type === "gemini_attraction" ? (
@@ -112,15 +163,17 @@ const AttractionCard = ({
             images={images}
           />
         )
-      ) : (
+      ) : enrichedAttraction ? (
         <EnrichedAttractionDisplay
           enrichedAttraction={enrichedAttraction}
           images={images}
         />
-      )}
-      {!displayEnriched && (
-        <button onClick={fetchEnrichedData}>Enrich Attraction</button>
-      )}
+      ) : null}
+      {(loadingSmartAttraction === SmartAttractionLoadingState.NotStarted ||
+        loadingSmartAttraction === SmartAttractionLoadingState.Failed) &&
+        !displayEnriched && (
+          <button onClick={fetchEnrichedData}>Enrich Attraction</button>
+        )}
     </div>
   );
 };
