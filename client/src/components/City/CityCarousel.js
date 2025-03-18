@@ -4,6 +4,7 @@ import "react-multi-carousel/lib/styles.css";
 import "./CityCarousel.css";
 import CityPlanDisplay from "./CityPlanDisplay";
 import { useCityImage } from "../../context/CityImageContext.js";
+import { base_url } from "../../services/apiServiceSetup.js";
 
 function CityCarousel({ cities }) {
   const [expandedCity, setExpandedCity] = useState(null);
@@ -34,7 +35,7 @@ function CityCarousel({ cities }) {
   }, [tripPlans]);
   const fetchCityImages = async (city) => {
     const response = await fetch(
-      `http://localhost:4000/trip/images?q=${city.name}+japan`
+      `${base_url}/trip/images?q=${city.name}+japan`
     );
     const data = await response.json();
     setCityImages((prevImages) => ({ ...prevImages, [city.name]: data }));
@@ -60,7 +61,7 @@ function CityCarousel({ cities }) {
     const fromCity = previousCity ? previousCity : "tokyo";
 
     try {
-      const response = await fetch("http://localhost:4000/trip/city-plan", {
+      const response = await fetch(`${base_url}/trip/city-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -79,7 +79,6 @@ const EnrichedAttractionDisplay = ({ place, enrichedAttraction, images }) => {
                 Official Website
               </a>
             )}
-            {JSON.stringify(images)}
             {images && (
               <div>
                 <strong>Images:</strong>

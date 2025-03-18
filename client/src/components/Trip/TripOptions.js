@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CityPlanDisplay from "../../components/City/CityPlanDisplay";
 import japanPlaces from "../../schemas/japanPlaces.json";
+import { base_url } from "../../services/apiServiceSetup";
 
 function TripOptions({ setCities }) {
   const [days, setDays] = useState(10);
@@ -27,7 +28,7 @@ function TripOptions({ setCities }) {
     const fromCity = previousCity ? previousCity : "tokyo";
 
     try {
-      const response = await fetch("http://localhost:4000/trip/city-plan", {
+      const response = await fetch(`${base_url}/trip/city-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,14 +53,13 @@ function TripOptions({ setCities }) {
     console.log("From City:", fromCity, "To City:", toCity);
   };
 
- const handleSelectItem = (key) => {
+  const handleSelectItem = (key) => {
     setSearchTerm(key);
     setFilteredPlaces([]);
   };
 
-
   const fetchCities = async () => {
-    const response = await fetch("http://localhost:4000/trip/cities", {
+    const response = await fetch(`${base_url}/trip/cities`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,11 +90,7 @@ function TripOptions({ setCities }) {
       <div>
         <label>
           Search Places :
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
+          <input type="text" value={searchTerm} onChange={handleSearch} />
           {filteredPlaces.length > 0 && (
             <ul>
               {filteredPlaces.map(([key, place]) => (
@@ -109,7 +105,7 @@ function TripOptions({ setCities }) {
           Plan to {searchTerm}
         </button>
       </div>
-       <CityPlanDisplay
+      <CityPlanDisplay
         tripPlans={tripPlans}
         setExpandedPlanIndex={setExpandedPlanIndex}
         expandedPlanIndex={expandedPlanIndex}

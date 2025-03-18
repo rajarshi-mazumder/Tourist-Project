@@ -13,6 +13,7 @@ const {
 const {
   getHotelsFromMaps,
   getHotelPriceFromPerplexity,
+  getHotelsFromRakuten,
 } = require("../controllers/trips/hotel/hotelDataController.js");
 const {
   searchPlacesAndDetailsHandler,
@@ -23,6 +24,7 @@ router.post("/cities", citiesController.getCities);
 router.post("/city-plan", citiesController.generateCityPlan);
 router.get("/images", googleSearchController.searchImages);
 router.post("/hotels-from-maps", getHotelsFromMaps);
+router.post("/hotels-from-rakuten", getHotelsFromRakuten);
 router.post("/search-places", searchPlacesAndDetailsHandler);
 router.post("/attractions", attractionsController.getAttractionsFromGemini);
 router.post(

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
 import GoogleMapAttractionDisplay from "./GoogleMapAttractionDisplay";
 import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
+import { base_url } from "../../services/apiServiceSetup";
 
 const enrichAttraction = async (
   attraction,
@@ -11,23 +12,20 @@ const enrichAttraction = async (
   season,
   dailyForecast
 ) => {
-  const enrichResponse = await fetch(
-    "http://localhost:4000/trip/enrich-attractions",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        location: location,
-        keywords: keywords,
-        month: month,
-        season: season,
-        dailyForecast: dailyForecast,
-        googlePlacesData: [attraction],
-      }),
-    }
-  );
+  const enrichResponse = await fetch(`${base_url}/trip/enrich-attractions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      location: location,
+      keywords: keywords,
+      month: month,
+      season: season,
+      dailyForecast: dailyForecast,
+      googlePlacesData: [attraction],
+    }),
+  });
 
   const enrichedData = await enrichResponse.json();
   console.log("Enriched Data:", enrichedData);
@@ -35,9 +33,7 @@ const enrichAttraction = async (
   // Fetch images
   try {
     const imageResponse = await fetch(
-      `http://localhost:4000/trip/images?q=${encodeURIComponent(
-        attraction.name
-      )}`
+      `${base_url}/trip/images?q=${encodeURIComponent(attraction.name)}`
     );
 
     if (imageResponse.ok) {
@@ -69,9 +65,7 @@ const AttractionCard = ({
     const fetchImages = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/trip/images?q=${encodeURIComponent(
-            attraction.name
-          )}`
+          `${base_url}/trip/images?q=${encodeURIComponent(attraction.name)}`
         );
 
         if (response.ok) {
@@ -115,10 +109,14 @@ const AttractionCard = ({
           <EnrichedAttractionDisplay
             place={attraction}
             enrichedAttraction={enrichedAttraction}
+            images={images}
           />
         )
       ) : (
-        <EnrichedAttractionDisplay enrichedAttraction={enrichedAttraction} />
+        <EnrichedAttractionDisplay
+          enrichedAttraction={enrichedAttraction}
+          images={images}
+        />
       )}
       {!displayEnriched && (
         <button onClick={fetchEnrichedData}>Enrich Attraction</button>

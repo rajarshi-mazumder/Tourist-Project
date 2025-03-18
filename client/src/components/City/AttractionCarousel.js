@@ -4,6 +4,7 @@ import "react-multi-carousel/lib/styles.css";
 import { getMonthSeasonWeather } from "../../services/dateAndSeason/getDateAndSeason";
 import "./CityCarousel.css";
 import AttractionCard from "./AttractionCard";
+import { base_url } from "../../services/apiServiceSetup";
 
 function AttractionCarousel({ attractions, location }) {
   const [newAttractions, setNewAttractions] = useState([
@@ -45,22 +46,19 @@ function AttractionCarousel({ attractions, location }) {
 
     const keywords = keywordsInput.split(",").map((keyword) => keyword.trim());
 
-    const response = await fetch(
-      "http://localhost:4000/trip/attractions-from-maps",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          keywords: keywords,
-          location,
-          month,
-          season,
-          dailyForecast,
-        }),
-      }
-    );
+    const response = await fetch(`${base_url}/trip/attractions-from-maps`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        keywords: keywords,
+        location,
+        month,
+        season,
+        dailyForecast,
+      }),
+    });
 
     const initialAttractions = await response.json();
     console.log("Initial Attractions from Maps:", initialAttractions);

@@ -164,6 +164,6 @@ async function extractHotelPrice(hotelDetails) {
 module.exports = {
   getHotels: getHotelsFromRakutenAPI,
   getHotelsFromMaps,
-  getHotelsFromRakutenAPI: getHotelsFromRakuten,
   getHotelPriceFromPerplexity,
+  getHotelsFromRakuten,
 };

@@ -4,6 +4,7 @@ import AccommodationCarousel from "../Accommodation/AccommodationCarousel.js";
 import AttractionCarousel from "./AttractionCarousel.js";
 import FoodCarousel from "./FoodCarousel.js";
 import { useCityImage } from "../../context/CityImageContext.js";
+import { base_url } from "../../services/apiServiceSetup.js";
 
 const CityPlanDisplay = ({
   tripPlans,
@@ -44,7 +45,7 @@ const PlanDetails = ({ cityPlan }) => {
     const fetchCityImages = async (city) => {
       try {
         const response = await fetch(
-          `http://localhost:4000/trip/images?q=${cityPlan.city}+japan`
+          `${base_url}/trip/images?q=${cityPlan.city}+japan`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

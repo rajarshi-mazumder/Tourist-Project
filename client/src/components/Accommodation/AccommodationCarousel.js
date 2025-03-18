@@ -5,7 +5,7 @@ import "../City/CityCarousel.css";
 import { BOOKING_COM_URL } from "../../constants";
 import RakutenHotelCard from "./RakutenHotelCard";
 import GoogleMapsHotelCard from "./GoogleMapsHotelCard";
-
+import { base_url } from "../../services/apiServiceSetup";
 function AccommodationCarousel({ accommodations, city }) {
   const [keywords, setKeywords] = useState("");
   const [rakutenHotelData, setRakutenHotelData] = useState(accommodations);
@@ -49,7 +49,7 @@ function AccommodationCarousel({ accommodations, city }) {
 
   const searchHotels = useCallback(async () => {
     try {
-      const apiUrl = `http://localhost:4000/trip/hotels-from-maps`;
+      const apiUrl = `${base_url}/trip/hotels-from-maps`;
       console.log(`Fetching hotels from: ${apiUrl}`);
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -75,19 +75,16 @@ function AccommodationCarousel({ accommodations, city }) {
 
   const fetchHotelPrice = async (hotelName, location) => {
     try {
-      const response = await fetch(
-        "http://localhost:4000/trip/get-hotel-price",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            hotelName: hotelName,
-            location: location,
-          }),
-        }
-      );
+      const response = await fetch(`${base_url}/trip/get-hotel-price`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hotelName: hotelName,
+          location: location,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

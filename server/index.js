@@ -10,7 +10,9 @@ require("dotenv").config();
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.10.117:3000"], // Add all allowed origins
+    origin:
+      // "https://touristproject-client-799087063528.asia-northeast1.run.app",
+      "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow cookies if needed
   })
