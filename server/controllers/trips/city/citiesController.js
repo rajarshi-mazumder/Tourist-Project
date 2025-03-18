@@ -8,6 +8,10 @@ const {
 const { getHotels } = require("../hotel/hotelDataController");
 const citiesWithDataSchema = require("../../../schemas/citiesWithDataSchema.json");
 const { AttractionType } = require("../../../constants");
+const {
+  saveCityResponse,
+  searchCityResponse,
+} = require("../../elasticSearch/elasticSearchController");
 
 const citiesController = {
   getCities: async (req, res) => {
@@ -90,14 +94,26 @@ const citiesController = {
   generateCityPlan: async (req, res) => {
     try {
       const { cityName, days } = req.body;
-      console.log(cityName);
-      const hotels = await getHotels(cityName, "");
 
       if (!cityName || !days) {
         return res
           .status(400)
-          .json({ message: "city_name and days are required" });
+          .json({ message: "cityName and days are required" });
       }
+
+      console.log(`🔍 Checking cache for city: ${cityName}`);
+
+      // Check if cached response exists
+      const cachedResponse = await searchCityResponse(cityName);
+      if (cachedResponse) {
+        console.log(`✅ Returning cached response for ${cityName}`);
+        return res.json(cachedResponse); // Ensure the format matches frontend expectations
+      }
+
+      console.log(`🚀 No cache found. Generating AI response for ${cityName}`);
+
+      // Fetch hotel details before calling AI
+      const hotels = await getHotels(cityName, "");
 
       const task = "trips";
       const cityPlannerPromptPath = path.resolve(
@@ -105,6 +121,7 @@ const citiesController = {
         "../../../prompts/CityPlannerPrompt.txt"
       );
       const tripPlannerPrompt = fs.readFileSync(cityPlannerPromptPath, "utf-8");
+
       const prompt = tripPlannerPrompt
         .replace(/{city_name}/g, cityName)
         .replace(/{{days}}/g, days);
@@ -113,44 +130,47 @@ const citiesController = {
       try {
         responseText = await aiController.generateAIResponse(prompt, task);
       } catch (error) {
-        console.error("Error generating AI response:", error);
+        console.error("❌ Error generating AI response:", error);
         return res
           .status(500)
           .json({ message: "Failed to generate trip", error: error.message });
       }
 
+      let parsedResponse;
       try {
-        try {
-          let parsedResponse = parseJsonFromGemini(responseText);
+        parsedResponse = parseJsonFromGemini(responseText);
+        parsedResponse.accommodations = hotels;
 
-          parsedResponse.accommodations = hotels;
-
-          // Assign AttractionType.GEMINI_ATTRACTION to attractions
-          if (
-            parsedResponse.attractions &&
-            Array.isArray(parsedResponse.attractions)
-          ) {
-            parsedResponse.attractions.forEach((attraction) => {
-              attraction.type = AttractionType.GEMINI_ATTRACTION;
-            });
-          }
-
-          return res.json(parsedResponse);
-        } catch (e) {
-          console.error("Error extracting content from AI response:", e);
-          return res
-            .status(500)
-            .json({ message: "Failed to extract content", error: e.message });
+        // Assign AttractionType.GEMINI_ATTRACTION to attractions
+        if (Array.isArray(parsedResponse.attractions)) {
+          parsedResponse.attractions.forEach((attraction) => {
+            attraction.type = AttractionType.GEMINI_ATTRACTION;
+          });
         }
-      } catch (parseError) {
-        console.error("Error parsing or transforming AI response:", parseError);
+      } catch (error) {
+        console.error("❌ Error parsing AI response:", error);
+        return res
+          .status(500)
+          .json({ message: "Failed to extract content", error: error.message });
+      }
+
+      try {
+        console.log(
+          `💾 Saving response to Elasticsearch for city: ${cityName}`
+        );
+        await saveCityResponse(cityName, parsedResponse);
+        console.log(`✅ Response saved successfully`);
+
+        return res.json(parsedResponse);
+      } catch (error) {
+        console.error("❌ Error saving to Elasticsearch:", error);
         return res.status(500).json({
-          message: "Failed to process AI response",
-          error: parseError.message,
+          message: "Failed to save city response",
+          error: error.message,
         });
       }
     } catch (error) {
-      console.error("Error generating city plan:", error);
+      console.error("❌ Error generating city plan:", error);
       return res.status(500).json({
         message: "Failed to generate city plan",
         error: error.message,

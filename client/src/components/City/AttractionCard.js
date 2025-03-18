@@ -48,28 +48,6 @@ const enrichAttraction = async (
     return null;
   }
 
-  // Fetch images
-  // try {
-  //   const imageResponse = await fetch(
-  //     `${base_url}/trip/images?q=${encodeURIComponent(attraction.name)}`
-  //   );
-
-  //   if (imageResponse.ok) {
-  //     const imageData = await imageResponse.json();
-  //     if (enrichedData.attractions && enrichedData.attractions.length > 0) {
-  //       enrichedData.attractions[0].images = imageData.map(
-  //         (image) => image.link
-  //       );
-  //     } else {
-  //       console.warn("enrichedData.attractions is empty or undefined");
-  //     }
-  //   } else {
-  //     console.error("Failed to fetch images:", imageResponse.status);
-  //   }
-  // } catch (error) {
-  //   console.error("Error fetching images:", error);
-  // }
-
   if (
     !enrichedData ||
     !enrichedData.attractions ||
