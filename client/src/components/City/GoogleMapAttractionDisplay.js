@@ -1,58 +1,51 @@
 import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import "./AttractionCard.css"; // Import unified styles
 
 const GoogleMapAttractionDisplay = ({ place, images }) => {
   const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
+    desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+    tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
+    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
   return (
-    <div className="google-map-place">
-      <h3>{place.name}</h3>
-      <p>Address: {place.formatted_address}</p>
-      <p>Business Status: {place.business_status}</p>
-      <p>
+    <div className="attraction-card">
+      <h3 className="attraction-title">{place.name}</h3>
+      <p className="attraction-info">Address: {place.formatted_address}</p>
+      <p className="attraction-info">
+        Business Status: {place.business_status}
+      </p>
+      <p className="attraction-info">
         Rating: {place.rating} ({place.user_ratings_total} ratings)
       </p>
-      <p>Price Level: {place.price_level}</p>
+      <p className="attraction-info">Price Level: {place.price_level}</p>
       {place.opening_hours && place.opening_hours.open_now !== undefined && (
-        <p>Open Now: {place.opening_hours.open_now ? "Yes" : "No"}</p>
+        <p className="attraction-info">
+          Open Now: {place.opening_hours.open_now ? "Yes" : "No"}
+        </p>
       )}
 
-      {images && (
-        <div>
+      {images.length > 0 && (
+        <div className="carousel-wrapper">
           <strong>Images:</strong>
-          <Carousel responsive={responsive}>
+          <Carousel responsive={responsive} className="custom-carousel">
             {images.map((image, index) => (
               <div key={index} className="carousel-image-container">
                 <img
                   src={image.link}
                   alt="Attraction"
-                  style={{
-                    maxWidth: "100%",
-                    height: "150px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
+                  className="attraction-image"
                 />
               </div>
             ))}
           </Carousel>
         </div>
       )}
+
       <a
+        className="map-link"
         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
           place.name + " " + place.formatted_address
         )}`}

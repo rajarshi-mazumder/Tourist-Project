@@ -3,6 +3,7 @@ import EnrichedAttractionDisplay from "./EnrichedAttractionDisplay";
 import GoogleMapAttractionDisplay from "./GoogleMapAttractionDisplay";
 import GeminiAttractionDisplay from "./GeminiAttractionDisplay";
 import { base_url } from "../../services/apiServiceSetup";
+import "./AttractionCard.css";
 
 const SmartAttractionLoadingState = {
   NotStarted: "not_started",
@@ -124,7 +125,7 @@ const AttractionCard = ({
   }, []);
 
   return (
-    <div>
+    <div className="attraction-card">
       {loadingSmartAttraction === SmartAttractionLoadingState.Loading && (
         <div>Enhancing using AI...</div>
       )}

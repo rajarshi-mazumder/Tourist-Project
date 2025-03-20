@@ -1,22 +1,26 @@
 const elasticClient = require("../../services/elasticSearch");
 
-async function saveCityResponse(city, response) {
+async function saveCityResponse(cityName, response) {
   try {
-    const doc = {
-      city: city.toLowerCase(), // Store lowercase for case-insensitive search
-      response,
-      timestamp: new Date(),
-    };
+    if (!response || typeof response !== "object") {
+      throw new Error("Invalid response format: Expected an object.");
+    }
+
+    console.log("🔍 Saving city response:", JSON.stringify(response, null, 2));
 
     const result = await elasticClient.index({
       index: "city_responses",
-      body: doc,
+      id: cityName.toLowerCase(),
+      document: {
+        city: cityName,
+        response: JSON.stringify(response), // ✅ Store as a JSON string to avoid formatting issues
+        timestamp: new Date(),
+      },
     });
 
-    console.log(`Saved response for ${city}:`, result);
-    return result;
-  } catch (err) {
-    console.error("Error saving city response:", err);
+    console.log("✅ Successfully saved to Elasticsearch:", result);
+  } catch (error) {
+    console.error("❌ Error saving city response:", error);
   }
 }
 
@@ -37,4 +41,15 @@ async function searchCityResponse(city) {
   return null; // No cached response found
 }
 
-module.exports = { saveCityResponse, searchCityResponse };
+function cleanElasticResponse(rawData) {
+  try {
+    if (typeof rawData === "string") {
+      return JSON.parse(rawData); // ✅ Convert JSON string back to object
+    }
+    return rawData; // ✅ Already an object, return as-is
+  } catch (error) {
+    console.error("❌ Error parsing ElasticSearch response:", error);
+    return {}; // Return empty object if parsing fails
+  }
+}
+module.exports = { saveCityResponse, cleanElasticResponse, searchCityResponse };

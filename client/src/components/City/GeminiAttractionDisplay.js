@@ -1,6 +1,7 @@
 import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import "./AttractionCard.css"; // Import styles
 
 const GeminiAttractionDisplay = ({ attraction, images }) => {
   const displayField = (fieldName, fieldValue) => {
@@ -10,7 +11,7 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
 
     if (fieldName === "Seasonal events" && Array.isArray(fieldValue)) {
       return (
-        <div>
+        <div className="attraction-detail">
           <strong>{fieldName}:</strong>
           <ul>
             {fieldValue.map((event, index) => (
@@ -34,7 +35,7 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
 
     if (Array.isArray(fieldValue)) {
       return (
-        <div>
+        <div className="attraction-detail">
           <strong>{fieldName}:</strong>
           <ul>
             {fieldValue.map((item, index) => (
@@ -47,12 +48,16 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
 
     if (typeof fieldValue === "object" && fieldValue !== null) {
       return (
-        <div>
+        <div className="attraction-detail">
           <strong>{fieldName}:</strong>
           {fieldValue.official_website && (
             <p>
               Official Website:{" "}
-              <a href={fieldValue.official_website}>
+              <a
+                href={fieldValue.official_website}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {fieldValue.official_website}
               </a>
             </p>
@@ -60,7 +65,13 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
           {fieldValue.google_maps && (
             <p>
               Google Maps:{" "}
-              <a href={fieldValue.google_maps}>{fieldValue.google_maps}</a>
+              <a
+                href={fieldValue.google_maps}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {fieldValue.google_maps}
+              </a>
             </p>
           )}
         </div>
@@ -68,30 +79,21 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
     }
 
     return (
-      <div>
+      <div className="attraction-detail">
         <strong>{fieldName}:</strong> {fieldValue}
       </div>
     );
   };
 
   const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
+    desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+    tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
+    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
   return (
-    <div>
-      <h3>{attraction.name}</h3>
+    <div className="attraction-card">
+      <h3 className="attraction-title">{attraction.name}</h3>
       {displayField("Address", attraction.address)}
       {displayField("Region", attraction.region)}
       {displayField("Reason", attraction.reason)}
@@ -106,20 +108,15 @@ const GeminiAttractionDisplay = ({ attraction, images }) => {
       {displayField("Links", attraction.links)}
 
       {images.length > 0 && (
-        <div>
+        <div className="carousel-wrapper">
           <strong>Images:</strong>
-          <Carousel responsive={responsive}>
+          <Carousel responsive={responsive} className="custom-carousel">
             {images.map((image, index) => (
               <div key={index} className="carousel-image-container">
                 <img
                   src={image.link}
                   alt="Attraction"
-                  style={{
-                    maxWidth: "100%",
-                    height: "150px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
+                  className="attraction-image"
                 />
               </div>
             ))}

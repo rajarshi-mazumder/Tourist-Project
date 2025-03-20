@@ -11,6 +11,7 @@ const { AttractionType } = require("../../../constants");
 const {
   saveCityResponse,
   searchCityResponse,
+  cleanElasticResponse,
 } = require("../../elasticSearch/elasticSearchController");
 
 const citiesController = {
@@ -107,7 +108,9 @@ const citiesController = {
       const cachedResponse = await searchCityResponse(cityName);
       if (cachedResponse) {
         console.log(`✅ Returning cached response for ${cityName}`);
-        return res.json(cachedResponse); // Ensure the format matches frontend expectations
+        const resp = cleanElasticResponse(cachedResponse);
+        // return res.json(resp); // Ensure the format matches frontend expectations
+        return res.json(resp);
       }
 
       console.log(`🚀 No cache found. Generating AI response for ${cityName}`);

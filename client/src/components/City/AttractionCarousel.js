@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { getMonthSeasonWeather } from "../../services/dateAndSeason/getDateAndSeason";
-import "./CityCarousel.css";
+import "./AttractionCarousel.css"; // Import the new CSS file
 import AttractionCard from "./AttractionCard";
 import { base_url } from "../../services/apiServiceSetup";
 
@@ -16,76 +16,56 @@ function AttractionCarousel({ attractions, location }) {
   const [dailyForecast, setDailyForecast] = useState("");
 
   const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-      slidesToSlide: 1, // optional, default to 1.
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-      slidesToSlide: 1, // optional, default to 1.
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-      slidesToSlide: 1, // optional, default to 1.
-    },
+    desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+    tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
+    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
   const handleGetMoreAttractionsFromMaps = async () => {
     const data = await getMonthSeasonWeather(location);
-    const {
-      month: newMonth,
-      season: newSeason,
-      dailyForecast: newDailyForecast,
-    } = data;
-    setMonth(newMonth);
-    setSeason(newSeason);
-    setDailyForecast(newDailyForecast);
+    setMonth(data.month);
+    setSeason(data.season);
+    setDailyForecast(data.dailyForecast);
 
     const keywords = keywordsInput.split(",").map((keyword) => keyword.trim());
 
     const response = await fetch(`${base_url}/trip/attractions-from-maps`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        keywords: keywords,
+        keywords,
         location,
-        month,
-        season,
-        dailyForecast,
+        month: data.month,
+        season: data.season,
+        dailyForecast: data.dailyForecast,
       }),
     });
 
     const initialAttractions = await response.json();
-    console.log("Initial Attractions from Maps:", initialAttractions);
-
-    const concatenatedKeyword = "Search results for : " + keywords;
     setNewAttractions([
       ...newAttractions,
-      { [concatenatedKeyword]: initialAttractions.attractions },
+      {
+        [`Search results for: ${keywords.join(", ")}`]:
+          initialAttractions.attractions,
+      },
     ]);
   };
+
   return (
-    <div>
-      {newAttractions.map((attraction) => (
-        <div>
-          {Object.entries(attraction).map(([key, value]) => (
-            <div className="attraction-row">
-              {key}
-              <div>
-                {/* {JSON.stringify(value)} */}
-                <Carousel responsive={responsive}>
-                  {value.map((attraction) => (
+    <div className="attraction-carousel-container">
+      {newAttractions.map((attraction, index) => (
+        <div key={index} className="attraction-section">
+          {Object.entries(attraction).map(([title, places]) => (
+            <div key={title} className="attraction-row">
+              <h3 className="attraction-title">{title}</h3>
+              <div className="carousel-wrapper">
+                <Carousel responsive={responsive} className="custom-carousel">
+                  {places.map((place, idx) => (
                     <AttractionCard
-                      attraction={attraction}
+                      key={idx}
+                      attraction={place}
                       location={location}
-                      keywords={keywordsInput
-                        .split(",")
-                        .map((keyword) => keyword.trim())}
+                      keywords={keywordsInput.split(",").map((kw) => kw.trim())}
                       month={month}
                       season={season}
                       dailyForecast={dailyForecast}
@@ -98,20 +78,21 @@ function AttractionCarousel({ attractions, location }) {
         </div>
       ))}
 
-      <input
-        type="text"
-        placeholder="Enter keywords separated by commas"
-        value={keywordsInput}
-        onChange={(e) => setKeywordsInput(e.target.value)}
-      />
-      <br />
-      <button
-        onClick={() => {
-          handleGetMoreAttractionsFromMaps();
-        }}
-      >
-        Get Attractions Data from maps
-      </button>
+      <div className="attraction-search">
+        <input
+          type="text"
+          className="keyword-input"
+          placeholder="Enter keywords separated by commas"
+          value={keywordsInput}
+          onChange={(e) => setKeywordsInput(e.target.value)}
+        />
+        <button
+          className="search-button"
+          onClick={handleGetMoreAttractionsFromMaps}
+        >
+          Get Attractions Data from Maps
+        </button>
+      </div>
     </div>
   );
 }
