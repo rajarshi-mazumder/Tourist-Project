@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { base_url } from "../../services/apiServiceSetup";
 
 function TripForm({ setTripData }) {
   const [fromCity, setFromCity] = useState("");
@@ -9,7 +10,7 @@ function TripForm({ setTripData }) {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost/trip/plan-trip", {
+      const response = await fetch(`${base_url}/trip/plan-trip`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

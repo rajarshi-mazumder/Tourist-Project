@@ -1,0 +1,27 @@
+{
+  "country": "{country_name}",
+  "trip_duration": "{num_days} days",
+  "recommended_places": [
+    {
+      "name": "Tokyo",
+      "description": "Japan’s bustling capital, known for its blend of modern skyscrapers, historic temples, and vibrant nightlife.",
+      "region": "kanto",
+      "best_for": "city_exploration, food, culture",
+      "image_urls": []
+    },
+    {
+      "name": "Kyoto",
+      "description": "The heart of traditional Japan, featuring beautiful temples, shrines, and geisha culture.",
+      "region": "kansai",
+      "best_for": "history, temples, cultural_experiences",
+      "image_urls": []
+    },
+    {
+      "name": "Okinawa",
+      "description": "A tropical island known for stunning beaches, unique Ryukyu culture, and delicious seafood.",
+      "region": "okinawa_prefecture",
+      "best_for": "beaches, relaxation, diving",
+      "image_urls": []
+    }
+  ]
+}

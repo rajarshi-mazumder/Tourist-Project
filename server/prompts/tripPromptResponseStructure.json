@@ -8,51 +8,62 @@
     "image_url": ""
   },
   "transportation": [
-    {
-      "method": "",
-      "from": "",
-      "to": "",
-      "duration": "",
-      "cost_range": "",
-      "booking_link": "",
-      "image_url": ""
-    },
-    {
-      "method": "",
-      "from": "",
-      "to": "",
-      "duration": "",
-      "cost_range": "",
-      "booking_link": "",
-      "image_url": ""
-    }
+    [
+      {
+        "method": "Flight",
+        "service_provider": "Japan Airlines",
+        "service_number": "JAL 302",
+        "from": "Narita International Airport (NRT)",
+        "to": "Kansai International Airport (KIX)",
+        "departure_terminal": "T1",
+        "arrival_terminal": "T2",
+        "duration": "1h 30m",
+        "cost_range": "$150 - $300",
+        "booking_link": "https://www.jal.co.jp",
+        "icon_url": null,
+        "image_url": "https://example.com/flight.jpg"
+      }
+    ],
+    [
+      {
+        "method": "Train",
+        "service_provider": "Shinkansen Nozomi",
+        "service_number": "N700A",
+        "from": "Tokyo Station",
+        "from_platform": "Platform 14",
+        "to": "Shin-Osaka Station",
+        "to_platform": "Platform 3",
+        "duration": "2h 30m",
+        "cost_range": "$100 - $150",
+        "seat_class": "Ordinary / Green Car",
+        "booking_link": "https://www.jr-pass.com",
+        "icon_url": "https://example.com/shinkansen-logo.png",
+        "image_url": "https://example.com/shinkansen.jpg"
+      }
+    ],
+    [
+      {
+        "method": "Subway",
+        "service_provider": "Tokyo Metro Ginza Line",
+        "service_number": "G12",
+        "from": "Shibuya Station",
+        "from_platform": "Platform 2",
+        "to": "Asakusa Station",
+        "to_platform": "Platform 1",
+        "duration": "28 min",
+        "cost_range": "$2 - $5",
+        "station_info": {
+          "entrance": "Exit A2",
+          "facilities": ["Elevator", "Restrooms", "Coin Lockers"]
+        },
+        "booking_link": "https://www.tokyometro.jp",
+        "icon_url": null,
+        "image_url": "https://example.com/ginza-line.jpg"
+      }
+    ]
   ],
-  "accommodations": [
-    {
-      "category": "",
-      "name": "",
-      "price_per_night": "",
-      "booking_link": "",
-      "image_url": ""
-    }
-  ],
-  "attractions": [
-    {
-      "name": "",
-      "description": "",
-      "best_time_to_visit": "",
-      "entry_fee": "",
-      "location": "",
-      "image_url": ""
-    }
-  ],
-  "food_recommendations": [
-    {
-      "dish": "",
-      "description": "",
-      "best_place_to_try": "",
-      "image_url": ""
-    }
-  ],
+  "accommodations": [],
+  "attractions": [],
+  "food_recommendations": [],
   "travel_tips": []
 }

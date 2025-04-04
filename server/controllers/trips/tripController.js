@@ -6,19 +6,19 @@ const parseJsonFromGemini = require("../../aicontrollers/geminiController.js");
 
 const tripPromptResponseStructure = require("../../prompts/tripPromptResponseStructure.json");
 
-const { getTransportOptions } = require("../transportation/transportationOptionsController.js");
+const { getHotels } = require("./hotel/hotelDataController.js");
 
 const tripController = {
   generateTrip: async (req, res) => {
     try {
       const { from_city, to_city, days } = req.body;
-      console.log(`BODYY ${JSON.stringify(req.body)} ${from_city} ${to_city}`);
+      const hotels = await getHotels(to_city);
+
       if (!from_city || !to_city || !days) {
         return res
           .status(400)
           .json({ message: "From city, to city, and days are required" });
       }
-
 
       const task = "trips";
       const tripPlannerPromptPath = path.resolve(
@@ -29,8 +29,7 @@ const tripController = {
       const prompt = tripPlannerPrompt
         .replace(/{from_city}/g, from_city)
         .replace(/{to_city}/g, to_city)
-        .replace(/{{days}}/g, days)
-
+        .replace(/{{days}}/g, days);
 
       let responseText;
       try {
@@ -41,15 +40,21 @@ const tripController = {
           .status(500)
           .json({ message: "Failed to generate trip", error: error.message });
       }
-      
+
       let tripDetails;
       try {
         let content;
         try {
           let parsedResponse = parseJsonFromGemini(responseText);
-          const structuredResponse = structureResponse(
+          let structuredResponse = structureResponse(
             parsedResponse,
             tripPromptResponseStructure
+          );
+          structuredResponse.accommodations = hotels;
+
+          console.log(
+            "Structured Response:",
+            JSON.stringify(structuredResponse, null, 2)
           );
           return res.json(structuredResponse);
         } catch (e) {

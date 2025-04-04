@@ -1,0 +1,20 @@
+{
+  "attractions": [
+    {
+      "Name": "Shinjuku Gyoen National Garden",
+      "Description": "A beautiful garden blending Japanese, English, and French garden styles. Offers a tranquil escape from the city bustle.",
+      "Best Time to Visit": "Spring (cherry blossoms) or Autumn (foliage)",
+      "Entry Fee": "500 JPY",
+      "Location": "11 Naito-machi, Shinjuku-ku, Tokyo 160-0014",
+      "Representative Image URL": "https://example.com/shinjuku_gyoen.jpg"
+    },
+    {
+      "Name": "Fushimi Inari Shrine",
+      "Description": "A famous Shinto shrine known for its thousands of vermillion torii gates leading into the forested mountain trails.",
+      "Best Time to Visit": "Early morning to avoid crowds",
+      "Entry Fee": "Free",
+      "Location": "68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto, 612-0882",
+      "Representative Image URL": "https://example.com/fushimi_inari.jpg"
+    }
+  ]
+}

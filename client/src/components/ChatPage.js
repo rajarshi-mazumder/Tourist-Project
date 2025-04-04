@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 function ChatPage({ setError }) {
@@ -60,8 +61,9 @@ User Query: "{userPrompt}"
       const response = await fetch('http://localhost/chat', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
+
         body: JSON.stringify({ prompt: userPrompt, promptType: category }),
       });
 

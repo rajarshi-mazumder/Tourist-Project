@@ -1,0 +1,622 @@
+
+{
+"places":[{
+  "tokyo": {
+    "eng": "Tokyo",
+    "jp": "東京"
+  },
+  "hokkaido": {
+    "eng": "Hokkaido",
+    "jp": "北海道"
+  },
+  "aomori": {
+    "eng": "Aomori Prefecture",
+    "jp": "青森県"
+  },
+  "iwate": {
+    "eng": "Iwate Prefecture",
+    "jp": "岩手県"
+  },
+  "miyagi": {
+    "eng": "Miyagi Prefecture",
+    "jp": "宮城県"
+  },
+  "akita": {
+    "eng": "Akita Prefecture",
+    "jp": "秋田県"
+  },
+  "yamagata": {
+    "eng": "Yamagata Prefecture",
+    "jp": "山形県"
+  },
+  "fukushima": {
+    "eng": "Fukushima Prefecture",
+    "jp": "福島県"
+  },
+  "ibaraki": {
+    "eng": "Ibaraki Prefecture",
+    "jp": "茨城県"
+  },
+  "tochigi": {
+    "eng": "Tochigi Prefecture",
+    "jp": "栃木県"
+  },
+  "gunma": {
+    "eng": "Gunma Prefecture",
+    "jp": "群馬県"
+  },
+  "saitama": {
+    "eng": "Saitama Prefecture",
+    "jp": "埼玉県"
+  },
+  "chiba": {
+    "eng": "Chiba Prefecture",
+    "jp": "千葉県"
+  },
+  "kanagawa": {
+    "eng": "Kanagawa Prefecture",
+    "jp": "神奈川県"
+  },
+  "yamanashi": {
+    "eng": "Yamanashi Prefecture",
+    "jp": "山梨県"
+  },
+  "nagano": {
+    "eng": "Nagano Prefecture",
+    "jp": "長野県"
+  },
+  "gifu": {
+    "eng": "Gifu Prefecture",
+    "jp": "岐阜県"
+  },
+  "shizuoka": {
+    "eng": "Shizuoka Prefecture",
+    "jp": "静岡県"
+  },
+  "aichi": {
+    "eng": "Aichi Prefecture",
+    "jp": "愛知県"
+  },
+  "mie": {
+    "eng": "Mie Prefecture",
+    "jp": "三重県"
+  },
+  "shiga": {
+    "eng": "Shiga Prefecture",
+    "jp": "滋賀県"
+  },
+  "kyoto": {
+    "eng": "Kyoto Prefecture",
+    "jp": "京都府"
+  },
+  "osaka": {
+    "eng": "Osaka Prefecture",
+    "jp": "大阪府"
+  },
+  "hyogo": {
+    "eng": "Hyogo Prefecture",
+    "jp": "兵庫県"
+  },
+  "nara": {
+    "eng": "Nara Prefecture",
+    "jp": "奈良県"
+  },
+  "wakayama": {
+    "eng": "Wakayama Prefecture",
+    "jp": "和歌山県"
+  },
+  "tottori": {
+    "eng": "Tottori Prefecture",
+    "jp": "鳥取県"
+  },
+  "shimane": {
+    "eng": "Shimane Prefecture",
+    "jp": "島根県"
+  },
+  "okayama": {
+    "eng": "Okayama Prefecture",
+    "jp": "岡山県"
+  },
+  "hiroshima": {
+    "eng": "Hiroshima Prefecture",
+    "jp": "広島県"
+  },
+  "yamaguchi": {
+    "eng": "Yamaguchi Prefecture",
+    "jp": "山口県"
+  },
+  "tokushima": {
+    "eng": "Tokushima Prefecture",
+    "jp": "徳島県"
+  },
+  "kagawa": {
+    "eng": "Kagawa Prefecture",
+    "jp": "香川県"
+  },
+  "ehime": {
+    "eng": "Ehime Prefecture",
+    "jp": "愛媛県"
+  },
+  "kochi": {
+    "eng": "Kochi Prefecture",
+    "jp": "高知県"
+  },
+  "fukuoka": {
+    "eng": "Fukuoka Prefecture",
+    "jp": "福岡県"
+  },
+  "saga": {
+    "eng": "Saga Prefecture",
+    "jp": "佐賀県"
+  },
+  "nagasaki": {
+    "eng": "Nagasaki Prefecture",
+    "jp": "長崎県"
+  },
+  "kumamoto": {
+    "eng": "Kumamoto Prefecture",
+    "jp": "熊本県"
+  },
+  "oita": {
+    "eng": "Oita Prefecture",
+    "jp": "大分県"
+  },
+  "miyazaki": {
+    "eng": "Miyazaki Prefecture",
+    "jp": "宮崎県"
+  },
+  "kagoshima": {
+    "eng": "Kagoshima Prefecture",
+    "jp": "鹿児島県"
+  },
+  "okinawa": {
+    "eng": "Okinawa Prefecture",
+    "jp": "沖縄県"
+  },
+  "hakone": {
+    "eng": "Hakone, Kanagawa",
+    "jp": "箱根, 神奈川"
+  },
+  "karuizawa": {
+    "eng": "Karuizawa, Nagano",
+    "jp": "軽井沢, 長野"
+  },
+  "kusatsu": {
+    "eng": "Kusatsu, Gunma",
+    "jp": "草津, 群馬"
+  },
+  "takayama": {
+    "eng": "Takayama, Gifu",
+    "jp": "高山, 岐阜"
+  },
+  "arima_onsen": {
+    "eng": "Arima Onsen, Hyogo",
+    "jp": "有馬温泉, 兵庫"
+  },
+  "saitama_city": {
+    "eng": "Saitama City, Saitama",
+    "jp": "さいたま市, 埼玉"
+  },
+  "kawagoe": {
+    "eng": "Kawagoe, Saitama",
+    "jp": "川越, 埼玉"
+  },
+    "warabi": {
+    "eng": "Warabi, Saitama",
+    "jp": "蕨, 埼玉"
+  },
+  "toda": {
+    "eng": "Toda, Saitama",
+    "jp": "戸田, 埼玉"
+  },
+  "iruma": {
+    "eng": "Iruma, Saitama",
+    "jp": "入間, 埼玉"
+  },
+  "sayama": {
+    "eng": "Sayama, Saitama",
+    "jp": "狭山, 埼玉"
+  },
+  "misato": {
+    "eng": "Misato, Saitama",
+    "jp": "三郷, 埼玉"
+  },
+  "shiki": {
+    "eng": "Shiki, Saitama",
+    "jp": "志木, 埼玉"
+  },
+  "wako": {
+    "eng": "Wako, Saitama",
+    "jp": "和光, 埼玉"
+  },
+  "niiza": {
+    "eng": "Niiza, Saitama",
+    "jp": "新座, 埼玉"
+  },
+  "okegawa": {
+    "eng": "Okegawa, Saitama",
+    "jp": "桶川, 埼玉"
+  },
+  "kuki": {
+    "eng": "Kuki, Saitama",
+    "jp": "久喜, 埼玉"
+  },
+  "chiba_city": {
+    "eng": "Chiba City, Chiba",
+    "jp": "千葉市, 千葉"
+  },
+  "funabashi": {
+    "eng": "Funabashi, Chiba",
+    "jp": "船橋, 千葉"
+  },
+  "matsudo": {
+    "eng": "Matsudo, Chiba",
+    "jp": "松戸, 千葉"
+  },
+  "kashiwa": {
+    "eng": "Kashiwa, Chiba",
+    "jp": "柏, 千葉"
+  },
+  "ichikawa": {
+    "eng": "Ichikawa, Chiba",
+    "jp": "市川, 千葉"
+  },
+  "narita": {
+    "eng": "Narita, Chiba",
+    "jp": "成田, 千葉"
+  },
+  "sakura": {
+    "eng": "Sakura, Chiba",
+    "jp": "佐倉, 千葉"
+  },
+  "yachiyo": {
+    "eng": "Yachiyo, Chiba",
+    "jp": "八千代, 千葉"
+  },
+  "abiko": {
+    "eng": "Abiko, Chiba",
+    "jp": "我孫子, 千葉"
+  },
+  "kamagaya": {
+    "eng": "Kamagaya, Chiba",
+    "jp": "鎌ケ谷, 千葉"
+  },
+  "urayasu": {
+    "eng": "Urayasu, Chiba",
+    "jp": "浦安, 千葉"
+  },
+  "ichihara": {
+    "eng": "Ichihara, Chiba",
+    "jp": "市原, 千葉"
+  },
+  "sodegaura": {
+    "eng": "Sodegaura, Chiba",
+    "jp": "袖ケ浦, 千葉"
+  },
+  "kisarazu": {
+    "eng": "Kisarazu, Chiba",
+    "jp": "木更津, 千葉"
+  },
+  "kimitsu": {
+    "eng": "Kimitsu, Chiba",
+    "jp": "君津, 千葉"
+  },
+  "futtsu": {
+    "eng": "Futtsu, Chiba",
+    "jp": "富津, 千葉"
+  },
+  "tateyama": {
+    "eng": "Tateyama, Chiba",
+    "jp": "館山, 千葉"
+  },
+  "minamiboso": {
+    "eng": "Minamiboso, Chiba",
+    "jp": "南房総, 千葉"
+  },
+  "asahi": {
+    "eng": "Asahi, Chiba",
+    "jp": "旭, 千葉"
+  },
+  "togane": {
+    "eng": "Togane, Chiba",
+    "jp": "東金, 千葉"
+  },
+  "sanmu": {
+    "eng": "Sanmu, Chiba",
+    "jp": "山武, 千葉"
+  },
+  "isumi": {
+    "eng": "Isumi, Chiba",
+    "jp": "いすみ, 千葉"
+  },
+  "onjuku": {
+    "eng": "Onjuku, Chiba",
+    "jp": "御宿, 千葉"
+  },
+  "otaki": {
+    "eng": "Otaki, Chiba",
+    "jp": "大多喜, 千葉"
+  },
+  "yokohama": {
+    "eng": "Yokohama, Kanagawa",
+    "jp": "横浜, 神奈川"
+  },
+  "kawasaki": {
+    "eng": "Kawasaki, Kanagawa",
+    "jp": "川崎, 神奈川"
+  },
+  "sagamihara": {
+    "eng": "Sagamihara, Kanagawa",
+    "jp": "相模原, 神奈川"
+  },
+  "odawara": {
+    "eng": "Odawara, Kanagawa",
+    "jp": "小田原, 神奈川"
+  },
+  "kamakura": {
+    "eng": "Kamakura, Kanagawa",
+    "jp": "鎌倉, 神奈川"
+  },
+  "fujisawa": {
+    "eng": "Fujisawa, Kanagawa",
+    "jp": "藤沢, 神奈川"
+  },
+  "chigasaki": {
+    "eng": "Chigasaki, Kanagawa",
+    "jp": "茅ヶ崎, 神奈川"
+  },
+  "atsugi": {
+    "eng": "Atsugi, Kanagawa",
+    "jp": "厚木, 神奈川"
+  },
+  "zama": {
+    "eng": "Zama, Kanagawa",
+    "jp": "座間, 神奈川"
+  },
+  "isehara": {
+    "eng": "Isehara, Kanagawa",
+    "jp": "伊勢原, 神奈川"
+  },
+  "ebina": {
+    "eng": "Ebina, Kanagawa",
+    "jp": "海老名, 神奈川"
+  },
+  "hayama": {
+    "eng": "Hayama, Kanagawa",
+    "jp": "葉山, 神奈川"
+  },
+  "samukawa": {
+    "eng": "Samukawa, Kanagawa",
+    "jp": "寒川, 神奈川"
+  },
+  "oiso": {
+    "eng": "Oiso, Kanagawa",
+    "jp": "大磯, 神奈川"
+  },
+  "manazuru": {
+    "eng": "Manazuru, Kanagawa",
+    "jp": "真鶴, 神奈川"
+  },
+  "yugawara": {
+    "eng": "Yugawara, Kanagawa",
+    "jp": "湯河原, 神奈川"
+  },
+  "nagoya": {
+    "eng": "Nagoya, Aichi",
+    "jp": "名古屋, 愛知"
+  },
+  "toyota": {
+    "eng": "Toyota, Aichi",
+    "jp": "豊田, 愛知"
+  },
+  "okazaki": {
+    "eng": "Okazaki, Aichi",
+    "jp": "岡崎, 愛知"
+  },
+  "ichinomiya": {
+    "eng": "Ichinomiya, Aichi",
+    "jp": "一宮, 愛知"
+  },
+  "seto": {
+    "eng": "Seto, Aichi",
+    "jp": "瀬戸, 愛知"
+  },
+  "handa": {
+    "eng": "Handa, Aichi",
+    "jp": "半田, 愛知"
+  },
+  "kasugai": {
+    "eng": "Kasugai, Aichi",
+    "jp": "春日井, 愛知"
+  },
+  "toyokawa": {
+    "eng": "Toyokawa, Aichi",
+    "jp": "豊川, 愛知"
+  },
+
+  "itami": {
+    "eng": "Itami, Hyogo",
+    "jp": "伊丹, 兵庫"
+  },
+  "sanda": {
+    "eng": "Sanda, Hyogo",
+    "jp": "三田, 兵庫"
+  },
+  "ashiya": {
+    "eng": "Ashiya, Hyogo",
+    "jp": "芦屋, 兵庫"
+  },
+  "nishiwaki": {
+    "eng": "Nishiwaki, Hyogo",
+    "jp": "西脇, 兵庫"
+  },
+  "aioi": {
+    "eng": "Aioi, Hyogo",
+    "jp": "相生, 兵庫"
+  },
+  "toyooka": {
+    "eng": "Toyooka, Hyogo",
+    "jp": "豊岡, 兵庫"
+  },
+  "ako": {
+    "eng": "Ako, Hyogo",
+    "jp": "赤穂, 兵庫"
+  },
+  "shiso": {
+    "eng": "Shiso, Hyogo",
+    "jp": "宍粟, 兵庫"
+  },
+  "kato": {
+    "eng": "Kato, Hyogo",
+    "jp": "加東, 兵庫"
+  },
+  "miki": {
+    "eng": "Miki, Hyogo",
+    "jp": "三木, 兵庫"
+  },
+  "taketa": {
+    "eng": "Taketa, Hyogo",
+    "jp": "竹田, 兵庫"
+  },
+  "awaji": {
+    "eng": "Awaji, Hyogo",
+    "jp": "淡路, 兵庫"
+  },
+  "yabu": {
+    "eng": "Yabu, Hyogo",
+    "jp": "養父, 兵庫"
+  },
+  "tanba": {
+    "eng": "Tanba, Hyogo",
+    "jp": "丹波, 兵庫"
+  },
+  "asago": {
+    "eng": "Asago, Hyogo",
+    "jp": "朝来, 兵庫"
+  },
+  "tatsuno": {
+    "eng": "Tatsuno, Hyogo",
+    "jp": "たつの, 兵庫"
+  },
+  "inagawa": {
+    "eng": "Inagawa, Hyogo",
+    "jp": "猪名川, 兵庫"
+  },
+  "hiroshima_city": {
+    "eng": "Hiroshima City, Hiroshima",
+    "jp": "広島市, 広島"
+  },
+  "fukuyama": {
+    "eng": "Fukuyama, Hiroshima",
+    "jp": "福山, 広島"
+  },
+  "kure": {
+    "eng": "Kure, Hiroshima",
+    "jp": "呉, 広島"
+  },
+  "higashihiroshima": {
+    "eng": "Higashihiroshima, Hiroshima",
+    "jp": "東広島, 広島"
+  },
+  "onomichi": {
+    "eng": "Onomichi, Hiroshima",
+    "jp": "尾道, 広島"
+  },
+  "mihara": {
+    "eng": "Mihara, Hiroshima",
+    "jp": "三原, 広島"
+  },
+  "fuchu": {
+    "eng": "Fuchu, Hiroshima",
+    "jp": "府中, 広島"
+  },
+  "shobara": {
+    "eng": "Shobara, Hiroshima",
+    "jp": "庄原, 広島"
+  },
+  "takehara": {
+    "eng": "Takehara, Hiroshima",
+    "jp": "竹原, 広島"
+  },
+  "akitakata": {
+    "eng": "Akitakata, Hiroshima",
+    "jp": "安芸高田, 広島"
+  },
+  "fukuoka_city": {
+    "eng": "Fukuoka City, Fukuoka",
+    "jp": "福岡市, 福岡"
+  },
+  "kitakyushu": {
+    "eng": "Kitakyushu, Fukuoka",
+    "jp": "北九州, 福岡"
+  },
+  "kurume": {
+    "eng": "Kurume, Fukuoka",
+    "jp": "久留米, 福岡"
+  },
+  "kasuga": {
+    "eng": "Kasuga, Fukuoka",
+    "jp": "春日, 福岡"
+  },
+  "onojo": {
+    "eng": "Onojo, Fukuoka",
+    "jp": "大野城, 福岡"
+  },
+  "munakata": {
+    "eng": "Munakata, Fukuoka",
+    "jp": "宗像, 福岡"
+  },
+  "dazaifu": {
+    "eng": "Dazaifu, Fukuoka",
+    "jp": "太宰府, 福岡"
+  },
+  "fukutsu": {
+    "eng": "Fukutsu, Fukuoka",
+    "jp": "福津, 福岡"
+  },
+  "ukiha": {
+    "eng": "Ukiha, Fukuoka",
+    "jp": "うきは, 福岡"
+  },
+  "yame": {
+    "eng": "Yame, Fukuoka",
+    "jp": "八女, 福岡"
+  },
+  "chikugo": {
+    "eng": "Chikugo, Fukuoka",
+    "jp": "筑後, 福岡"
+  },
+  "koga": {
+    "eng": "Koga, Fukuoka",
+    "jp": "古賀, 福岡"
+  },
+  "miyama": {
+    "eng": "Miyama, Fukuoka",
+    "jp": "みやま, 福岡"
+  },
+  "asakura": {
+    "eng": "Asakura, Fukuoka",
+    "jp": "朝倉, 福岡"
+  },
+  "iizuka": {
+    "eng": "Iizuka, Fukuoka",
+    "jp": "飯塚, 福岡"
+  },
+  "tagawa": {
+    "eng": "Tagawa, Fukuoka",
+    "jp": "田川, 福岡"
+  },
+  "kama": {
+    "eng": "Kama, Fukuoka",
+    "jp": "嘉麻, 福岡"
+  },
+  "yamaga": {
+    "eng": "Yamaga, Fukuoka",
+    "jp": "山鹿, 福岡"
+  },
+  "nikko": {
+    "eng": "Tochigi Prefecture",
+    "jp": "日光, 栃木県"
+  }
+  }]
+}

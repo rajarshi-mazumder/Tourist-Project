@@ -11,14 +11,17 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@elastic/elasticsearch": "^8.17.1",
     "@google/generative-ai": "^0.2.1",
     "@googlemaps/google-maps-services-js": "^3.4.0",
     "@googlemaps/places": "^1.9.1",
+    "amadeus": "^11.0.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "node_perplexityai": "^1.0.4",
     "openai": "^4.85.1",
     "zod": "^3.24.2"
   }
