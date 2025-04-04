@@ -1,8 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-const tripRoutes = require("./routes/tripRoutes.js");
-const chatRoutes = require("./routes/chatRoutes.js");
+const express = require('express');
+const cors = require('cors');
+const tripRoutes = require('./routes/tripRoutes.js')
+const foodRoutes = require('./routes/foodRoutes.js');
+const llmRoutes = require('./routes/llmRoutes.js');
 const axios = require("axios");
+
 const app = express();
 const port = process.env.PORT || 4000;
 require("dotenv").config();
@@ -20,8 +22,15 @@ app.use(
 app.use(express.json());
 
 // Routes
+const { getGeminiFlashResponse } = require('./services/gemini.js');
+const { getDeepseekResponse } = require('./services/deepseek.js');
+
+const chatController = require('./controllers/chat/chatController.js');
+
 app.use("/trip", tripRoutes);
-app.use("/chat", chatRoutes);
+app.use("/food", foodRoutes);
+app.use("/llm", llmRoutes);
+app.post('/chat', chatController.handleClassifiedPrompt);
 
 // Start server
 app.listen(port, () => {

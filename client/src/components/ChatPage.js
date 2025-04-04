@@ -1,110 +1,118 @@
-import React, { useState, useEffect } from "react";
 
-export default function ChatPage() {
-  const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
-  const [response, setResponse] = useState("");
+import React, { useState } from 'react';
 
-  useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            if (
-              latitude < -90 ||
-              latitude > 90 ||
-              longitude < -180 ||
-              longitude > 180
-            ) {
-              setError("Invalid location data received from browser.");
-            } else {
-              setLocation({
-                latitude: latitude,
-                longitude: longitude,
-              });
-            }
-          },
-          (err) => {
-            setError(err.message);
-          },
-          {
-            enableHighAccuracy: true,
-          }
-        );
-      } else {
-        setError("Geolocation is not supported by this browser.");
+function ChatPage({ setError }) {
+  const [deepseekRequest, setDeepseekRequest] = useState('');
+  const [deepseekResponse, setDeepseekResponse] = useState('');
+  const [geminiRequest, setGeminiRequest] = useState('');
+  const [geminiResponse, setGeminiResponse] = useState('');
+
+  const classificationPrompt = `
+You are an AI assistant. Your task is to classify the user's query into one of the following categories:
+1. Attractions - for queries about tourist sites, museums, temples, parks, etc.
+2. Restaurants - for queries about dining options and food recommendations.
+3. Translation - for queries that request translating phrases or words into Japanese.
+4. Audio Pronunciation - for queries asking how to pronounce words or phrases.
+5. General Travel Assistance - for travel directions, itineraries, or general travel advice.
+6. Emergency Information - for urgent issues like lost items, hospital help, or police assistance.
+
+Return only the category name (exactly one of the above).
+
+User Query: "{userPrompt}"
+`;
+
+  const classifyPrompt = async (userPrompt) => {
+    const prompt = classificationPrompt.replace('{userPrompt}', userPrompt);
+
+    try {
+      const response = await fetch('http://localhost/llm/gemini', { // Using Gemini for classification
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
-    getLocation();
-  }, []);
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('Error classifying prompt:', error);
+      setError(error.message);
+      return 'General'; // Default category in case of error
+    }
+  };
 
-  const handleSend = () => {
-    // Send location to server
-    if (location) {
-      fetch("http://localhost/chat/chat", {
-        method: "POST",
+  const handleDeepseekSend = async () => {
+    handleSend(deepseekRequest, "Deepseek");
+  };
+
+  const handleGeminiSend = async () => {
+    handleSend(geminiRequest, "Gemini");
+  };
+
+  const handleSend = async (userPrompt, model) => {
+    try {
+      const category = await classifyPrompt(userPrompt);
+
+      const response = await fetch('http://localhost/chat', {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          location: location,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Response fro api");
-          console.log(data);
-          setResponse(data); // Assuming the response has a 'response' field
-        })
-        .catch((error) => console.error("Error:", error));
-    } else {
-      console.error("Location not available");
+
+        body: JSON.stringify({ prompt: userPrompt, promptType: category }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (model === "Deepseek") {
+        setDeepseekResponse(data.response);
+      } else {
+        setGeminiResponse(data.response);
+      }
+    } catch (error) {
+      console.error('Error sending request:', error);
+      setError(error.message);
+      if (model === "Deepseek") {
+        setDeepseekResponse('Error occurred while fetching response.');
+      } else {
+        setGeminiResponse('Error occurred while fetching response.');
+      }
     }
   };
 
   return (
-    <div className="chat-container">
-      <h1>Chat Page</h1>
-      {error && <p>{error}</p>}
-      {location && (
-        <p>
-          Latitude: {location.latitude}, Longitude: {location.longitude}
-        </p>
-      )}
+    <div>
+      <div>
+        <input
+          type="text"
+          value={deepseekRequest}
+          onChange={(e) => setDeepseekRequest(e.target.value)}
+          placeholder="Enter your Deepseek request"
+        />
+        <button onClick={handleDeepseekSend}>Send to Deepseek</button>
+        {deepseekResponse && <p>Deepseek Response: {deepseekResponse}</p>}
+      </div>
 
-      <button onClick={handleSend}>Send</button>
-
-      {response && (
-        <div className="restaurant-container">
-          <h2>Restaurants:</h2>
-          {response.map((place, index) => (
-            <div key={index} className="restaurant-container">
-              <h3>{place.name}</h3>
-              <p>Address: {place.formatted_address}</p>
-              <p>Description: {place.description}</p>
-              {place.opening_hours && (
-                <p>Open Now: {place.opening_hours.open_now}</p>
-              )}
-              <p>Rating: {place.rating}</p>
-              <p>Price Level: {place.price_level}</p>
-              <p>User Ratings Total: {place.user_ratings_total}</p>
-              <p>Curbside Pickup: {place.curbside_pickup}</p>
-              <p>Delivery: {place.delivery}</p>
-              <p>Dine-in: {place.dine_in}</p>
-              <p>Takeout: {place.takeout}</p>
-              <p>Reservations: {place.reservable}</p>
-              <p>Payment Options: {place.payment_options}</p>
-              <p>Accessibility Information: {place.wheelchair_accessible}</p>
-              <p>
-                Walking Distance: {place.walking_distance} (
-                {place.walking_duration})
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div>
+        <input
+          type="text"
+          value={geminiRequest}
+          onChange={(e) => setGeminiRequest(e.target.value)}
+          placeholder="Enter your Gemini request"
+        />
+        <button onClick={handleGeminiSend}>Send to Gemini</button>
+        {geminiResponse && <p>Gemini Response: {geminiResponse}</p>}
+      </div>
     </div>
   );
 }
+
+export default ChatPage;

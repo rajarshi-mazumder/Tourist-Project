@@ -1,0 +1,17 @@
+{ "restaurants": 
+    [
+      {  
+        "name": "Ramen Shop",
+        "id": "1234567890",
+        "description": "This is a description of the restaurant",
+        "cuisine": "Italian",
+        "seating": "Seating available now",
+        "reservation_required": "No reservation is ok",
+        "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place",
+        "ranking": {
+          "rank": 1,
+          "reasoning": "The reviews of this place mentioned this place has english menu, so i recommend this place"
+        }
+      }
+    ]
+ }

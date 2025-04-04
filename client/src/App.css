@@ -72,4 +72,13 @@
 
 .city-carousel .slick-list {
   padding-right: 50px;
+.restaurant-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.slick-next:before,
+.slick-prev:before {
+  color: black;
 }

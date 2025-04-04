@@ -1,7 +1,8 @@
-const OpenAI = require('openai');
-require('dotenv').config();
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const DeepseekAI = require('openai'); // Assuming deepseek uses the openai package
+
+const openai = new DeepseekAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: 'https://api.deepseek.com/v1', // Replace with the actual Deepseek API endpoint
 });
 const { zodResponseFormat } = require('openai/helpers/zod');
 const { z } = require('zod');
@@ -42,21 +43,21 @@ const IndexItemSchema = z.object({
   restaurants: z.array(RestaurantSchema),
 });
 
-async function getOpenAIChatResponse(prompt) {
+async function getDeepseekResponse(prompt) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-2024-08-06",
+      model: "deepseek-reasoner", // Replace with the actual Deepseek model
       messages: [{ role: "user", content: prompt }],
-      response_format: zodResponseFormat(IndexItemSchema, "items"),
+      
 
     });
      // Log the token usage details
      console.log("Token usage:", completion.usage);
     return completion.choices[0].message.content;
   } catch (error) {
-    console.error("Error calling OpenAI:", error);
-    throw new Error("Failed to get response from OpenAI");
+    console.error("Error calling Deepseek:", error);
+    throw new Error("Failed to get response from Deepseek");
   }
 }
 
-module.exports = { getOpenAIChatResponse };
+module.exports = { getDeepseekResponse };
